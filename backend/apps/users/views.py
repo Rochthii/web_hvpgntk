@@ -154,12 +154,19 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
+from apps.core.permissions import CanViewStudents, CanEditStudents
+
 class MonkProfileViewSet(viewsets.ModelViewSet):
     """ViewSet for MonkProfile CRUD operations."""
     
     queryset = MonkProfile.objects.select_related('user').all()
     serializer_class = MonkProfileSerializer
     
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [CanViewStudents()]
+        return [CanEditStudents()]
+
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
             return MonkProfileCreateSerializer
@@ -191,6 +198,11 @@ class LaypersonProfileViewSet(viewsets.ModelViewSet):
     
     queryset = LaypersonProfile.objects.select_related('user').all()
     serializer_class = LaypersonProfileSerializer
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [CanViewStudents()]
+        return [CanEditStudents()]
     
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:

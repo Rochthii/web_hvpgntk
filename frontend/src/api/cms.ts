@@ -1,21 +1,100 @@
-/**
- * CMS API Client
- * API methods for content management system data
- */
-import client from './client';
-import type { SiteSettings, NewsItem, Page, StaffMember } from '../types/cms';
+import axiosClient from './client';
+// Using types from local definition to avoid circular checks or if types/cms.ts is missing
+// But wait, user said "declares SiteSettings locally". 
+// I should define it here and export it if the app uses it from here.
+
+export interface SiteSettings {
+    site_name_vi: string;
+    site_slogan_vi: string;
+    site_name_km: string;
+    site_slogan_km: string;
+    logo_url: string;
+    favicon_url: string;
+    contact_email: string;
+    contact_phone: string;
+    contact_address: string;
+    google_maps_embed: string;
+    facebook_url: string;
+    youtube_url: string;
+    footer_text_vi: string;
+    footer_text_km: string;
+    student_count: string;
+    course_count: string;
+    founded_year: string;
+    id: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface NewsItem {
+    id: string;
+    title_vi: string;
+    slug: string;
+    excerpt_vi: string;
+    content_vi: string;
+    featured_image_url: string;
+    category: string;
+    status: 'draft' | 'published' | 'archived';
+    published_at: string | null;
+    created_at: string;
+    // aliases for compatibility
+    thumbnail_url?: string;
+}
+
+// ... existing code ...
+
+export interface StaffMember {
+    id: string;
+    display_name_vi: string;
+    position: string;
+    photo_url: string;
+    // Compatibility fields
+    image_url?: string;
+    display_order?: number;
+    bio_vi?: string;
+}
 
 export const cmsApi = {
-    getSettings: () => client.get<SiteSettings>('/cms/settings/'),
-    getNews: () => client.get<NewsItem[]>('/cms/news/'),
-    getLatestNews: () => client.get<NewsItem[]>('/cms/news/latest/'),
-    getNewsBySlug: (slug: string) => client.get<NewsItem>(`/cms/news/${slug}/`),
-    getFeaturedNews: () => client.get<NewsItem[]>('/cms/news/featured/'),
-    getStaff: () => client.get<StaffMember[]>('/cms/staff/'),
-    getLeadership: () => client.get<StaffMember[]>('/cms/staff/leadership/'),
-    getPages: () => client.get<Page[]>('/cms/pages/'),
-    getPageBySlug: (slug: string) => client.get<Page>(`/cms/pages/${slug}/`),
+    // Dashboard
+    getDashboardStats: () => axiosClient.get('/core/dashboard/stats/'),
+
+    // Site Settings
+    getSettings: () => axiosClient.get<SiteSettings>('/cms/settings/'),
+    updateSettings: (data: Partial<SiteSettings>) => axiosClient.post('/cms/settings/update_settings/', data),
+    // ... rest same
+    // News
+    getNews: (params?: any) => axiosClient.get<NewsItem[]>('/cms/news/', { params }).then(res => ({ ...res, data: (res.data as any).results || res.data })),
+    getNewsDetail: (slug: string) => axiosClient.get<NewsItem>(`/cms/news/${slug}/`),
+    createNews: (data: Partial<NewsItem>) => axiosClient.post('/cms/news/', data),
+    updateNews: (id: string, data: Partial<NewsItem>) => axiosClient.patch(`/cms/news/${id}/`, data),
+    deleteNews: (id: string) => axiosClient.delete(`/cms/news/${id}/`),
+
+    // News Public/Filter
+    getLatestNews: () => axiosClient.get<NewsItem[]>('/cms/news/latest/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
+    getFeaturedNews: () => axiosClient.get<NewsItem[]>('/cms/news/featured/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
+    getNewsBySlug: (slug: string) => axiosClient.get<NewsItem>(`/cms/news/${slug}/`),
+
+    // Pages
+    getPages: () => axiosClient.get<Page[]>('/cms/pages/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
+    getPageDetail: (slug: string) => axiosClient.get<Page>(`/cms/pages/${slug}/`),
+    createPage: (data: Partial<Page>) => axiosClient.post('/cms/pages/', data),
+    updatePage: (id: string, data: Partial<Page>) => axiosClient.patch(`/cms/pages/${id}/`, data),
+    deletePage: (id: string) => axiosClient.delete(`/cms/pages/${id}/`),
+
+    // Staff
+    getStaffList: () => axiosClient.get<StaffMember[]>('/cms/staff/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
+    getStaffDetail: (id: string) => axiosClient.get<StaffMember>(`/cms/staff/${id}/`),
+    createStaff: (data: Partial<StaffMember>) => axiosClient.post('/cms/staff/', data),
+    updateStaff: (id: string, data: Partial<StaffMember>) => axiosClient.patch(`/cms/staff/${id}/`, data),
+    deleteStaff: (id: string) => axiosClient.delete(`/cms/staff/${id}/`),
+    getLeadership: () => axiosClient.get<StaffMember[]>('/cms/staff/leadership/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
 };
 
-// Re-export types for backward compatibility
-export type { SiteSettings, NewsItem, Page, StaffMember };
+export interface Page {
+    id: string;
+    title_vi: string;
+    slug: string;
+    content_vi: string;
+    status: 'draft' | 'published';
+    updated_at: string;
+}

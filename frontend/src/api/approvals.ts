@@ -31,8 +31,8 @@ export interface StudentRequest {
 }
 
 export const approvalsApi = {
-    getRequestTypes: () => client.get<RequestType[]>('/approvals/types/'),
-    getMyRequests: () => client.get<StudentRequest[]>('/approvals/requests/'),
+    getRequestTypes: () => client.get<RequestType[]>('/approvals/types/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
+    getMyRequests: () => client.get<StudentRequest[]>('/approvals/requests/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
     createRequest: (data: any) => client.post('/approvals/requests/', data, {
         headers: {
             'Content-Type': 'multipart/form-data',

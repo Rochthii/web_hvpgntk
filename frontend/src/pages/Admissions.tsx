@@ -5,9 +5,33 @@ import { useFetch } from '../hooks/useFetch';
 
 const Admissions: React.FC = () => {
    const fetchCurrentPeriod = useCallback(() => admissionsApi.getCurrentPeriod(), []);
-   const { data: period, loading: periodLoading } = useFetch<AdmissionPeriod>(fetchCurrentPeriod);
+   const { data: rawPeriod, loading: periodLoading } = useFetch(fetchCurrentPeriod);
+
+   // Robust check: Ensure period is a valid object with an ID or required field
+   const period = (rawPeriod && typeof rawPeriod === 'object' && 'id' in rawPeriod) ? rawPeriod as AdmissionPeriod : null;
 
    const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+   const [formData, setFormData] = useState<any>({ applicant_type: 'monk' });
+   const [submitting, setSubmitting] = useState(false);
+
+   const handleSubmit = async () => {
+      if (!period) return;
+      setSubmitting(true);
+      try {
+         await admissionsApi.submitApplication({
+            ...formData,
+            period_id: period.id,
+            secular_name: formData.applicant_name, // Mapping UI field to Model field
+            admission_period: period.id // Just in case backend expects this
+         });
+         alert("Nộp hồ sơ thành công! Chúc mừng bạn.");
+      } catch (error) {
+         console.error(error);
+         alert("Nộp hồ sơ thất bại. Vui lòng thử lại.");
+      } finally {
+         setSubmitting(false);
+      }
+   };
 
    useEffect(() => {
       if (!period || !period.application_end_date) return;
@@ -125,37 +149,81 @@ const Admissions: React.FC = () => {
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                            <label className="block text-sm font-bold text-[#8B4513] mb-2">Họ và tên Khmer <span className="text-red-500">*</span></label>
-                           <input type="text" className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] focus:ring-1 focus:ring-[#DAA520] outline-none transition-all placeholder-gray-400" placeholder="Nhập họ và tên..." />
+                           <input
+                              type="text"
+                              name="applicant_name"
+                              onChange={(e) => setFormData({ ...formData, applicant_name: e.target.value })}
+                              className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] focus:ring-1 focus:ring-[#DAA520] outline-none transition-all placeholder-gray-400"
+                              placeholder="Nhập họ và tên..." />
                         </div>
                         <div>
                            <label className="block text-sm font-bold text-[#8B4513] mb-2">Tên Pali (nếu có)</label>
-                           <input type="text" className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] focus:ring-1 focus:ring-[#DAA520] outline-none transition-all placeholder-gray-400" placeholder="Nhập tên Pali..." />
+                           <input
+                              type="text"
+                              name="dharma_name_pali"
+                              onChange={(e) => setFormData({ ...formData, dharma_name_pali: e.target.value })}
+                              className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] focus:ring-1 focus:ring-[#DAA520] outline-none transition-all placeholder-gray-400"
+                              placeholder="Nhập tên Pali..." />
                         </div>
                      </div>
 
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
                            <label className="block text-sm font-bold text-[#8B4513] mb-2">Ngày sinh</label>
-                           <input type="date" className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] outline-none" />
+                           <input
+                              type="date"
+                              name="date_of_birth"
+                              onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                              className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] outline-none" />
                         </div>
                         <div>
                            <label className="block text-sm font-bold text-[#8B4513] mb-2">Số điện thoại</label>
-                           <input type="tel" className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] outline-none placeholder-gray-400" placeholder="090..." />
+                           <input
+                              type="tel"
+                              name="phone"
+                              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                              className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] outline-none placeholder-gray-400"
+                              placeholder="090..." />
                         </div>
                         <div>
                            <label className="block text-sm font-bold text-[#8B4513] mb-2">Email</label>
-                           <input type="email" className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] outline-none placeholder-gray-400" placeholder="example@email.com" />
+                           <input
+                              type="email"
+                              name="email"
+                              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                              className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] outline-none placeholder-gray-400"
+                              placeholder="example@email.com" />
                         </div>
                      </div>
 
-                     <div>
-                        <label className="block text-sm font-bold text-[#8B4513] mb-2">Địa chỉ thường trú</label>
-                        <input type="text" className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] outline-none placeholder-gray-400" placeholder="Số nhà, đường, phường/xã..." />
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                           <label className="block text-sm font-bold text-[#8B4513] mb-2">Nơi sinh (Tỉnh/Thành) <span className="text-red-500">*</span></label>
+                           <input
+                              type="text"
+                              name="place_of_birth"
+                              onChange={(e) => setFormData({ ...formData, place_of_birth: e.target.value })}
+                              className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] outline-none placeholder-gray-400"
+                              placeholder="Nhập nơi sinh..." />
+                        </div>
+                        <div>
+                           <label className="block text-sm font-bold text-[#8B4513] mb-2">Địa chỉ thường trú <span className="text-red-500">*</span></label>
+                           <input
+                              type="text"
+                              name="current_residence"
+                              onChange={(e) => setFormData({ ...formData, current_residence: e.target.value })}
+                              className="w-full px-4 py-3 rounded-lg bg-[#FFFAF0] border border-[#E5CFA0] focus:border-[#DAA520] outline-none placeholder-gray-400"
+                              placeholder="Số nhà, đường, phường/xã..." />
+                        </div>
                      </div>
 
                      <div className="flex justify-end pt-8">
-                        <button type="button" className="group relative px-10 py-3 bg-[#6B2C2C] text-white font-bold rounded-lg shadow-lg hover:shadow-gold-lg overflow-hidden transition-all">
-                           <span className="relative z-10 flex items-center gap-2">Tiếp theo →</span>
+                        <button
+                           type="button"
+                           onClick={handleSubmit}
+                           disabled={submitting}
+                           className="group relative px-10 py-3 bg-[#6B2C2C] text-white font-bold rounded-lg shadow-lg hover:shadow-gold-lg overflow-hidden transition-all disabled:opacity-50">
+                           <span className="relative z-10 flex items-center gap-2">{submitting ? 'Đang nộp...' : 'Nộp hồ sơ'} →</span>
                            <div className="absolute inset-0 bg-[#8B4513] transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></div>
                         </button>
                      </div>

@@ -62,7 +62,7 @@ class Command(BaseCommand):
             {
                 'title_vi': 'Giới thiệu Học viện',
                 'slug': 'gioi-thieu',
-                'page_type': 'ABOUT',
+                'page_type': 'about',
                 'content_vi': '''
 <h2>Học viện Phật giáo Nam Tông Khmer Cần Thơ</h2>
 
@@ -79,14 +79,14 @@ class Command(BaseCommand):
 <h3>Phạm vi hoạt động</h3>
 <p>Phục vụ đào tạo tăng ni sinh Khmer tại 8 tỉnh: Cần Thơ, Sóc Trăng, Trà Vinh, Bạc Liêu, Cà Mau, Hậu Giang, Kiên Giang và các tỉnh lân cận.</p>
                 ''',
-                'status': 'PUBLISHED',
+                'status': 'published',
                 'menu_order': 1,
                 'published_at': timezone.now()
             },
             {
                 'title_vi': 'Chương trình đào tạo',
                 'slug': 'chuong-trinh-dao-tao',
-                'page_type': 'CURRICULUM',
+                'page_type': 'curriculum',
                 'content_vi': '''
 <h2>Chương trình đào tạo Cử nhân Phật học Pali-Khmer</h2>
 
@@ -104,8 +104,32 @@ class Command(BaseCommand):
 
 <p>Học viện có hợp tác quốc tế với Viện Đại học Ayutthaya (Thái Lan) và liên kết với Đại học Cần Thơ.</p>
                 ''',
-                'status': 'PUBLISHED',
+                'status': 'published',
                 'menu_order': 2,
+                'published_at': timezone.now()
+            },
+            {
+                'title_vi': 'Sứ mệnh & Tầm nhìn',
+                'slug': 'su-menh',
+                'page_type': 'mission',
+                'content_vi': '''
+<h2>Sứ mệnh</h2>
+<p>Học viện Phật giáo Nam tông Khmer là cơ sở giáo dục đại học, đào tạo Tăng sinh, Tu nữ và Phật tử Khmer trình độ Cử nhân Phật học, góp phần phát triển nguồn nhân lực có phẩm hạnh và trí tuệ cho Giáo hội và xã hội.</p>
+<p>Học viện cam kết bảo tồn và phát huy bản sắc văn hóa dân tộc, ngôn ngữ Pali - Khmer và các giá trị đạo đức Phật giáo Nam tông truyền thống.</p>
+
+<h2>Tầm nhìn</h2>
+<p>Trở thành trung tâm đào tạo và nghiên cứu Phật học Nam tông Khmer hàng đầu tại Việt Nam và khu vực, kết nối với các nền giáo dục Phật giáo tiên tiến trên thế giới.</p>
+<p>Xây dựng môi trường tu học trang nghiêm, hiện đại, nơi kết hợp hài hòa giữa tri thức Phật học và tri thức thế học.</p>
+
+<h2>Giá trị cốt lõi</h2>
+<ul>
+    <li><strong>Trí tuệ (Paññā):</strong> Đề cao sự hiểu biết đúng đắn và tư duy phản biện.</li>
+    <li><strong>Đạo đức (Sīla):</strong> Giữ gìn giới luật và phẩm hạnh người xuất gia.</li>
+    <li><strong>Vị tha (Metta):</strong> Phụng sự chúng sinh và xã hội với lòng từ bi.</li>
+</ul>
+                ''',
+                'status': 'published',
+                'menu_order': 3,
                 'published_at': timezone.now()
             },
         ]
@@ -150,7 +174,7 @@ class Command(BaseCommand):
                 'position': 'Viện trưởng',
                 'department': dept_hddt,
                 'bio_vi': 'Viện trưởng Học viện Phật giáo Nam tông Khmer Cần Thơ, Phó Chủ tịch Hội đồng Trị sự GHPGVN',
-                'staff_type': 'LEADERSHIP',
+                'staff_type': 'leadership',
                 'display_order': 1
             },
             {
@@ -159,7 +183,7 @@ class Command(BaseCommand):
                 'position': 'Phó Viện trưởng, Trưởng Khoa Ký',
                 'department': dept_kk,
                 'bio_vi': 'Phó Viện trưởng kiêm Trưởng Khoa Ký',
-                'staff_type': 'LEADERSHIP',
+                'staff_type': 'leadership',
                 'display_order': 2
             },
             {
@@ -168,7 +192,7 @@ class Command(BaseCommand):
                 'position': 'Phó Viện trưởng, Giám luật',
                 'department': dept_gl,
                 'bio_vi': 'Phó Viện trưởng kiêm Giám luật Học viện',
-                'staff_type': 'LEADERSHIP',
+                'staff_type': 'leadership',
                 'display_order': 3
             },
             # Administration
@@ -178,7 +202,7 @@ class Command(BaseCommand):
                 'position': 'Phó Văn phòng',
                 'department': dept_vp,
                 'bio_vi': 'Phó Văn phòng Học viện',
-                'staff_type': 'ADMIN_STAFF',
+                'staff_type': 'admin_staff',
                 'display_order': 4
             },
             {
@@ -187,7 +211,7 @@ class Command(BaseCommand):
                 'position': 'Phó Văn phòng',
                 'department': dept_vp,
                 'bio_vi': 'Phó Văn phòng Học viện',
-                'staff_type': 'ADMIN_STAFF',
+                'staff_type': 'admin_staff',
                 'display_order': 5
             },
             {
@@ -196,7 +220,7 @@ class Command(BaseCommand):
                 'position': 'Phó Văn phòng, Giảng viên',
                 'department': dept_vp,
                 'bio_vi': 'Phó Văn phòng, Giảng viên các môn Anh ngữ, Thiền học, Phương pháp viết luận văn',
-                'staff_type': 'FACULTY',
+                'staff_type': 'faculty',
                 'display_order': 6
             },
             {
@@ -205,7 +229,7 @@ class Command(BaseCommand):
                 'position': 'Phó Trưởng Thư ký',
                 'department': dept_tk,
                 'bio_vi': 'Phó Trưởng Thư ký, Phó Văn phòng',
-                'staff_type': 'ADMIN_STAFF',
+                'staff_type': 'admin_staff',
                 'display_order': 7
             },
             {
@@ -214,7 +238,7 @@ class Command(BaseCommand):
                 'position': 'Thư ký',
                 'department': dept_tk,
                 'bio_vi': 'Thư ký Học viện',
-                'staff_type': 'ADMIN_STAFF',
+                'staff_type': 'admin_staff',
                 'display_order': 8
             },
             # Faculty members
@@ -224,7 +248,7 @@ class Command(BaseCommand):
                 'position': 'Giảng viên',
                 'department': dept_hddt,
                 'bio_vi': 'Giảng viên Văn học Khmer, Văn minh Khmer',
-                'staff_type': 'FACULTY',
+                'staff_type': 'faculty',
                 'display_order': 9
             },
             {
@@ -233,7 +257,7 @@ class Command(BaseCommand):
                 'position': 'Giảng viên',
                 'department': dept_hddt,
                 'bio_vi': 'Giảng viên Dịch Phạm Pali',
-                'staff_type': 'FACULTY',
+                'staff_type': 'faculty',
                 'display_order': 10
             },
             {
@@ -242,7 +266,7 @@ class Command(BaseCommand):
                 'position': 'Giảng viên',
                 'department': dept_hddt,
                 'bio_vi': 'Giảng viên Thái ngữ, Logic học, Văn tông Phật giáo',
-                'staff_type': 'FACULTY',
+                'staff_type': 'faculty',
                 'display_order': 11
             },
             {
@@ -251,7 +275,7 @@ class Command(BaseCommand):
                 'position': 'Giảng viên',
                 'department': dept_hddt,
                 'bio_vi': 'Giảng viên Sanskrit, Triết học Phật giáo',
-                'staff_type': 'FACULTY',
+                'staff_type': 'faculty',
                 'display_order': 12
             },
         ]
@@ -270,8 +294,8 @@ class Command(BaseCommand):
                 'slug': 'khanh-thanh-chanh-dien-2025',
                 'excerpt_vi': 'Ngày 15/02/2025, Học viện trọng thể tổ chức Lễ khánh thành ngôi Chánh điện, hoàn thiện công trình sau gần 20 năm xây dựng.',
                 'content_vi': '<p>Sau gần 20 năm xây dựng, ngôi Chánh điện của Học viện Phật giáo Nam tông Khmer Cần Thơ đã chính thức được khánh thành vào ngày 15 tháng 2 năm 2025...</p>',
-                'status': 'PUBLISHED',
-                'category': 'ACADEMY_NEWS',
+                'status': 'published',
+                'category': 'academy_news',
                 'is_featured': True,
                 'published_at': date(2025, 2, 15)
             },
@@ -280,8 +304,8 @@ class Command(BaseCommand):
                 'slug': 'khanh-thanh-trai-duong-2023',
                 'excerpt_vi': 'Ngày 26/04/2023, Học viện long trọng tổ chức lễ khánh thành Trai đường đồng thời kính mừng Đại lễ Phật đản.',
                 'content_vi': '<p>Vào ngày 26 tháng 4 năm 2023, Học viện Phật giáo Nam tông Khmer Cần Thơ đã trọng thể tổ chức Lễ khánh thành Trai đường...</p>',
-                'status': 'PUBLISHED',
-                'category': 'ACADEMY_NEWS',
+                'status': 'published',
+                'category': 'academy_news',
                 'published_at': date(2023, 4, 26)
             },
             {
@@ -289,8 +313,8 @@ class Command(BaseCommand):
                 'slug': 'khanh-thanh-giai-doan-1-2019',
                 'excerpt_vi': 'Ngày 09/01/2019, giai đoạn I của công trình Học viện đã hoàn thành và được khánh thành, tạo môi trường tu học cho tăng ni sinh.',
                 'content_vi': '<p>Ngày 9 tháng 1 năm 2019 đánh dấu sự kiện quan trọng khi giai đoạn I của công trình Học viện Phật giáo Nam tông Khmer Cần Thơ được chính thức khánh thành...</p>',
-                'status': 'PUBLISHED',
-                'category': 'ACADEMY_NEWS',
+                'status': 'published',
+                'category': 'academy_news',
                 'published_at': date(2019, 1, 9)
             },
         ]

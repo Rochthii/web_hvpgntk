@@ -73,6 +73,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Add WhiteNoise here
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -111,7 +112,7 @@ import dj_database_url
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
+        default=os.environ.get('DATABASE_URL', f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
         conn_max_age=600,
         conn_health_checks=True,
     )
@@ -121,6 +122,12 @@ DATABASES = {
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
 
+
+# Authentication Backends
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -143,9 +150,33 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+# WhiteNoise Configuration
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Media files
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# PRODUCTION SECURITY SETTINGS
+if not DEBUG:
+    # HSTS Settings
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    
+    # Cookie Security
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    
+    # Proxy Headers (if behind Nginx/Traefik)
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    
+    # Other Security
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
+    X_FRAME_OPTIONS = 'DENY'
 
 
 # Default primary key field type
@@ -171,7 +202,7 @@ REST_FRAMEWORK = {
         'apps.core.throttling.SustainedUserThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'login': '5/minute',           # Login attempts (brute-force protection)
+        'login': '10/minute',           # Login attempts (brute-force protection)
         'strict_anon': '50/hour',      # Anonymous users
         'burst_user': '100/minute',    # Authenticated users (burst)
         'sustained_user': '1000/hour', # Authenticated users (sustained)
@@ -191,7 +222,7 @@ SIMPLE_JWT = {
 # CORS Settings - Read from environment
 CORS_ALLOWED_ORIGINS = os.getenv(
     'CORS_ALLOWED_ORIGINS',
-    'http://localhost:3000,http://127.0.0.1:3000'
+    'http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173'
 ).split(',')
 
 # Add production domain if not in DEBUG mode
@@ -257,5 +288,5 @@ AXES_VERBOSE = True  # Show detailed error messages
 
 # Lock by username only (not IP) for better UX
 # Users can retry from different locations
-AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = False
-AXES_ONLY_USER_FAILURES = True
+# AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = False
+# AXES_ONLY_USER_FAILURES = True

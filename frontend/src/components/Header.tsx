@@ -63,11 +63,24 @@ const Header: React.FC = () => {
             <Link to={ROUTES.CONTACT} className={getLinkClass(ROUTES.CONTACT)}>
               Liên hệ
             </Link>
+
+
           </nav>
 
           {/* Right side */}
           <div className="flex items-center gap-4">
-            {user && <NotificationBell />}
+            {user ? (
+              <Link to={ROUTES.PROFILE} className="flex items-center gap-2 hover:bg-white/10 p-1 rounded-lg transition-colors">
+                <div className="w-8 h-8 rounded-full bg-orange-200 border-2 border-orange-300 overflow-hidden flex items-center justify-center text-[#6B2C2C] font-bold text-xs">
+                  {user.avatar_url ? <img src={user.avatar_url} className="w-full h-full object-cover" /> : user.display_name?.charAt(0) || 'U'}
+                </div>
+                <span className="text-sm font-medium hidden md:inline">{user.display_name?.split(' ').pop()}</span>
+              </Link>
+            ) : (
+              <Link to={ROUTES.STUDENT_PORTAL} className="text-sm font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded transition-colors">
+                Đăng nhập
+              </Link>
+            )}
 
             <div className="flex items-center gap-2">
               <button className="text-white/80 hover:text-white transition-colors text-sm">VI</button>

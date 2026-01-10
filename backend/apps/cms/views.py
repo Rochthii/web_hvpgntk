@@ -7,6 +7,8 @@ from .serializers import (
     StaffMemberSerializer, NewsSerializer, NewsLiteSerializer, FAQSerializer, PartnerSerializer
 )
 
+from apps.core.permissions import CanEditCMS, CanViewCMS
+
 class SiteSettingViewSet(viewsets.ViewSet):
     """
     Singleton viewset for Site Settings.
@@ -18,27 +20,47 @@ class SiteSettingViewSet(viewsets.ViewSet):
         serializer = SiteSettingSerializer(settings)
         return Response(serializer.data)
 
-class PageViewSet(viewsets.ReadOnlyModelViewSet):
+    @action(detail=False, methods=['post', 'patch'], permission_classes=[CanEditCMS])
+    def update_settings(self, request):
+        settings = SiteSetting.get_settings()
+        serializer = SiteSettingSerializer(settings, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PageViewSet(viewsets.ModelViewSet):
     """
-    ReadOnly ViewSet for Pages (About, History, etc.)
+    Pages Management. Public View / CMS Edit.
     """
-    queryset = Page.objects.filter(status='PUBLISHED').order_by('menu_order')
+    queryset = Page.objects.all().order_by('menu_order')
     serializer_class = PageSerializer
-    permission_classes = [permissions.AllowAny]
-    pagination_class = None
     lookup_field = 'slug'
 
-class DepartmentViewSet(viewsets.ReadOnlyModelViewSet):
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+             return [permissions.AllowAny()]
+        return [CanEditCMS()]
+
+class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all().order_by('display_order')
     serializer_class = DepartmentSerializer
-    permission_classes = [permissions.AllowAny]
     pagination_class = None
 
-class StaffMemberViewSet(viewsets.ReadOnlyModelViewSet):
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+             return [permissions.AllowAny()]
+        return [CanEditCMS()]
+
+class StaffMemberViewSet(viewsets.ModelViewSet):
     queryset = StaffMember.objects.all().order_by('display_order')
     serializer_class = StaffMemberSerializer
-    permission_classes = [permissions.AllowAny]
     pagination_class = None
+    
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'leadership']:
+             return [permissions.AllowAny()]
+        return [CanEditCMS()]
     
     @action(detail=False)
     def leadership(self, request):
@@ -47,17 +69,27 @@ class StaffMemberViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(leaders, many=True)
         return Response(serializer.data)
 
-class NewsViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = News.objects.filter(status='PUBLISHED').order_by('-published_at')
+class NewsViewSet(viewsets.ModelViewSet):
+    def get_queryset(self):
+        user = self.request.user
+        # Check if user has CMS View permission
+        can_view_all = user.is_authenticated and (
+            user.role in ['admin', 'abbot', 'teacher', 'content', 'secretary'] or user.is_staff
+        )
+        if self.action in ['list', 'retrieve'] and not can_view_all:
+             return News.objects.filter(status='PUBLISHED').order_by('-published_at')
+        return News.objects.all().order_by('-created_at')
     
     def get_serializer_class(self):
-        if self.action == 'retrieve':
-            return NewsSerializer
-        return NewsLiteSerializer
+        if self.action == 'list':
+            return NewsLiteSerializer
+        return NewsSerializer
 
-    permission_classes = [permissions.AllowAny]
-    # Re-enable pagination for the main list
-    # pagination_class = None 
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'featured', 'latest']:
+            return [permissions.AllowAny()]
+        return [CanEditCMS()]
+
     lookup_field = 'slug'
     
     @action(detail=False)

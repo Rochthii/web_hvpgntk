@@ -5,9 +5,23 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    strictPort: true,  // Fail if port 3000 is busy (better than auto-increment)
+    strictPort: true,
     host: true,
     cors: true
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: false, // Cleaner production build
+    chunkSizeWarningLimit: 1600,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        }
+      }
+    }
   },
   optimizeDeps: {
     exclude: []

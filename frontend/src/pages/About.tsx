@@ -97,7 +97,7 @@ const About: React.FC = () => {
 
   // Data Fetching
   const fetchPages = useCallback(() => cmsApi.getPages(), []);
-  const { data: pages, loading: pagesLoading } = useFetch<Page[]>(fetchPages);
+  const { data: pages, loading: pagesLoading, error: pagesError } = useFetch<Page[]>(fetchPages);
 
   const fetchLeadership = useCallback(async () => {
     const res = await cmsApi.getLeadership();
@@ -107,7 +107,18 @@ const About: React.FC = () => {
   }, []);
   const { data: leadership, loading: staffLoading } = useFetch<StaffMember[]>(fetchLeadership);
 
-  const getPageContent = (slugPart: string) => pages?.find(p => p.slug.includes(slugPart))?.content_vi || "Đang cập nhật...";
+  // Debugging
+  React.useEffect(() => {
+    if (pagesError) console.error("Pages fetch error:", pagesError);
+    if (pages) console.log("Fetched pages:", pages);
+  }, [pages, pagesError]);
+
+  const getPageContent = (slugPart: string) => {
+    if (pagesLoading) return "Đang tải dữ liệu...";
+    if (pagesError) return "Không thể tải dữ liệu. Vui lòng thử lại.";
+    const page = pages?.find(p => p.slug.includes(slugPart));
+    return page?.content_vi || "Nội dung đang được cập nhật...";
+  };
 
   return (
     <div className="min-h-screen bg-[#FDF5E6] pb-20 font-sans">

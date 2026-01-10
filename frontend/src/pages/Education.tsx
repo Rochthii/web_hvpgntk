@@ -55,8 +55,8 @@ const Education: React.FC = () => {
             </p>
           </div>
 
-          {/* VISUAL YEAR TABS */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12 relative z-10">
+          {/* VISUAL YEAR TABS - Disabled for Demo until more data seeded */}
+          {/* <div className="flex flex-wrap justify-center gap-4 mb-12 relative z-10">
             {[1, 2, 3, 4].map((year) => (
               <button
                 key={year}
@@ -75,7 +75,7 @@ const Education: React.FC = () => {
                 )}
               </button>
             ))}
-          </div>
+          </div> */}
 
           {/* CURRICULUM DISPLAY */}
           <div className="relative z-10 max-w-5xl mx-auto min-h-[400px]">
@@ -93,7 +93,7 @@ const Education: React.FC = () => {
                 </div>
               ) : courses && courses.length > 0 ? (
                 // Allow showing ALL courses if filtering logic mimics empty, but here we use the helper
-                (getCoursesByYear(activeTab).length > 0 ? getCoursesByYear(activeTab) : courses).map((course) => (
+                (courses).map((course) => (
                   <div key={course.id} className="group bg-white p-6 rounded-xl shadow-sm border border-[#E5CFA0]/50 hover:border-[#DAA520] hover:shadow-gold-md transition-all duration-300 flex items-start gap-4">
                     <div className="w-12 h-12 rounded-full bg-[#FFF8E1] flex items-center justify-center flex-shrink-0 text-[#DAA520] group-hover:scale-110 transition-transform">
                       <Book size={24} />

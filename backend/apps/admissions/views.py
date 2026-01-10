@@ -1,8 +1,9 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import AdmissionPeriod
-from .serializers import AdmissionPeriodSerializer
+from .models import AdmissionPeriod, AdmissionApplication
+from .serializers import AdmissionPeriodSerializer, AdmissionApplicationSerializer
+from rest_framework import viewsets, permissions, status
 
 class AdmissionPeriodViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -10,6 +11,7 @@ class AdmissionPeriodViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = AdmissionPeriod.objects.all()
     serializer_class = AdmissionPeriodSerializer
+    permission_classes = [permissions.AllowAny]
     
     @action(detail=False, methods=['get'])
     def current(self, request):
@@ -25,3 +27,19 @@ class AdmissionPeriodViewSet(viewsets.ReadOnlyModelViewSet):
             serializer = self.get_serializer(period)
             return Response(serializer.data)
         return Response(None)
+
+class AdmissionApplicationViewSet(viewsets.ModelViewSet):
+    """
+    API for submitting Admission Applications
+    """
+    queryset = AdmissionApplication.objects.all()
+    serializer_class = AdmissionApplicationSerializer
+    
+    def get_permissions(self):
+        if self.action == 'create':
+            return [permissions.AllowAny()]
+        return [permissions.IsAuthenticated()]
+
+    def create(self, request, *args, **kwargs):
+        # Optional: Add logic to check if AdmissionPeriod is currently open
+        return super().create(request, *args, **kwargs)

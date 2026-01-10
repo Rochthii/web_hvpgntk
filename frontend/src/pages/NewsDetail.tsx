@@ -70,9 +70,9 @@ const NewsDetail: React.FC = () => {
                 </header>
 
                 {/* Featured Image */}
-                {news.thumbnail_url && (
+                {(news.featured_image_url || news.thumbnail_url) && (
                     <div className="rounded-xl overflow-hidden shadow-lg mb-12">
-                        <img src={news.thumbnail_url} alt={news.title_vi} className="w-full h-auto object-cover max-h-[600px]" />
+                        <img src={news.featured_image_url || news.thumbnail_url} alt={news.title_vi} className="w-full h-auto object-cover max-h-[600px]" />
                     </div>
                 )}
 

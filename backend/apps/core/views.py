@@ -3,7 +3,58 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.utils import timezone
 from .models import Notification
-from .serializers import NotificationSerializer
+from .models import Notification
+from apps.cms.models import ContactMessage
+from .serializers import NotificationSerializer, ContactMessageSerializer
+from rest_framework import generics
+
+# Import models
+from apps.users.models import User
+from apps.approvals.models import StudentRequest
+from apps.cms.models import News
+from rest_framework.views import APIView
+
+from apps.core.models import AuditLog
+
+class ContactMessageView(generics.CreateAPIView):
+    """
+    API for submitting contact messages (Public)
+    """
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ContactMessageSerializer
+    queryset = ContactMessage.objects.all()
+
+class DashboardStatsView(APIView):
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
+        recent_activities = []
+        logs = AuditLog.objects.select_related('user').order_by('-created_at')[:5]
+        for log in logs:
+            user_name = log.user.display_name if log.user else 'System'
+            recent_activities.append({
+                'id': log.id,
+                'text': f"{user_name} {log.action} {log.resource_type}",
+                'time': log.created_at
+            })
+
+        # Fallback if no logs, use requests
+        if not recent_activities:
+            latest_requests = StudentRequest.objects.all().order_by('-created_at')[:5]
+            for req in latest_requests:
+                recent_activities.append({
+                    'id': req.id,
+                    'text': f"{req.user.full_name} gửi đơn {req.request_type_display}",
+                    'time': req.created_at
+                })
+
+        return Response({
+            'total_students': User.objects.filter(role='STUDENT').count(),
+            'pending_requests': StudentRequest.objects.filter(status='PENDING').count(),
+            'processed_requests': StudentRequest.objects.exclude(status='PENDING').count(),
+            'total_news': News.objects.count(),
+            'recent_activities': recent_activities
+        })
 
 class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = NotificationSerializer

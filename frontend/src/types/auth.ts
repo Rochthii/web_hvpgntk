@@ -5,6 +5,8 @@ export interface MonkProfile {
     dharma_name_vietnamese: string;
     student_code: string | null;
     temple: string;
+    current_temple?: string; // Client-side alias for temple
+    vassa_count: number;
     ordination_date: string | null;
 }
 
@@ -23,6 +25,7 @@ export interface User {
     user_type: 'monk' | 'layperson';
     role: string;
     display_name: string;
+    avatar_url?: string | null;
     is_active: boolean;
     monk_profile?: MonkProfile;
     layperson_profile?: LaypersonProfile;

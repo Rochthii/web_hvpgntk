@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Calendar, ChevronRight, Clock, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cmsApi } from '../api/cms';
@@ -6,10 +6,39 @@ import { ROUTES } from '../router/routes';
 import { useFetch } from '../hooks/useFetch';
 
 const News: React.FC = () => {
-   const fetchNews = React.useCallback(() => cmsApi.getNews(), []);
+   // State for filters
+   const [search, setSearch] = useState('');
+   const [category, setCategory] = useState<string>('');
+   const [debouncedSearch, setDebouncedSearch] = useState('');
+
+   // Debounce search
+   useEffect(() => {
+      const timer = setTimeout(() => setDebouncedSearch(search), 500);
+      return () => clearTimeout(timer);
+   }, [search]);
+
+   const fetchNews = useCallback(() => {
+      const params: any = {};
+      if (debouncedSearch) params.search = debouncedSearch;
+      if (category) params.category = category;
+      return cmsApi.getNews(params);
+   }, [debouncedSearch, category]);
+
    const { data: news, loading } = useFetch(fetchNews);
 
-   if (loading) {
+   // Hardcoded categories list mapped to model choices
+   // In a real scenario, we might fetch these from an API endpoint like /cms/news/categories/
+   const CATEGORIES = [
+      { label: 'Tất cả', value: '' },
+      { label: 'Phật sự', value: 'PHAT_SU' },
+      { label: 'Hoằng pháp', value: 'HOANG_PHAP' },
+      { label: 'Giáo dục', value: 'GIAO_DUC' },
+      { label: 'Từ thiện', value: 'TU_THIEN' },
+      { label: 'Văn hóa', value: 'VAN_HOA' },
+      { label: 'Thông báo', value: 'THONG_BAO' },
+   ];
+
+   if (loading && !news) {
       return (
          <div className="min-h-screen flex items-center justify-center bg-[#FDF5E6]">
             <div className="w-16 h-16 border-4 border-[#DAA520] border-t-transparent rounded-full animate-spin"></div>
@@ -17,13 +46,13 @@ const News: React.FC = () => {
       );
    }
 
-   const sortedNews = news ? [...news].sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime()) : [];
+   // Client-side sort if API doesn't order by published_at (it should, but safety first)
+   const sortedNews = news ? [...news].sort((a, b) => new Date(b.published_at || b.created_at).getTime() - new Date(a.published_at || a.created_at).getTime()) : [];
    const featuredNews = sortedNews.length > 0 ? sortedNews[0] : null;
    const otherNews = sortedNews.slice(1);
 
    return (
       <div className="min-h-screen bg-[#FDF5E6] pb-20 font-sans">
-
          {/* HEADER SECTION */}
          <div className="bg-[#6B2C2C] text-white py-16 px-4 relative overflow-hidden">
             <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')]"></div>
@@ -41,8 +70,8 @@ const News: React.FC = () => {
                {/* Main Content */}
                <div className="lg:w-3/4">
 
-                  {/* HERO NEWS (Featured) */}
-                  {featuredNews && (
+                  {/* HERO NEWS (Featured) - Only show if no search filter active to focus results */}
+                  {!debouncedSearch && !category && featuredNews && (
                      <div className="mb-12 group">
                         <Link to={`${ROUTES.NEWS}/${featuredNews.slug}`} className="block relative h-[500px] rounded-2xl overflow-hidden shadow-2xl border-4 border-[#DAA520]">
                            <img
@@ -52,14 +81,13 @@ const News: React.FC = () => {
                            />
                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex flex-col justify-end p-8 md:p-12">
                               <span className="inline-block bg-[#DAA520] text-[#6B2C2C] text-xs font-bold px-3 py-1 rounded-full mb-4 w-fit uppercase tracking-wider">
-                                 {featuredNews.category || 'Nổi bật'}
+                                 {CATEGORIES.find(c => c.value === featuredNews.category)?.label || featuredNews.category || 'Nổi bật'}
                               </span>
                               <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4 leading-tight group-hover:text-[#E5CFA0] transition-colors shadow-black drop-shadow-lg">
                                  {featuredNews.title_vi}
                               </h2>
                               <div className="flex items-center text-gray-300 text-sm mb-4 space-x-4">
-                                 <span className="flex items-center"><Calendar size={14} className="mr-1 text-[#DAA520]" /> {new Date(featuredNews.published_at).toLocaleDateString('vi-VN')}</span>
-                                 <span className="flex items-center"><Eye size={14} className="mr-1 text-[#DAA520]" /> 1.2k lượt xem</span>
+                                 <span className="flex items-center"><Calendar size={14} className="mr-1 text-[#DAA520]" /> {new Date(featuredNews.published_at || featuredNews.created_at).toLocaleDateString('vi-VN')}</span>
                               </div>
                               <p className="text-gray-200 text-lg line-clamp-2 max-w-3xl font-light">
                                  {featuredNews.excerpt_vi}
@@ -70,9 +98,9 @@ const News: React.FC = () => {
                   )}
 
                   {/* GRID NEWS */}
-                  {otherNews.length > 0 ? (
+                  {((!debouncedSearch && !category) ? otherNews : sortedNews).length > 0 ? (
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {otherNews.map((item) => (
+                        {((!debouncedSearch && !category) ? otherNews : sortedNews).map((item) => (
                            <div key={item.id} className="bg-white rounded-xl shadow-gold-sm border border-[#E5CFA0] overflow-hidden group hover:shadow-gold-md transition-all hover:-translate-y-1 duration-300">
                               <div className="relative h-56 overflow-hidden">
                                  <img
@@ -81,11 +109,13 @@ const News: React.FC = () => {
                                     alt={item.title_vi}
                                  />
                                  <div className="absolute top-4 right-4 bg-[#6B2C2C] text-white text-xs font-bold px-3 py-1 rounded shadow-lg">
-                                    {new Date(item.published_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })}
+                                    {new Date(item.published_at || item.created_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })}
                                  </div>
                               </div>
                               <div className="p-6">
-                                 <div className="text-[#DAA520] text-xs font-bold uppercase mb-2 tracking-wide">{item.category || 'Sự kiện'}</div>
+                                 <div className="text-[#DAA520] text-xs font-bold uppercase mb-2 tracking-wide">
+                                    {CATEGORIES.find(c => c.value === item.category)?.label || item.category || 'Tin tức'}
+                                 </div>
                                  <Link to={`${ROUTES.NEWS}/${item.slug}`}>
                                     <h3 className="font-serif font-bold text-xl text-[#6B2C2C] mb-3 group-hover:text-[#8B4513] transition-colors line-clamp-2 height-[3.5rem]">
                                        {item.title_vi}
@@ -103,7 +133,7 @@ const News: React.FC = () => {
                      </div>
                   ) : (
                      <div className="text-center py-20 bg-white rounded-xl border border-dashed border-[#E5CFA0]">
-                        <p className="text-gray-500 italic">Chưa có tin tức nào khác.</p>
+                        <p className="text-gray-500 italic">Không tìm thấy tin tức nào phù hợp.</p>
                      </div>
                   )}
                </div>
@@ -116,7 +146,13 @@ const News: React.FC = () => {
                         Tìm kiếm
                      </h3>
                      <div className="relative">
-                        <input type="text" placeholder="Tìm tin tức..." className="w-full pl-4 pr-10 py-3 bg-[#FDF5E6] border border-[#E5CFA0] rounded-lg focus:outline-none focus:border-[#DAA520] focus:ring-1 focus:ring-[#DAA520] text-sm text-[#6B2C2C] placeholder-[#8B4513]/50" />
+                        <input
+                           type="text"
+                           value={search}
+                           onChange={(e) => setSearch(e.target.value)}
+                           placeholder="Tìm tin tức..."
+                           className="w-full pl-4 pr-10 py-3 bg-[#FDF5E6] border border-[#E5CFA0] rounded-lg focus:outline-none focus:border-[#DAA520] focus:ring-1 focus:ring-[#DAA520] text-sm text-[#6B2C2C] placeholder-[#8B4513]/50"
+                        />
                         <Search className="absolute right-3 top-3 text-[#DAA520]" size={18} />
                      </div>
                   </div>
@@ -127,12 +163,15 @@ const News: React.FC = () => {
                         Danh mục
                      </h3>
                      <ul className="space-y-3 text-sm">
-                        {['Phật sự', 'Khóa tu - Thiền', 'Lễ hội Văn hóa', 'Giáo dục & Đào tạo', 'Thông báo Học viện'].map(cat => (
-                           <li key={cat}>
-                              <a href="#" className="flex items-center text-[#5D4037] hover:text-[#DAA520] transition-colors group">
-                                 <span className="w-2 h-2 bg-[#E5CFA0] rounded-full mr-3 group-hover:bg-[#DAA520] transition-colors"></span>
-                                 {cat}
-                              </a>
+                        {CATEGORIES.map(cat => (
+                           <li key={cat.value}>
+                              <button
+                                 onClick={() => setCategory(cat.value)}
+                                 className={`flex items-center w-full text-left transition-colors group ${category === cat.value ? 'text-[#DAA520] font-bold' : 'text-[#5D4037] hover:text-[#DAA520]'}`}
+                              >
+                                 <span className={`w-2 h-2 rounded-full mr-3 transition-colors ${category === cat.value ? 'bg-[#DAA520]' : 'bg-[#E5CFA0] group-hover:bg-[#DAA520]'}`}></span>
+                                 {cat.label}
+                              </button>
                            </li>
                         ))}
                      </ul>

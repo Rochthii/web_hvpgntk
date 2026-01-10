@@ -1,0 +1,16 @@
+[
+    {
+        "path": "e:\\web_HVPGNTK\\frontend\\src\\pages\\admin\\dashboard\\AdminDashboard.tsx",
+        "message": "Cannot find name 'useState'.",
+        "severity": "error",
+        "startLine": 4,
+        "endLine": 4
+    },
+    {
+        "path": "e:\\web_HVPGNTK\\frontend\\src\\pages\\admin\\dashboard\\AdminDashboard.tsx",
+        "message": "Cannot find name 'useEffect'.",
+        "severity": "error",
+        "startLine": 7,
+        "endLine": 7
+    }
+]

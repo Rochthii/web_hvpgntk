@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { SiteSettings } from '../api/cms';
 import { ROUTES } from '../router/routes';
 import { HeroSection } from '../components/home/HeroSection';
+import Header from '../components/Header';
 import { StatsCards } from '../components/home/StatsCards';
 import { NewsGrid } from '../components/home/NewsGrid';
 import { useNews, useSiteSettings } from '../features/news/hooks/useNews';
@@ -34,47 +35,16 @@ const Home: React.FC = () => {
       google_maps_embed: '',
       footer_text_vi: '',
       footer_text_km: '',
-    };
+      id: 'default',
+      created_at: '',
+      updated_at: '',
+    } as SiteSettings;
   }, [settingsData]);
 
   return (
     <div className="min-h-screen bg-cream">
       {/* HEADER - Inline styles kept for now */}
-      <header className="sticky top-0 z-[1000] h-[72px] flex items-center justify-between px-10 shadow-lg backdrop-blur-md bg-gradient-to-r from-secondary via-[#3E2723] to-secondary">
-        <div className="flex items-center gap-4">
-          <Link to={ROUTES.HOME} className="w-[54px] h-[54px] rounded-full bg-white flex items-center justify-center shadow-gold-sm">
-            <img src="/logo-hvpgntk.png" alt={siteSettings.site_name_vi} className="w-full h-full object-contain" />
-          </Link>
-        </div>
-
-        <nav className="flex gap-1.5">
-          {[
-            { label: 'Trang chủ', path: ROUTES.HOME },
-            { label: 'Giới thiệu', path: ROUTES.ABOUT },
-            { label: 'Đào tạo', path: ROUTES.EDUCATION },
-            { label: 'Tin tức', path: ROUTES.NEWS },
-            { label: 'Tuyển sinh', path: ROUTES.ADMISSIONS },
-            { label: 'Liên hệ', path: ROUTES.CONTACT }
-          ].map((item, idx) => (
-            <Link
-              key={item.label}
-              to={item.path}
-              className="px-4 py-2 text-white no-underline rounded-md transition-all duration-250 font-medium text-[0.9375rem] hover:bg-white/10"
-              style={{
-                backgroundColor: idx === 0 ? '#FF9800' : 'transparent',
-                fontWeight: idx === 0 ? 600 : 500,
-              }}
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="flex gap-5 text-white/75 text-sm font-medium">
-          <span className="cursor-pointer hover:text-white transition-colors">VI</span>
-          <span className="cursor-pointer hover:text-white transition-colors">KH</span>
-        </div>
-      </header>
+      <Header />
 
       {/* HERO SECTION */}
       <HeroSection siteName={siteSettings.site_name_vi} siteSlogan={siteSettings.site_slogan_vi} />
@@ -94,7 +64,10 @@ const Home: React.FC = () => {
         <div className="max-w-[1180px] mx-auto">
           <p className="text-sm mb-2">{siteSettings.contact_address}</p>
           <p className="text-sm mb-2">Email: {siteSettings.contact_email} | SĐT: {siteSettings.contact_phone}</p>
-          <p className="text-xs text-white/60 mt-4">© {new Date().getFullYear()} Học viện Phật giáo Nam tông Khmer. All rights reserved.</p>
+          <p className="text-xs text-white/60 mt-4">
+            © {new Date().getFullYear()} Học viện Phật giáo Nam tông Khmer. All rights reserved. <br />
+            <span className="text-white/40">System Status: Connected • Version 1.0.2</span>
+          </p>
         </div>
       </footer>
     </div>

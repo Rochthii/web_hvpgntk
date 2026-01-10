@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../router/routes';
+import { cmsApi, SiteSettings } from '../api/cms';
+import { useFetch } from '../hooks/useFetch';
 
 const Footer: React.FC = () => {
+  const fetchSettings = useCallback(() => cmsApi.getSettings(), []);
+  const { data: settings } = useFetch<SiteSettings>(fetchSettings);
+
   return (
     <footer
       className="text-white pt-16 pb-8"
@@ -20,17 +25,18 @@ const Footer: React.FC = () => {
                 className="bg-white rounded-full flex items-center justify-center overflow-hidden"
                 style={{ width: '48px', height: '48px' }}
               >
-                <div className="w-full h-full flex items-center justify-center text-xs font-bold" style={{ color: '#6B2C2C' }}>
-                  LOGO
-                </div>
+                <img
+                  src={settings?.logo_url || "/logo-hvpgntk.png"}
+                  alt="Logo"
+                  className="w-full h-full object-contain p-1"
+                />
               </div>
             </div>
-            <h3 className="text-lg font-bold mb-3">
-              HỌC VIỆN PHẬT GIÁO NAM TÔNG CẦN THƠ
+            <h3 className="text-lg font-bold mb-3 uppercase">
+              {settings?.site_name_vi || "HỌC VIỆN PHẬT GIÁO NAM TÔNG CẦN THƠ"}
             </h3>
             <p className="text-sm leading-relaxed" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-              Khu vực 12, Phường Châu Văn Liêm<br />
-              Quận Ô Môn, TP. Cần Thơ
+              {settings?.contact_address || "Khu vực 12, Phường Châu Văn Liêm, Quận Ô Môn, TP. Cần Thơ"}
             </p>
           </div>
 
@@ -39,48 +45,16 @@ const Footer: React.FC = () => {
             <h4 className="font-bold mb-4">Trang chủ</h4>
             <ul className="space-y-2">
               <li>
-                <Link
-                  to={ROUTES.ABOUT}
-                  className="transition-colors duration-200"
-                  style={{ color: 'rgba(255, 255, 255, 0.8)' }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#FFE499'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}
-                >
-                  Giới thiệu
-                </Link>
+                <Link to={ROUTES.ABOUT} className="hover:text-[#FFE499] text-white/80 transition-colors">Giới thiệu</Link>
               </li>
               <li>
-                <Link
-                  to={ROUTES.EDUCATION}
-                  className="transition-colors duration-200"
-                  style={{ color: 'rgba(255, 255, 255, 0.8)' }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#FFE499'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}
-                >
-                  Đào tạo
-                </Link>
+                <Link to={ROUTES.EDUCATION} className="hover:text-[#FFE499] text-white/80 transition-colors">Đào tạo</Link>
               </li>
               <li>
-                <Link
-                  to={ROUTES.NEWS}
-                  className="transition-colors duration-200"
-                  style={{ color: 'rgba(255, 255, 255, 0.8)' }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#FFE499'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}
-                >
-                  Tin tức
-                </Link>
+                <Link to={ROUTES.NEWS} className="hover:text-[#FFE499] text-white/80 transition-colors">Tin tức</Link>
               </li>
               <li>
-                <Link
-                  to={ROUTES.ADMISSIONS}
-                  className="transition-colors duration-200"
-                  style={{ color: 'rgba(255, 255, 255, 0.8)' }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#FFE499'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'rgba(255, 255, 255, 0.8)'}
-                >
-                  Tuyển sinh
-                </Link>
+                <Link to={ROUTES.ADMISSIONS} className="hover:text-[#FFE499] text-white/80 transition-colors">Tuyển sinh</Link>
               </li>
             </ul>
           </div>
@@ -88,9 +62,9 @@ const Footer: React.FC = () => {
           {/* Column 3: Contact */}
           <div>
             <h4 className="font-bold mb-4">Liên hệ</h4>
-            <ul className="space-y-2 text-sm" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-              <li>📞 0292 738 925</li>
-              <li>✉️ hocvienphatgiaonamtong@edu.vn</li>
+            <ul className="space-y-2 text-sm text-white/80">
+              <li>📞 {settings?.contact_phone || "0292 738 925"}</li>
+              <li>✉️ {settings?.contact_email || "contact@hvpgntk.edu.vn"}</li>
               <li>🌐 hocvienphatgiaonamtong.vn</li>
             </ul>
           </div>
@@ -99,41 +73,20 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-bold mb-4">Theo dõi</h4>
             <div className="flex gap-3">
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
-              >
-                F
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
-              >
-                Y
-              </a>
-              <a
-                href="#"
-                className="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
-              >
-                I
-              </a>
+              {settings?.facebook_url && (
+                <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">F</a>
+              )}
+              {settings?.youtube_url && (
+                <a href={settings.youtube_url} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors">Y</a>
+              )}
             </div>
           </div>
         </div>
 
         {/* Copyright */}
-        <div className="border-t pt-6 text-center" style={{ borderColor: 'rgba(255, 255, 255, 0.1)' }}>
-          <p className="text-sm" style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
-            © 2026 Học viện Phật giáo Nam tông Khmer - Cần Thơ. All rights reserved.
+        <div className="border-t pt-6 text-center border-white/10">
+          <p className="text-sm text-white/60">
+            {settings?.footer_text_vi || "© 2026 Học viện Phật giáo Nam tông Khmer - Cần Thơ. All rights reserved."}
           </p>
         </div>
       </div>

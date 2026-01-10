@@ -21,7 +21,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ siteName, siteSlogan }
 
             {/* Content */}
             <div className="relative z-10 text-center max-w-[880px] px-8 animate-fade-in-up">
-                <h1 className="text-[2.625rem] font-extrabold text-gold-500 drop-shadow-glow mb-[1.125rem] tracking-[0.075em] leading-[1.4] font-serif-khmer">
+                <h1 className="text-[2.625rem] font-extrabold text-[#FFD700] drop-shadow-[0_4px_8px_rgba(0,0,0,1)] mb-[1.125rem] tracking-[0.075em] leading-[1.4] font-serif-khmer">
                     {siteName.toUpperCase()}
                 </h1>
 
@@ -29,11 +29,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ siteName, siteSlogan }
                     {siteSlogan}
                 </p>
 
-                <Link to={ROUTES.ADMISSIONS} className="inline-block">
-                    <button className="bg-primary text-white px-[2.125rem] py-[0.8125rem] text-[0.8125rem] font-bold tracking-widest border-none rounded-lg cursor-pointer shadow-primary-glow hover:translate-y-[-3px] hover:scale-105 hover:shadow-primary-glow-lg transition-all duration-300 uppercase">
-                        THAM QUAN
-                    </button>
-                </Link>
+
             </div>
         </section>
     );

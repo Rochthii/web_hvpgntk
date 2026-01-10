@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { authApi } from '../api/auth';
 import { academicApi } from '../api/academic';
 import { AcademicYear, Semester, Enrollment } from '../types/academic';
 import { Book, Calendar, Clock, User, LogOut, ChevronRight } from 'lucide-react';
@@ -53,9 +54,21 @@ const StudentPortal: React.FC = () => {
       e.preventDefault();
       setError('');
       try {
-         await login(email, password);
-      } catch (err) {
-         setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+         const isEmail = email.includes('@');
+         const payload = isEmail
+            ? { email: email, password }
+            : { phone: email, password };
+
+         const res = await authApi.login(payload);
+         login(res.data);
+      } catch (err: any) {
+         console.error(err);
+         // Show detailed error if available
+         const msg = err.response?.data?.non_field_errors?.[0] ||
+            err.response?.data?.email?.[0] ||
+            err.response?.data?.phone?.[0] ||
+            'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.';
+         setError(msg);
       }
    };
 
@@ -210,10 +223,10 @@ const StudentPortal: React.FC = () => {
                      <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-100">
                         <p className="text-gray-500 text-xs uppercase font-bold">Điểm TB (GPA)</p>
                         <h3 className="text-2xl font-bold text-secondary mt-1">
-                           {studentStats?.gpa !== null ? studentStats.gpa.toFixed(2) : '--'}
+                           {studentStats?.gpa != null ? studentStats.gpa.toFixed(2) : '--'}
                         </h3>
                         <p className="text-xs text-gray-400 mt-1">
-                           {studentStats?.gpa !== null
+                           {studentStats?.gpa != null
                               ? (studentStats.gpa >= 3.5 ? '🎉 Xuất sắc' : studentStats.gpa >= 3.0 ? '👍 Giỏi' : studentStats.gpa >= 2.5 ? '📚 Khá' : '📖 Trung bình')
                               : 'Chưa có điểm'}
                         </p>

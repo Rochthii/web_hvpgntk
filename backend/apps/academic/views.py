@@ -57,10 +57,35 @@ class EnrollmentViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['student', 'class_instance', 'status']
 
-class GradeViewSet(viewsets.ReadOnlyModelViewSet):
+from apps.core.permissions import CanViewGrades, CanEditGrades
+
+class GradeViewSet(viewsets.ModelViewSet):
     queryset = Grade.objects.select_related('enrollment__student', 'enrollment__class_instance__course').all()
     serializer_class = GradeSerializer
-    permission_classes = [permissions.AllowAny]
+    
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [CanViewGrades()]
+        return [CanEditGrades()]
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = super().get_queryset()
+        
+        if user.is_staff or user.role in ['admin', 'abbot']:
+            return qs
+        if user.role == 'teacher':
+             # Teachers view grades for classes they teach
+             return qs.filter(enrollment__class_instance__instructor=user)
+        if user.role == 'student':
+             # Students view their own grades
+             return qs.filter(enrollment__student=user)
+        
+        # Others (Secretary, Admission) might view all or nothing?
+        # Based on Matrix "Grades View": Admin, Abbot, Teacher, Student
+        # Secretary/Admission not explicitly listed, but logical to allow view?
+        # For now, restrict to defined roles.
+        return qs.none() 
 
 class ExamScheduleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ExamSchedule.objects.select_related('class_instance__course').all().order_by('exam_date', 'exam_time')
@@ -162,8 +187,11 @@ def get_student_stats(request):
     return Response({
         'cohort': cohort,
         'current_year': current_year,
-        'program_name': 'Cử nhân Phật học',  # TODO: Get from program config
+        'program_name': 'Cử nhân Phật học',
         'earned_credits': earned_credits,
+        'total_credits': 140, # Standard curriculum
+        'gpa': gpa,
+        'current_semester_courses': current_semester_courses,
         'upcoming_exams': upcoming_exams,
     })
 
