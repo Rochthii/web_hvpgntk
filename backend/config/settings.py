@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_spectacular',
     'django_filters',
+    'axes',  # Brute-force protection
     
     # Local apps
     'apps.core',
@@ -76,6 +77,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'axes.middleware.AxesMiddleware',  # Must be after AuthenticationMiddleware
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -239,3 +241,20 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+
+# Django Axes - Brute-force Protection
+# https://django-axes.readthedocs.io/
+
+AXES_FAILURE_LIMIT = 5  # Lock account after 5 failed attempts
+AXES_COOLOFF_TIME = 1   # Lock duration: 1 hour (in hours)
+AXES_LOCKOUT_TEMPLATE = None  # Use default lockout response
+AXES_LOCKOUT_URL = None
+AXES_RESET_ON_SUCCESS = True  # Reset counter on successful login
+AXES_ENABLE_ADMIN = True  # Enable admin interface
+AXES_VERBOSE = True  # Show detailed error messages
+
+# Lock by username only (not IP) for better UX
+# Users can retry from different locations
+AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = False
+AXES_ONLY_USER_FAILURES = True

@@ -29,3 +29,8 @@ django-storages==1.14.2
 # Utilities
 python-slugify==8.0.1
 uuid==1.30
+dj-database-url==2.1.0
+
+# Security
+django-axes>=6.1.1
+python-dotenv==1.0.0
