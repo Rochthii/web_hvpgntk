@@ -16,9 +16,21 @@ source venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-3. Cấu hình database:
+3. **QUAN TRỌNG - Cấu hình Environment Variables:**
 - Copy `.env.example` thành `.env`
-- Cập nhật thông tin database trong `.env`
+- **BẮT BUỘC** phải set `DJANGO_SECRET_KEY` trong `.env`
+- Generate secret key mới:
+```bash
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+- Copy key vào file `.env`:
+```bash
+DJANGO_SECRET_KEY=your-generated-secret-key-here
+DATABASE_URL=postgresql://user:password@localhost:5432/hvpgntk_db
+DEBUG=True
+```
+
+> ⚠️ **Lưu ý:** Server sẽ KHÔNG CHẠY nếu thiếu `DJANGO_SECRET_KEY`
 
 4. Tạo database (PostgreSQL):
 ```sql

@@ -15,9 +15,26 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+# Helper function to enforce required environment variables
+def get_required_env(var_name: str) -> str:
+    """
+    Get required environment variable or raise ImproperlyConfigured.
+    This prevents the server from running with insecure defaults.
+    """
+    value = os.environ.get(var_name)
+    if not value:
+        from django.core.exceptions import ImproperlyConfigured
+        raise ImproperlyConfigured(
+            f"Missing required environment variable: {var_name}\n"
+            f"Please set {var_name} in your .env file or environment."
+        )
+    return value
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-# In production, use environment variable
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-change-this-in-production')
+# This will fail if DJANGO_SECRET_KEY is not set - this is intentional!
+SECRET_KEY = get_required_env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
