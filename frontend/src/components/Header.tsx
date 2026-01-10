@@ -1,10 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { NotificationBell } from './layout/NotificationBell';
 
 import { ROUTES } from '../router/routes';
 
 const Header: React.FC = () => {
   const location = useLocation();
+  const { user } = useAuth();
 
   const isActive = (path: string) => {
     if (path === ROUTES.HOME) {
@@ -61,13 +64,6 @@ const Header: React.FC = () => {
               Liên hệ
             </Link>
           </nav>
-
-          import {useAuth} from '../contexts/AuthContext';
-          import {NotificationBell} from './layout/NotificationBell';
-
-          // ... inside Header component
-          const {user} = useAuth();
-          // ...
 
           {/* Right side */}
           <div className="flex items-center gap-4">
