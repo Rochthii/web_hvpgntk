@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { cn } from '../../lib/utils';
+import { cn } from '../lib/utils';
 import {
     LayoutDashboard,
     Users,
@@ -14,8 +14,8 @@ import {
     GraduationCap,
     Bell
 } from 'lucide-react';
-import { useAuth } from '../../contexts/AuthContext';
-import { NotificationBell } from '../layout/NotificationBell';
+import { useAuth } from '../contexts/AuthContext';
+import { NotificationBell } from '../components/layout/NotificationBell';
 
 const SidebarItem = ({ icon: Icon, label, to, active }: any) => (
     <Link
