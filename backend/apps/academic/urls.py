@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     AcademicYearViewSet, SemesterViewSet, CourseViewSet,
     ClassViewSet, EnrollmentViewSet, GradeViewSet, ExamScheduleViewSet,
-    get_student_stats
+    get_student_stats, get_my_schedule
 )
 
 router = DefaultRouter()
@@ -18,5 +18,6 @@ router.register(r'exams', ExamScheduleViewSet)
 
 urlpatterns = [
     path('student/stats/', get_student_stats, name='student-stats'),
+    path('student/schedule/', get_my_schedule, name='student-schedule'),
     path('', include(router.urls)),
 ]

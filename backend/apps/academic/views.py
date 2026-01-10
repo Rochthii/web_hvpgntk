@@ -164,10 +164,57 @@ def get_student_stats(request):
         'current_year': current_year,
         'program_name': 'Cử nhân Phật học',  # TODO: Get from program config
         'earned_credits': earned_credits,
-        'total_credits': 140,  # TODO: Get from program requirements
-        'gpa': gpa,
-        'status': profile.status if profile else 'active',
-        'current_semester_courses': current_semester_courses,
         'upcoming_exams': upcoming_exams,
     })
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_my_schedule(request):
+    """
+    Get weekly schedule for the current semester.
+    Returns list of enrolled classes with schedule details.
+    """
+    user = request.user
+    
+    # Get enrollments for current semester
+    enrollments = Enrollment.objects.filter(
+        student=user,
+        status__in=['ENROLLED', 'APPROVED'],
+        class_instance__semester__is_current=True
+    ).select_related('class_instance', 'class_instance__course', 'class_instance__instructor')
+    
+    schedule_data = []
+    
+    for enrollment in enrollments:
+        cls = enrollment.class_instance
+        course = cls.course
+        
+        # Parse schedule JSON
+        # Expected format: [{"day": 2, "start": "07:00", "end": "09:00", "room": "A101"}]
+        # or single object: {"day": 2, "start": "07:00", "end": "09:00"}
+        schedule_info = cls.schedule
+        
+        if not schedule_info:
+            continue
+            
+        # Normalize to list
+        schedules = schedule_info if isinstance(schedule_info, list) else [schedule_info]
+        
+        for slot in schedules:
+            if not isinstance(slot, dict):
+                continue
+                
+            schedule_data.append({
+                'class_id': cls.id,
+                'course_code': course.code,
+                'course_name': course.name_vi,
+                'lecturer': cls.instructor.display_name if cls.instructor else "Chưa phân công",
+                'day_of_week': slot.get('day', 2),  # 2=Mon, 8=Sun
+                'start_time': slot.get('start', '07:00'),
+                'end_time': slot.get('end', '09:00'),
+                'room': slot.get('room', cls.room)
+            })
+            
+    return Response(schedule_data)
 

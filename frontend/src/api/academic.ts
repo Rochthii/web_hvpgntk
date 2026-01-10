@@ -22,5 +22,6 @@ export const academicApi = {
 
     // Dashboard Stats
     getStudentStats: () => client.get('/academic/student/stats/'),
+    getMySchedule: () => client.get<any[]>('/academic/student/schedule/'),
 };
 

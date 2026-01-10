@@ -7,6 +7,7 @@ export const ROUTES = {
     ADMISSIONS: '/admissions',
     CONTACT: '/contact',
     STUDENT_PORTAL: '/student',
+    SCHEDULE: '/student/schedule',
 };
 
 export const API_ROUTES = {
