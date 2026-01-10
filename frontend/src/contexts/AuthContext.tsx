@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, LoginResponse } from '../types/auth';
 import { authApi } from '../api/auth';
-import client from '../api/client';
+import { tokenManager } from '../lib/tokenManager';
 
 interface AuthContextType {
     user: User | null;
@@ -19,19 +19,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     useEffect(() => {
         const initAuth = async () => {
-            const token = localStorage.getItem('accessToken');
+            const token = tokenManager.getAccessToken();
             if (token) {
-                // Set header immediately for the request
-                client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
                 try {
                     const response = await authApi.getMe();
                     setUser(response.data);
                 } catch (error) {
                     console.error("Auth check failed", error);
-                    // If verify fails, clear local storage
-                    localStorage.removeItem('accessToken');
-                    localStorage.removeItem('refreshToken');
-                    delete client.defaults.headers.common['Authorization'];
+                    // If verify fails, clear tokens
+                    tokenManager.clearTokens();
                     setUser(null);
                 }
             }
@@ -41,20 +37,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }, []);
 
     const login = (data: LoginResponse) => {
-        localStorage.setItem('accessToken', data.tokens.access);
-        localStorage.setItem('refreshToken', data.tokens.refresh);
-        client.defaults.headers.common['Authorization'] = `Bearer ${data.tokens.access}`;
+        tokenManager.setTokens(data.tokens.access, data.tokens.refresh);
         setUser(data.user);
     };
 
     const logout = () => {
-        const refresh = localStorage.getItem('refreshToken');
+        const refresh = tokenManager.getRefreshToken();
         if (refresh) {
             authApi.logout(refresh).catch(console.error); // Best effort logout
         }
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        delete client.defaults.headers.common['Authorization'];
+        tokenManager.clearTokens();
         setUser(null);
     };
 
