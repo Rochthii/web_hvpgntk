@@ -9,6 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
 
 from apps.core.throttling import LoginThrottle
+from apps.core.middleware.audit import log_login, log_logout
 
 from .models import User, MonkProfile, LaypersonProfile
 from .serializers import (
@@ -36,6 +37,9 @@ class LoginView(APIView):
         user.last_login_at = timezone.now()
         user.save(update_fields=['last_login_at'])
         
+        # Log successful login
+        log_login(user, request, success=True)
+        
         # Generate JWT tokens
         refresh = RefreshToken.for_user(user)
         
@@ -52,6 +56,10 @@ class LogoutView(APIView):
     """API endpoint for user logout."""
     
     def post(self, request):
+        # Log logout before processing
+        if request.user and request.user.is_authenticated:
+            log_logout(request.user, request)
+        
         try:
             refresh_token = request.data.get('refresh')
             if refresh_token:
