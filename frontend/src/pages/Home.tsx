@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { cmsApi, SiteSettings } from '../api/cms';
+import { SiteSettings } from '../api/cms';
 import { ROUTES } from '../router/routes';
 import { HeroSection } from '../components/home/HeroSection';
 import { StatsCards } from '../components/home/StatsCards';
@@ -10,21 +10,32 @@ import { useNews, useSiteSettings } from '../features/news/hooks/useNews';
 /** NOTE: Header & Footer are kept inline for now - will extract later **/
 
 const Home: React.FC = () => {
-  // Use React Query hooks instead of useEffect
-  const { data: settings } = useSiteSettings();
+  // Use React Query hooks
+  const { data: settingsData, isLoading: settingsLoading } = useSiteSettings();
   const { data: news = [], isLoading: newsLoading } = useNews();
 
-  // Fallback to defaults if settings not loaded yet
-  const siteSettings = settings || {
-    site_name_vi: 'Học viện Phật giáo Nam tông Khmer',
-    site_slogan_vi: 'Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự',
-    contact_email: 'hvpgntk@edu.vn',
-    contact_phone: '0292 738 925',
-    contact_address: 'Cần Thơ',
-    founded_year: '2006',
-    student_count: '450+',
-    course_count: '30+',
-  } as SiteSettings;
+  // Memoized settings with guaranteed defaults
+  const siteSettings = useMemo<SiteSettings>(() => {
+    return settingsData || {
+      site_name_vi: 'Học viện Phật giáo Nam tông Khmer',
+      site_slogan_vi: 'Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự',
+      contact_email: 'hvpgntk@edu.vn',
+      contact_phone: '0292 738 925',
+      contact_address: 'Cần Thơ',
+      founded_year: '2006',
+      student_count: '450+',
+      course_count: '30+',
+      facebook_url: '',
+      youtube_url: '',
+      site_name_km: '',
+      site_slogan_km: '',
+      logo_url: '',
+      favicon_url: '',
+      google_maps_embed: '',
+      footer_text_vi: '',
+      footer_text_km: '',
+    };
+  }, [settingsData]);
 
   return (
     <div className="min-h-screen bg-cream">
