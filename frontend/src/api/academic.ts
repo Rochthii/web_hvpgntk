@@ -19,5 +19,8 @@ export const academicApi = {
 
     // Actions
     enrollCourse: (classId: string) => client.post('/academic/enrollments/', { class_id: classId }),
+
+    // Dashboard Stats
+    getStudentStats: () => client.get('/academic/student/stats/'),
 };
 

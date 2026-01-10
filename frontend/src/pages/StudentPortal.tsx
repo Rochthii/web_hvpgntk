@@ -16,6 +16,7 @@ const StudentPortal: React.FC = () => {
    const [currentYear, setCurrentYear] = useState<AcademicYear | null>(null);
    const [currentSemester, setCurrentSemester] = useState<Semester | null>(null);
    const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+   const [studentStats, setStudentStats] = useState<any>(null);
    const [dataLoading, setDataLoading] = useState(false);
 
    useEffect(() => {
@@ -32,8 +33,12 @@ const StudentPortal: React.FC = () => {
                setCurrentSemester(semRes.data);
 
                // Fetch student specific data
-               const enrollRes = await academicApi.getMyEnrollments();
+               const [enrollRes, statsRes] = await Promise.all([
+                  academicApi.getMyEnrollments(),
+                  academicApi.getStudentStats()
+               ]);
                setEnrollments(enrollRes.data);
+               setStudentStats(statsRes.data);
             } catch (err) {
                console.error("Error fetching academic data", err);
             } finally {
@@ -172,11 +177,11 @@ const StudentPortal: React.FC = () => {
                         </div>
                         <div className="flex justify-between">
                            <span className="text-gray-500">Khóa:</span>
-                           <span className="font-medium">K15 (2024-2028)</span>
+                           <span className="font-medium">{studentStats?.cohort || 'Chưa có dữ liệu'}</span>
                         </div>
                         <div className="flex justify-between">
                            <span className="text-gray-500">Hệ đào tạo:</span>
-                           <span className="font-medium">Cử nhân Phật học</span>
+                           <span className="font-medium">{studentStats?.program_name || 'Cử nhân Phật học'}</span>
                         </div>
                      </div>
                   </div>
@@ -189,7 +194,7 @@ const StudentPortal: React.FC = () => {
                      <div className="bg-white p-5 rounded-xl shadow-sm border border-amber-100 flex items-center justify-between">
                         <div>
                            <p className="text-gray-500 text-xs uppercase font-bold">Tín chỉ tích lũy</p>
-                           <h3 className="text-2xl font-bold text-secondary mt-1">12/140</h3>
+                           <h3 className="text-2xl font-bold text-secondary mt-1">{studentStats?.earned_credits || 0}/{studentStats?.total_credits || 140}</h3>
                         </div>
                         <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center text-primary">
                            <Book size={20} />
