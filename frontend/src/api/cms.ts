@@ -1,44 +1,9 @@
+/**
+ * CMS API Client
+ * API methods for content management system data
+ */
 import client from './client';
-
-export interface SiteSettings {
-    site_name_vi: string;
-    site_name_km: string;
-    site_slogan_vi: string;
-    site_slogan_km: string;
-    contact_email: string;
-    contact_phone: string;
-    contact_address: string;
-    logo_url: string;
-    favicon_url: string;
-    google_maps_embed: string;
-    footer_text_vi: string;
-    footer_text_km: string;
-    facebook_url: string | null;
-    youtube_url: string | null;
-    founded_year: string;
-    student_count: string;
-    course_count: string;
-}
-
-export interface NewsItem {
-    id: string;
-    title_vi: string;
-    slug: string;
-    excerpt_vi: string;
-    content_vi: string;
-    thumbnail_url: string | null;
-    category: string;
-    published_at: string;
-}
-
-export interface StaffMember {
-    id: string;
-    display_name_vi: string;
-    position: string;
-    image_url: string | null;
-    staff_type: string;
-    display_order?: number;
-}
+import type { SiteSettings, NewsItem, Page, StaffMember } from '../types/cms';
 
 export const cmsApi = {
     getSettings: () => client.get<SiteSettings>('/cms/settings/'),
@@ -52,10 +17,5 @@ export const cmsApi = {
     getPageBySlug: (slug: string) => client.get<Page>(`/cms/pages/${slug}/`),
 };
 
-export interface Page {
-    id: string;
-    title_vi: string;
-    slug: string;
-    content_vi: string;
-    page_type: string;
-}
+// Re-export types for backward compatibility
+export type { SiteSettings, NewsItem, Page, StaffMember };
