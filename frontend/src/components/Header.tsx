@@ -15,8 +15,8 @@ const Header: React.FC = () => {
 
   const getLinkClass = (path: string) => {
     return `px-4 py-2 rounded-md font-medium transition-colors duration-200 ${isActive(path)
-        ? 'bg-[#FFA726] text-white' // Active state (Golden/Orange)
-        : 'text-white/90 hover:text-white hover:bg-white/10' // Inactive state
+      ? 'bg-[#FFA726] text-white' // Active state (Golden/Orange)
+      : 'text-white/90 hover:text-white hover:bg-white/10' // Inactive state
       }`;
   };
 
@@ -62,14 +62,22 @@ const Header: React.FC = () => {
             </Link>
           </nav>
 
-          {/* Right side - Language */}
+          import {useAuth} from '../contexts/AuthContext';
+          import {NotificationBell} from './layout/NotificationBell';
+
+          // ... inside Header component
+          const {user} = useAuth();
+          // ...
+
+          {/* Right side */}
           <div className="flex items-center gap-4">
-            <button className="text-white/80 hover:text-white transition-colors text-sm">
-              VI
-            </button>
-            <button className="text-white/80 hover:text-white transition-colors text-sm">
-              KH
-            </button>
+            {user && <NotificationBell />}
+
+            <div className="flex items-center gap-2">
+              <button className="text-white/80 hover:text-white transition-colors text-sm">VI</button>
+              <div className="w-px h-4 bg-white/20"></div>
+              <button className="text-white/80 hover:text-white transition-colors text-sm">KH</button>
+            </div>
           </div>
         </div>
       </div>
