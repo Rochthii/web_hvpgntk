@@ -128,9 +128,43 @@ export default {
                 'ornate-pattern': "url('/images/pattern-ornate.svg')",
                 'temple-hero': "url('/images/temple-hero.jpg')",
             },
+
+            // Text shadows for glow effects
+            textShadow: {
+                'sm': '0 1px 2px rgba(0, 0, 0, 0.5)',
+                'md': '1px 1px 3px rgba(0, 0, 0, 0.75)',
+                'lg': '2px 2px 4px rgba(0, 0, 0, 0.85)',
+                'glow': '0 0 35px rgba(255,215,0,0.65), 0 0 18px rgba(255,215,0,0.45), 2px 2px 5px rgba(0,0,0,0.85)',
+            },
+
+            // Drop shadows
+            dropShadow: {
+                'gold-sm': '0 0 8px rgba(212, 175, 55, 0.5)',
+                'gold-md': '0 0 15px rgba(212, 175, 55, 0.6)',
+                'gold-lg': '0 0 25px rgba(212, 175, 55, 0.7)',
+                'glow': '0 0 35px rgba(255,215,0,0.65)',
+                'primary-glow': '0 5px 18px rgba(255,152,0,0.5)',
+                'primary-glow-lg': '0 10px 28px rgba(255,152,0,0.65)',
+            },
+
+            // Font families
+            fontFamily: {
+                'serif-khmer': ['"Noto Serif Khmer"', 'Georgia', 'serif'],
+            },
         },
     },
     plugins: [
         require('@tailwindcss/typography'),
+        // Plugin for textShadow utility
+        function ({ matchUtilities, theme }) {
+            matchUtilities(
+                {
+                    'text-shadow': (value) => ({
+                        textShadow: value,
+                    }),
+                },
+                { values: theme('textShadow') }
+            )
+        },
     ],
 }
