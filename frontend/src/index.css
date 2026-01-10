@@ -590,3 +590,46 @@
     --section-padding-x: var(--section-padding-x-desktop);
   }
 }
+
+/* ============================================
+   PRINT STYLES (Task 3.1.4)
+   ============================================ */
+
+@media print {
+  @page {
+    margin: 20mm;
+    size: A4 portrait;
+  }
+
+  body {
+    background-color: white !important;
+    background-image: none !important;
+    color: black !important;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .print\:block {
+    display: block !important;
+  }
+
+  /* Reset containers/grids for print */
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .min-h-screen {
+    min-height: auto !important;
+  }
+
+  /* Ensure background colors are printed for tables/charts */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

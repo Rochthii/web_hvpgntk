@@ -44,8 +44,8 @@ const Grades: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 pb-12">
-            {/* Header */}
-            <div className="bg-white shadow-sm border-b border-gray-200">
+            {/* Header (Hidden on Print) */}
+            <div className="bg-white shadow-sm border-b border-gray-200 print:hidden">
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                         <Link to={ROUTES.STUDENT_PORTAL} className="p-2 hover:bg-gray-100 rounded-full text-gray-500">
@@ -61,6 +61,25 @@ const Grades: React.FC = () => {
                         <Printer size={16} />
                         <span className="hidden sm:inline">In Bảng Điểm</span>
                     </button>
+                </div>
+            </div>
+
+            {/* Print Header (Visible ONLY on Print) */}
+            <div className="hidden print:block mb-8 text-center pt-8">
+                <h2 className="text-xl font-bold uppercase mb-1">HỌC VIỆN PHẬT GIÁO NAM TÔNG KHMER</h2>
+                <p className="text-sm text-gray-500 mb-6">Ô Môn, Cần Thơ, Việt Nam</p>
+
+                <h1 className="text-2xl font-bold uppercase text-secondary mb-6 decoration-double underline decoration-gray-300 underline-offset-4">BẢNG KẾT QUẢ HỌC TẬP</h1>
+
+                <div className="grid grid-cols-2 gap-4 text-left max-w-2xl mx-auto text-sm border p-4 rounded-lg">
+                    <div>
+                        <p><span className="text-gray-500">Họ và tên:</span> <span className="font-bold">{user?.display_name}</span></p>
+                        <p><span className="text-gray-500">Mã sinh viên:</span> <span className="font-bold">{user?.monk_profile?.student_code || user?.layperson_profile?.student_code}</span></p>
+                    </div>
+                    <div>
+                        <p><span className="text-gray-500">Hệ đào tạo:</span> <span>Cử nhân Phật học</span></p>
+                        <p><span className="text-gray-500">Ngày in:</span> <span>{new Date().toLocaleDateString('vi-VN')}</span></p>
+                    </div>
                 </div>
             </div>
 
