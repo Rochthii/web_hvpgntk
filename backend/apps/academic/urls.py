@@ -3,7 +3,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     AcademicYearViewSet, SemesterViewSet, CourseViewSet,
-    ClassViewSet, EnrollmentViewSet, GradeViewSet, ExamScheduleViewSet
+    ClassViewSet, EnrollmentViewSet, GradeViewSet, ExamScheduleViewSet,
+    get_student_stats
 )
 
 router = DefaultRouter()
@@ -16,5 +17,6 @@ router.register(r'grades', GradeViewSet)
 router.register(r'exams', ExamScheduleViewSet)
 
 urlpatterns = [
+    path('student/stats/', get_student_stats, name='student-stats'),
     path('', include(router.urls)),
 ]
