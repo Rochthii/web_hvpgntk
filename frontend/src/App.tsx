@@ -8,9 +8,11 @@ import NewsDetail from './pages/NewsDetail';
 import Admissions from './pages/Admissions';
 import StudentPortal from './pages/StudentPortal';
 import Contact from './pages/Contact';
+import Schedule from './pages/student/Schedule';
 import MainLayout from './components/MainLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContext';
+import { ROUTES } from './router/routes';
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -29,17 +31,20 @@ const App: React.FC = () => {
           <ScrollToTop />
           <Routes>
             {/* Home handles its own layout for now (special hero spacing etc) */}
-            <Route path="/" element={<Home />} />
+            <Route path={ROUTES.HOME} element={<Home />} />
+
+            {/* Student Portal (No MainLayout to avoid double headers) */}
+            <Route path={ROUTES.STUDENT_PORTAL} element={<StudentPortal />} />
+            <Route path={ROUTES.SCHEDULE} element={<Schedule />} />
 
             {/* Other pages use MainLayout (Header + Standard Content + Footer) */}
             <Route element={<MainLayout />}>
-              <Route path="/about" element={<About />} />
-              <Route path="/education" element={<Education />} />
-              <Route path="/news" element={<News />} />
-              <Route path="/news/:slug" element={<NewsDetail />} />
-              <Route path="/admissions" element={<Admissions />} />
-              <Route path="/portal" element={<StudentPortal />} />
-              <Route path="/contact" element={<Contact />} />
+              <Route path={ROUTES.ABOUT} element={<About />} />
+              <Route path={ROUTES.EDUCATION} element={<Education />} />
+              <Route path={ROUTES.NEWS} element={<News />} />
+              <Route path={ROUTES.NEWS_DETAIL} element={<NewsDetail />} />
+              <Route path={ROUTES.ADMISSIONS} element={<Admissions />} />
+              <Route path={ROUTES.CONTACT} element={<Contact />} />
             </Route>
           </Routes>
         </ErrorBoundary>
