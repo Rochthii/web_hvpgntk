@@ -8,6 +8,7 @@ export const ROUTES = {
     CONTACT: '/contact',
     STUDENT_PORTAL: '/student',
     SCHEDULE: '/student/schedule',
+    GRADES: '/student/grades',
 };
 
 export const API_ROUTES = {

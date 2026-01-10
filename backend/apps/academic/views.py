@@ -218,3 +218,70 @@ def get_my_schedule(request):
             
     return Response(schedule_data)
 
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_my_grades(request):
+    """
+    Get all grades for the logged-in student, grouped by semester.
+    """
+    user = request.user
+    
+    # Get all completed/enrolled enrollments with grades
+    enrollments = Enrollment.objects.filter(
+        student=user
+    ).select_related(
+        'class_instance', 
+        'class_instance__course', 
+        'class_instance__semester',
+        'class_instance__semester__academic_year',
+        'grade'
+    ).order_by('-class_instance__semester__academic_year__year_code', '-class_instance__semester__semester_number')
+    
+    # Group by semester
+    semesters_data = {}
+    
+    for enrollment in enrollments:
+        cls = enrollment.class_instance
+        sem = cls.semester
+        year = sem.academic_year
+        
+        sem_key = f"{year.year_code}_{sem.semester_number}"
+        
+        if sem_key not in semesters_data:
+            semesters_data[sem_key] = {
+                'semester_info': {
+                    'term': f"Học kỳ {sem.semester_number}",
+                    'year': year.year_code,
+                    'is_current': year.is_current,
+                },
+                'grades': [],
+                'semester_gpa': 0,
+                'semester_credits': 0
+            }
+            
+        grade_data = {
+            'course_code': cls.course.code,
+            'course_name': cls.course.name_vi,
+            'credits': cls.course.credits,
+            'midterm': None,
+            'final': None,
+            'total': None,
+            'letter': None,
+            'status': enrollment.get_status_display()
+        }
+        
+        try:
+            if hasattr(enrollment, 'grade'):
+                g = enrollment.grade
+                grade_data['midterm'] = g.midterm_score
+                grade_data['final'] = g.final_score
+                grade_data['total'] = g.gpa_points  # Or calculate 10-scale total
+                grade_data['letter'] = g.grade_letter
+        except:
+            pass
+            
+        semesters_data[sem_key]['grades'].append(grade_data)
+        
+    return Response(semesters_data.values())
+

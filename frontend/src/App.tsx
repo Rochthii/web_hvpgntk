@@ -9,6 +9,7 @@ import Admissions from './pages/Admissions';
 import StudentPortal from './pages/StudentPortal';
 import Contact from './pages/Contact';
 import Schedule from './pages/student/Schedule';
+import Grades from './pages/student/Grades';
 import MainLayout from './components/MainLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContext';
@@ -36,6 +37,7 @@ const App: React.FC = () => {
             {/* Student Portal (No MainLayout to avoid double headers) */}
             <Route path={ROUTES.STUDENT_PORTAL} element={<StudentPortal />} />
             <Route path={ROUTES.SCHEDULE} element={<Schedule />} />
+            <Route path={ROUTES.GRADES} element={<Grades />} />
 
             {/* Other pages use MainLayout (Header + Standard Content + Footer) */}
             <Route element={<MainLayout />}>

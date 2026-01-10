@@ -15,7 +15,7 @@ export const academicApi = {
 
     // Student Specific (My Data)
     getMyEnrollments: () => client.get<Enrollment[]>('/academic/enrollments/my_enrollments/'),
-    getMyGrades: () => client.get<Grade[]>('/academic/grades/my_grades/'),
+    getMyGrades: () => client.get<any[]>('/academic/student/grades/'),
 
     // Actions
     enrollCourse: (classId: string) => client.post('/academic/enrollments/', { class_id: classId }),
