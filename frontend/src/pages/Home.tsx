@@ -1,16 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { cmsApi, SiteSettings, NewsItem } from '../api/cms';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { cmsApi, SiteSettings } from '../api/cms';
 import { ROUTES } from '../router/routes';
 import { HeroSection } from '../components/home/HeroSection';
 import { StatsCards } from '../components/home/StatsCards';
 import { NewsGrid } from '../components/home/NewsGrid';
+import { useNews, useSiteSettings } from '../features/news/hooks/useNews';
 
 /** NOTE: Header & Footer are kept inline for now - will extract later **/
 
 const Home: React.FC = () => {
-  // Optimistic/Default Settings
-  const defaultSettings: SiteSettings = {
+  // Use React Query hooks instead of useEffect
+  const { data: settings } = useSiteSettings();
+  const { data: news = [], isLoading: newsLoading } = useNews();
+
+  // Fallback to defaults if settings not loaded yet
+  const siteSettings = settings || {
     site_name_vi: 'Học viện Phật giáo Nam tông Khmer',
     site_slogan_vi: 'Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự',
     contact_email: 'hvpgntk@edu.vn',
@@ -19,38 +24,7 @@ const Home: React.FC = () => {
     founded_year: '2006',
     student_count: '450+',
     course_count: '30+',
-    facebook_url: '',
-    youtube_url: '',
-    site_name_km: '',
-    site_slogan_km: '',
-    logo_url: '',
-    favicon_url: '',
-    google_maps_embed: '',
-    footer_text_vi: '',
-    footer_text_km: ''
-  };
-
-  const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
-  const [news, setNews] = useState<NewsItem[]>([]);
-  const [newsLoading, setNewsLoading] = useState(true);
-
-  useEffect(() => {
-    cmsApi.getSettings()
-      .then(res => setSettings(prev => ({ ...prev, ...res.data })))
-      .catch(err => console.error('Settings fetch error:', err));
-  }, []);
-
-  useEffect(() => {
-    cmsApi.getLatestNews()
-      .then(res => {
-        setNews(res.data);
-        setNewsLoading(false);
-      })
-      .catch(err => {
-        console.error('News fetch error:', err);
-        setNewsLoading(false);
-      });
-  }, []);
+  } as SiteSettings;
 
   return (
     <div className="min-h-screen bg-cream">
@@ -58,7 +32,7 @@ const Home: React.FC = () => {
       <header className="sticky top-0 z-[1000] h-[72px] flex items-center justify-between px-10 shadow-lg backdrop-blur-md bg-gradient-to-r from-secondary via-[#3E2723] to-secondary">
         <div className="flex items-center gap-4">
           <Link to={ROUTES.HOME} className="w-[54px] h-[54px] rounded-full bg-white flex items-center justify-center shadow-gold-sm">
-            <img src="/logo-hvpgntk.png" alt={settings.site_name_vi} className="w-full h-full object-contain" />
+            <img src="/logo-hvpgntk.png" alt={siteSettings.site_name_vi} className="w-full h-full object-contain" />
           </Link>
         </div>
 
