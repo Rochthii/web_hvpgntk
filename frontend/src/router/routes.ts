@@ -10,6 +10,8 @@ export const ROUTES = {
     SCHEDULE: '/student/schedule',
     GRADES: '/student/grades',
     REGISTRATION: '/student/registration',
+    MY_REQUESTS: '/student/requests',
+    CREATE_REQUEST: '/student/requests/create',
 };
 
 export const API_ROUTES = {

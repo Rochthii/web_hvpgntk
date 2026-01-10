@@ -11,6 +11,8 @@ import Contact from './pages/Contact';
 import Schedule from './pages/student/Schedule';
 import Grades from './pages/student/Grades';
 import CourseRegistration from './pages/student/CourseRegistration';
+import MyRequests from './pages/student/MyRequests';
+import CreateRequest from './pages/student/CreateRequest';
 import MainLayout from './components/MainLayout';
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContext';
@@ -40,6 +42,8 @@ const App: React.FC = () => {
             <Route path={ROUTES.SCHEDULE} element={<Schedule />} />
             <Route path={ROUTES.GRADES} element={<Grades />} />
             <Route path={ROUTES.REGISTRATION} element={<CourseRegistration />} />
+            <Route path={ROUTES.MY_REQUESTS} element={<MyRequests />} />
+            <Route path={ROUTES.CREATE_REQUEST} element={<CreateRequest />} />
 
             {/* Other pages use MainLayout (Header + Standard Content + Footer) */}
             <Route element={<MainLayout />}>

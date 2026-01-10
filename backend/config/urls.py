@@ -17,8 +17,9 @@ urlpatterns = [
         path('users/', include('apps.users.urls_users')),
         path('cms/', include('apps.cms.urls')),
         path('admissions/', include('apps.admissions.urls')),
-        path('academic/', include('apps.academic.urls')),
-        path('petitions/', include('apps.petitions.urls')),
+        path('api/v1/academic/', include('apps.academic.urls')),
+    path('api/v1/approvals/', include('apps.approvals.urls')),
+    path('api/v1/petitions/', include('apps.petitions.urls')),
         path('calendar/', include('apps.calendar_app.urls')),
     ])),
     

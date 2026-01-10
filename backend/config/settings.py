@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'apps.academic',
     'apps.petitions',
     'apps.calendar_app',
+    'apps.approvals',
 ]
 
 MIDDLEWARE = [
