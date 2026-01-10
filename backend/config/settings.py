@@ -161,6 +161,18 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    
+    # Rate Limiting (Throttling)
+    'DEFAULT_THROTTLE_CLASSES': [
+        'apps.core.throttling.BurstUserThrottle',
+        'apps.core.throttling.SustainedUserThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'login': '5/minute',           # Login attempts (brute-force protection)
+        'strict_anon': '50/hour',      # Anonymous users
+        'burst_user': '100/minute',    # Authenticated users (burst)
+        'sustained_user': '1000/hour', # Authenticated users (sustained)
+    },
 }
 
 

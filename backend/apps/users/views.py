@@ -8,6 +8,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
 
+from apps.core.throttling import LoginThrottle
+
 from .models import User, MonkProfile, LaypersonProfile
 from .serializers import (
     UserSerializer, UserCreateSerializer, LoginSerializer,
@@ -17,10 +19,12 @@ from .serializers import (
 )
 
 
+
 class LoginView(APIView):
     """API endpoint for user login."""
     
     permission_classes = [permissions.AllowAny]
+    throttle_classes = [LoginThrottle]
     
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
