@@ -189,36 +189,78 @@ const StudentPortal: React.FC = () => {
 
                {/* Main Stats & Schedule */}
                <div className="md:col-span-3 space-y-6">
-                  {/* Stats Cards */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                     <div className="bg-white p-5 rounded-xl shadow-sm border border-amber-100 flex items-center justify-between">
-                        <div>
-                           <p className="text-gray-500 text-xs uppercase font-bold">Tín chỉ tích lũy</p>
-                           <h3 className="text-2xl font-bold text-secondary mt-1">{studentStats?.earned_credits || 0}/{studentStats?.total_credits || 140}</h3>
+                  {/* Stats Cards - 2 rows */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                     {/* Tín chỉ */}
+                     <div className="bg-white p-5 rounded-xl shadow-sm border border-amber-100">
+                        <p className="text-gray-500 text-xs uppercase font-bold">Tín chỉ tích lũy</p>
+                        <h3 className="text-2xl font-bold text-secondary mt-1">
+                           {studentStats?.earned_credits || 0}/{studentStats?.total_credits || 140}
+                        </h3>
+                        <div className="mt-2 bg-gray-100 rounded-full h-2">
+                           <div
+                              className="bg-primary h-2 rounded-full transition-all"
+                              style={{ width: `${Math.min(100, ((studentStats?.earned_credits || 0) / (studentStats?.total_credits || 140)) * 100)}%` }}
+                           />
                         </div>
-                        <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center text-primary">
-                           <Book size={20} />
-                        </div>
+                        <p className="text-xs text-gray-400 mt-1">{Math.round(((studentStats?.earned_credits || 0) / (studentStats?.total_credits || 140)) * 100)}% hoàn thành</p>
                      </div>
-                     <div className="bg-white p-5 rounded-xl shadow-sm border border-amber-100 flex items-center justify-between">
-                        <div>
-                           <p className="text-gray-500 text-xs uppercase font-bold">Điểm T.Bình (GPA)</p>
-                           <h3 className="text-2xl font-bold text-secondary mt-1">--</h3>
-                        </div>
-                        <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
-                           <Clock size={20} />
-                        </div>
+
+                     {/* GPA */}
+                     <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-100">
+                        <p className="text-gray-500 text-xs uppercase font-bold">Điểm TB (GPA)</p>
+                        <h3 className="text-2xl font-bold text-secondary mt-1">
+                           {studentStats?.gpa !== null ? studentStats.gpa.toFixed(2) : '--'}
+                        </h3>
+                        <p className="text-xs text-gray-400 mt-1">
+                           {studentStats?.gpa !== null
+                              ? (studentStats.gpa >= 3.5 ? '🎉 Xuất sắc' : studentStats.gpa >= 3.0 ? '👍 Giỏi' : studentStats.gpa >= 2.5 ? '📚 Khá' : '📖 Trung bình')
+                              : 'Chưa có điểm'}
+                        </p>
                      </div>
-                     <div className="bg-white p-5 rounded-xl shadow-sm border border-amber-100 flex items-center justify-between">
-                        <div>
-                           <p className="text-gray-500 text-xs uppercase font-bold">Học kỳ hiện tại</p>
-                           <h3 className="text-lg font-bold text-secondary mt-1">{currentSemester ? `HK${currentSemester.term === 'SEMESTER_1' ? '1' : '2'} / ${currentYear?.name}` : '...'}</h3>
-                        </div>
-                        <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center text-green-600">
-                           <Calendar size={20} />
-                        </div>
+
+                     {/* Môn đang học */}
+                     <div className="bg-white p-5 rounded-xl shadow-sm border border-green-100">
+                        <p className="text-gray-500 text-xs uppercase font-bold">Môn đang học</p>
+                        <h3 className="text-2xl font-bold text-secondary mt-1">
+                           {studentStats?.current_semester_courses || 0}
+                        </h3>
+                        <p className="text-xs text-gray-400 mt-1">Học kỳ này</p>
+                     </div>
+
+                     {/* Học kỳ */}
+                     <div className="bg-white p-5 rounded-xl shadow-sm border border-purple-100">
+                        <p className="text-gray-500 text-xs uppercase font-bold">Học kỳ hiện tại</p>
+                        <h3 className="text-lg font-bold text-secondary mt-1">
+                           {currentSemester ? `HK${currentSemester.term === 'SEMESTER_1' ? '1' : '2'}` : '...'}
+                        </h3>
+                        <p className="text-xs text-gray-400 mt-1">{currentYear?.name || '...'}</p>
                      </div>
                   </div>
+
+                  {/* Lịch thi sắp tới */}
+                  {studentStats?.upcoming_exams && studentStats.upcoming_exams.length > 0 && (
+                     <div className="bg-gradient-to-r from-red-50 to-orange-50 p-4 rounded-xl border border-red-100">
+                        <h4 className="font-bold text-red-700 text-sm mb-3 flex items-center">
+                           <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse"></span>
+                           Lịch thi sắp tới
+                        </h4>
+                        <div className="space-y-2">
+                           {studentStats.upcoming_exams.slice(0, 3).map((exam: any, idx: number) => (
+                              <div key={idx} className="flex justify-between items-center bg-white/60 p-2 rounded-lg">
+                                 <div>
+                                    <span className="font-medium text-sm">{exam.course_name}</span>
+                                    <span className="text-xs text-gray-500 ml-2">({exam.exam_type})</span>
+                                 </div>
+                                 <div className="text-right">
+                                    <span className="text-sm font-bold text-red-600">{exam.exam_date}</span>
+                                    {exam.exam_time && <span className="text-xs text-gray-500 ml-1">{exam.exam_time}</span>}
+                                 </div>
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+                  )}
 
                   {/* Schedule / Enrollments */}
                   <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">

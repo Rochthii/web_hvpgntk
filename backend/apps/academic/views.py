@@ -127,6 +127,38 @@ def get_student_stats(request):
     if completed_courses > 0 and earned_credits > 0:
         gpa = round(total_grade_points / earned_credits, 2)
     
+    # Get current semester courses count
+    current_semester_courses = Enrollment.objects.filter(
+        student=user,
+        status__in=['ENROLLED', 'APPROVED'],
+        class_instance__semester__is_current=True
+    ).count()
+    
+    # Get upcoming exams (next 30 days)
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    upcoming_exams = []
+    try:
+        today = timezone.now().date()
+        next_month = today + timedelta(days=30)
+        exams = ExamSchedule.objects.filter(
+            class_instance__enrollments__student=user,
+            exam_date__gte=today,
+            exam_date__lte=next_month
+        ).select_related('class_instance__course').order_by('exam_date', 'exam_time')[:5]
+        
+        for exam in exams:
+            upcoming_exams.append({
+                'course_name': exam.class_instance.course.name_vi,
+                'exam_type': exam.get_exam_type_display(),
+                'exam_date': exam.exam_date.strftime('%d/%m/%Y'),
+                'exam_time': exam.exam_time.strftime('%H:%M') if exam.exam_time else None,
+                'room': exam.room,
+            })
+    except:
+        pass
+    
     return Response({
         'cohort': cohort,
         'current_year': current_year,
@@ -135,4 +167,7 @@ def get_student_stats(request):
         'total_credits': 140,  # TODO: Get from program requirements
         'gpa': gpa,
         'status': profile.status if profile else 'active',
+        'current_semester_courses': current_semester_courses,
+        'upcoming_exams': upcoming_exams,
     })
+
