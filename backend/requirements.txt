@@ -1,0 +1,31 @@
+# Requirements cho Django Backend
+# Học viện Phật giáo Nam tông Khmer
+
+# Django Core
+Django==5.0.1
+djangorestframework==3.14.0
+
+# Database
+psycopg2-binary==2.9.9
+
+# Environment
+python-decouple==3.8
+
+# CORS
+django-cors-headers==4.3.1
+
+# Image processing
+Pillow==10.2.0
+
+# Authentication
+djangorestframework-simplejwt==5.3.1
+
+# API Documentation
+drf-spectacular==0.27.0
+
+# File upload
+django-storages==1.14.2
+
+# Utilities
+python-slugify==8.0.1
+uuid==1.30

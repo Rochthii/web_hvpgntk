@@ -1,0 +1,592 @@
+/* Import CSS Variables FIRST */
+@import './styles/variables.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* ============================================
+   HVPGNTK BASE STYLES
+   ============================================ */
+
+@layer base {
+  /* Import Khmer Fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@100;200;300;400;500;600;700;800;900&family=Noto+Serif+Khmer:wght@100;200;300;400;500;600;700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+  * {
+    @apply box-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+    font-size: 16px;
+    /* Base font size */
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    color: var(--color-text-primary);
+    background-color: var(--color-cream);
+    @apply antialiased;
+
+    /* Subtle pattern background (như trong mockup) */
+    background-image:
+      repeating-linear-gradient(45deg,
+        transparent,
+        transparent 10px,
+        rgba(212, 175, 55, 0.02) 10px,
+        rgba(212, 175, 55, 0.02) 20px);
+  }
+
+  /* Headings */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    line-height: var(--line-height-tight);
+  }
+
+  h1 {
+    font-size: var(--font-size-5xl);
+  }
+
+  h2 {
+    font-size: var(--font-size-4xl);
+  }
+
+  h3 {
+    font-size: var(--font-size-3xl);
+  }
+
+  h4 {
+    font-size: var(--font-size-2xl);
+  }
+
+  h5 {
+    font-size: var(--font-size-xl);
+  }
+
+  h6 {
+    font-size: var(--font-size-lg);
+  }
+
+  /* Links */
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-base);
+  }
+
+  a:hover {
+    color: var(--color-primary-dark);
+  }
+
+  /* Images */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@layer components {
+  /* ============================================
+     HEADER & NAVIGATION (từ mockup)
+     ============================================ */
+
+  .header-primary {
+    background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-dark) 100%);
+    color: var(--color-text-white);
+    height: var(--header-height);
+    box-shadow: var(--shadow-lg);
+    position: sticky;
+    top: 0;
+    z-index: var(--z-sticky);
+  }
+
+  .header-logo {
+    width: 60px;
+    height: 60px;
+  }
+
+  .nav-menu {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+  }
+
+  .nav-link {
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--border-radius-base);
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-base);
+    transition: all var(--transition-base);
+  }
+
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-text-white);
+  }
+
+  .nav-link-active {
+    background-color: var(--color-primary);
+    color: var(--color-text-white);
+  }
+
+  /* ============================================
+     HERO SECTION (Homepage mockup)
+     ============================================ */
+
+  .hero-section {
+    position: relative;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--color-secondary-dark) 0%, var(--color-secondary) 100%);
+  }
+
+  .hero-background {
+    position: absolute;
+    inset: 0;
+    opacity: 0.4;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero-ornate-top,
+  .hero-ornate-bottom {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: var(--ornate-border-height);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    z-index: 10;
+  }
+
+  .hero-ornate-top {
+    top: 0;
+  }
+
+  .hero-ornate-bottom {
+    bottom: 0;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 20;
+    text-align: center;
+    max-width: var(--container-lg);
+    padding: var(--section-padding-x);
+  }
+
+  .hero-title {
+    font-size: var(--font-size-6xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-gold);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: var(--space-6);
+    letter-spacing: 0.02em;
+  }
+
+  .hero-subtitle {
+    font-size: var(--font-size-xl);
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: var(--space-8);
+  }
+
+  /* ============================================
+     STATS SECTION (1992, 150+, 30+ từ mockup)
+     ============================================ */
+
+  .stats-section {
+    margin-top: calc(var(--section-padding-y) * -0.5);
+    padding: 0 var(--section-padding-x);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-8);
+    max-width: var(--container-xl);
+    margin: 0 auto;
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, var(--color-cream-lightest) 0%, var(--color-cream) 100%);
+    border-radius: var(--border-radius-2xl);
+    padding: var(--space-8);
+    text-align: center;
+    border: var(--border-width-base) solid var(--color-gold);
+    box-shadow: var(--shadow-lg);
+    min-height: var(--stat-card-min-height);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: transform var(--transition-base);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .stat-number {
+    font-size: var(--stat-number-size);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    font-family: var(--font-heading);
+    line-height: 1;
+    margin-bottom: var(--space-2);
+  }
+
+  .stat-label {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+  }
+
+  /* ============================================
+     BUTTONS (từ mockup)
+     ============================================ */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    height: var(--btn-height-base);
+    padding: var(--btn-padding-y) var(--btn-padding-x);
+    border-radius: var(--btn-border-radius);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-base);
+    transition: all var(--transition-base);
+    cursor: pointer;
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-white);
+    box-shadow: var(--shadow-md);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-primary-dark);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background-color: var(--color-secondary);
+    color: var(--color-text-white);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-secondary-dark);
+  }
+
+  .btn-gold {
+    background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+    color: var(--color-text-primary);
+    box-shadow: var(--shadow-gold-md);
+  }
+
+  .btn-gold:hover:not(:disabled) {
+    box-shadow: var(--shadow-gold-lg);
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    border: var(--border-width-base) solid var(--color-secondary);
+    color: var(--color-secondary);
+  }
+
+  .btn-outline:hover:not(:disabled) {
+    background-color: var(--color-secondary);
+    color: var(--color-text-white);
+  }
+
+  /* ============================================
+     CARDS (từ mockup)
+     ============================================ */
+
+  .card {
+    background-color: var(--color-bg-white);
+    border-radius: var(--card-border-radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: all var(--transition-base);
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-4px);
+  }
+
+  /* News Card (News page) */
+  .card-news {
+    max-width: var(--news-card-width);
+    border: var(--border-width-base) solid var(--color-gold-light);
+  }
+
+  .card-news-image {
+    width: 100%;
+    height: var(--news-card-image-height);
+    object-fit: cover;
+  }
+
+  .card-news-content {
+    padding: var(--card-padding);
+  }
+
+  .card-news-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--space-3);
+    color: var(--color-text-primary);
+  }
+
+  .card-news-date {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+  }
+
+  /* Staff Card (About page) */
+  .card-staff {
+    background: linear-gradient(135deg, var(--color-cream-light) 0%, var(--color-cream) 100%);
+    border-radius: var(--border-radius-2xl);
+    padding: var(--card-padding);
+    text-align: center;
+    border: 1px solid var(--color-gold-light);
+    min-height: var(--staff-card-height);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .staff-avatar {
+    width: var(--staff-avatar-size);
+    height: var(--staff-avatar-size);
+    border-radius: var(--border-radius-full);
+    border: var(--border-width-thick) solid var(--color-gold);
+    object-fit: cover;
+    margin-bottom: var(--space-4);
+  }
+
+  .staff-name {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .staff-position {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+  }
+
+  /* Course Card (Training page) */
+  .card-course {
+    background-color: var(--color-bg-white);
+    border-left: var(--border-width-thick) solid var(--color-primary);
+    border-radius: var(--border-radius-base);
+    padding: var(--space-4);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+  }
+
+  .card-course:hover {
+    box-shadow: var(--shadow-md);
+  }
+
+  /* ============================================
+     FORMS (Admissions page từ mockup)
+     ============================================ */
+
+  .form-group {
+    margin-bottom: var(--space-6);
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+    height: var(--input-height);
+    padding: var(--input-padding-y) var(--input-padding-x);
+    background-color: var(--color-cream-light);
+    border: var(--input-border-width) solid var(--color-gold-light);
+    border-radius: var(--input-border-radius);
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    transition: all var(--transition-base);
+  }
+
+  .form-textarea {
+    height: auto;
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(255, 167, 38, 0.1);
+  }
+
+  .form-error {
+    color: var(--color-error);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-1);
+  }
+
+  /* ============================================
+     TABS (About page từ mockup)
+     ============================================ */
+
+  .tabs-container {
+    border-bottom: var(--border-width-base) solid var(--color-gold-light);
+    margin-bottom: var(--space-8);
+  }
+
+  .tabs {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: var(--space-3) var(--space-6);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    border-bottom: var(--border-width-thick) solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-base);
+  }
+
+  .tab:hover {
+    color: var(--color-text-primary);
+    border-bottom-color: var(--color-gold-light);
+  }
+
+  .tab-active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    background-color: var(--color-cream-light);
+  }
+
+  /* ============================================
+     FOOTER (từ mockup)
+     ============================================ */
+
+  .footer-primary {
+    background: linear-gradient(135deg, var(--color-secondary-dark) 0%, var(--color-secondary) 100%);
+    color: rgba(255, 255, 255, 0.9);
+    padding-top: var(--section-padding-y);
+    padding-bottom: var(--space-8);
+    min-height: var(--footer-min-height);
+  }
+
+  .footer-link {
+    color: rgba(255, 255, 255, 0.8);
+    transition: color var(--transition-base);
+  }
+
+  .footer-link:hover {
+    color: var(--color-gold-light);
+  }
+
+  /* ============================================
+     UTILITIES
+     ============================================ */
+
+  .container {
+    max-width: var(--container-xl);
+    margin: 0 auto;
+    padding: 0 var(--section-padding-x);
+  }
+
+  .section {
+    padding: var(--section-padding-y) 0;
+  }
+
+  /* Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: var(--color-cream);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-gold);
+    border-radius: var(--border-radius-full);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-gold-dark);
+  }
+}
+
+/* ============================================
+   MEDIA QUERIES
+   ============================================ */
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: var(--header-height-mobile);
+    --font-size-6xl: 2.5rem;
+    /* Smaller hero on mobile */
+    --section-padding-y: 3rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --section-padding-x: var(--section-padding-x-desktop);
+  }
+}
