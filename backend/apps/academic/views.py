@@ -344,44 +344,111 @@ def get_available_classes(request):
     return Response(data)
 
 
+def check_time_overlap(schedule1, schedule2):
+    """
+    Helper to check if two schedule lists overlap.
+    Schedule format: [{'day': 2, 'start': '07:00', 'end': '09:00'}, ...]
+    """
+    def parse_time(t_str):
+        h, m = map(int, t_str.split(':'))
+        return h * 60 + m
+
+    list1 = schedule1 if isinstance(schedule1, list) else [schedule1]
+    list2 = schedule2 if isinstance(schedule2, list) else [schedule2]
+
+    for s1 in list1:
+        if not isinstance(s1, dict): continue
+        for s2 in list2:
+            if not isinstance(s2, dict): continue
+            
+            if s1.get('day') != s2.get('day'):
+                continue
+            
+            start1 = parse_time(s1.get('start', '00:00'))
+            end1 = parse_time(s1.get('end', '00:00'))
+            start2 = parse_time(s2.get('start', '00:00'))
+            end2 = parse_time(s2.get('end', '00:00'))
+
+            # Check overlap: (Start1 < End2) and (Start2 < End1)
+            if start1 < end2 and start2 < end1:
+                return True
+    return False
+
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def enroll_class(request):
     """
     Enroll in a class.
-    Body: { "class_id": 123 }
+    Validations:
+    - Already enrolled
+    - Class full
+    - Max credits (25)
+    - Prerequisites met
+    - Time conflicts
     """
     user = request.user
     class_id = request.data.get('class_id')
     
     if not class_id:
-        return Response({'detail': 'Class ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'Thiếu class_id'}, status=status.HTTP_400_BAD_REQUEST)
         
     try:
-        cls = Class.objects.get(id=class_id)
+        cls = Class.objects.select_related('course', 'semester', 'semester__academic_year').get(id=class_id)
     except Class.DoesNotExist:
-        return Response({'detail': 'Class not found'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'detail': 'Lớp học không tồn tại'}, status=status.HTTP_404_NOT_FOUND)
         
-    # Validation 1: Already enrolled?
+    # 1. Check if already enrolled
     if Enrollment.objects.filter(student=user, class_instance=cls, status__in=['ENROLLED', 'APPROVED']).exists():
         return Response({'detail': 'Bạn đã đăng ký lớp này rồi'}, status=status.HTTP_400_BAD_REQUEST)
         
-    # Validation 2: Class full?
+    # 2. Check Capacity
     current_count = Enrollment.objects.filter(class_instance=cls, status__in=['ENROLLED', 'APPROVED']).count()
     if current_count >= cls.max_students:
         return Response({'detail': 'Lớp học đã đầy'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Get all current enrollments for context
+    current_enrollments = Enrollment.objects.filter(
+        student=user, 
+        class_instance__semester=cls.semester,
+        status__in=['ENROLLED', 'APPROVED']
+    ).select_related('class_instance', 'class_instance__course')
+
+    # 3. Check Max Credits (Limit: 25)
+    current_credits = sum(e.class_instance.course.credits for e in current_enrollments)
+    if current_credits + cls.course.credits > 25:
+         return Response({'detail': f'Vượt quá giới hạn tín chỉ (25). Hiện tại: {current_credits}, Thêm: {cls.course.credits}'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 4. Check Time Conflict
+    for enrollment in current_enrollments:
+        existing_cls = enrollment.class_instance
+        if check_time_overlap(cls.schedule, existing_cls.schedule):
+             return Response({
+                 'detail': f'Trùng lịch học với môn {existing_cls.course.name_vi} ({existing_cls.class_code})'
+             }, status=status.HTTP_400_BAD_REQUEST)
+
+    # 5. Check Prerequisites
+    # Find prerequisites for this course
+    prereqs = cls.course.prerequisites.all()
+    if prereqs.exists():
+        # Get user's completed courses
+        passed_course_ids = Enrollment.objects.filter(
+            student=user,
+            status='COMPLETED', 
+            grade__grade_letter__in=['A', 'B+', 'B', 'C+', 'C', 'D'] # Assuming D is pass
+        ).values_list('class_instance__course_id', flat=True)
         
-    # Validation 3: Time conflict?
-    # This is complex with JSON schedule. For MVP, we skip strictly checking overlapping times 
-    # unless we parse the JSON deeply. Let's start with basic enrollment.
-    # TODO: Implement time conflict checking
-    
-    # Create enrollment
-    Enrollment.objects.create(
-        student=user,
-        class_instance=cls,
-        status='ENROLLED'
-    )
+        missing_prereqs = []
+        for p in prereqs:
+            if p.id not in passed_course_ids:
+                missing_prereqs.append(p.name_vi)
+        
+        if missing_prereqs:
+             return Response({
+                 'detail': f'Bạn chưa hoàn thành môn tiên quyết: {", ".join(missing_prereqs)}'
+             }, status=status.HTTP_400_BAD_REQUEST)
+
+    # Proceed to enroll
+    Enrollment.objects.create(student=user, class_instance=cls, status='ENROLLED')
     
     return Response({'detail': 'Đăng ký thành công', 'class_id': cls.id}, status=status.HTTP_201_CREATED)
 

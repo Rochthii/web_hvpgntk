@@ -81,6 +81,7 @@ class Course(models.Model):
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, verbose_name='Cấp độ')
     category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, default='REQUIRED', verbose_name='Loại')
     knowledge_block = models.CharField(max_length=30, choices=KNOWLEDGE_BLOCK_CHOICES, default='OTHER', verbose_name='Khối kiến thức')
+    prerequisites = models.ManyToManyField('self', symmetrical=False, blank=True, related_name='required_for', verbose_name='Môn tiên quyết')
     description = models.TextField(blank=True, verbose_name='Mô tả')
     
     created_at = models.DateTimeField(auto_now_add=True)

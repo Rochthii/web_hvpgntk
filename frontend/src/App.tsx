@@ -14,6 +14,9 @@ import CourseRegistration from './pages/student/CourseRegistration';
 import MyRequests from './pages/student/MyRequests';
 import CreateRequest from './pages/student/CreateRequest';
 import MainLayout from './components/MainLayout';
+import { AdminLayout } from './layouts/AdminLayout';
+import { PetitionQueue } from './pages/admin/PetitionQueue';
+import { AdminDashboard } from './pages/admin/dashboard/AdminDashboard';
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthProvider } from './contexts/AuthContext';
 import { ROUTES } from './router/routes';
@@ -44,6 +47,11 @@ const App: React.FC = () => {
             <Route path={ROUTES.REGISTRATION} element={<CourseRegistration />} />
             <Route path={ROUTES.MY_REQUESTS} element={<MyRequests />} />
             <Route path={ROUTES.CREATE_REQUEST} element={<CreateRequest />} />
+
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+            <Route path="/admin/dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+            <Route path="/admin/approvals" element={<AdminLayout><PetitionQueue /></AdminLayout>} />
 
             {/* Other pages use MainLayout (Header + Standard Content + Footer) */}
             <Route element={<MainLayout />}>
