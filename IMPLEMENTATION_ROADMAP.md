@@ -845,16 +845,239 @@ export const cmsApi = {
 
 ## 📋 PHASE 3: FEATURE COMPLETION (Tuần 6-9)
 
-*(Này sẽ viết chi tiết sau khi Phase 1+2 xong)*
-
-**Preview:**
-- Complete Student Dashboard
-- Course Registration Flow
-- E-Approval System
-- Admin CMS
-- Granular RBAC
+**Tổng quan:** 5 nhiệm vụ lớn, ước tính 80 giờ làm việc
 
 ---
+
+### ✅ Task 3.1: Hoàn Thiện Student Dashboard (16h)
+
+**Subtasks:**
+
+#### 3.1.1: Trang Tổng Quan (4h)
+- Sửa `StudentPortal.tsx` với cards hiển thị data thật
+- Tổng tín chỉ, GPA, số môn đang học, thông báo, lịch thi
+
+#### 3.1.2: Trang Thời Khóa Biểu (4h)
+**Files cần tạo:**
+- `frontend/src/pages/student/Schedule.tsx`
+- `frontend/src/components/schedule/WeeklyCalendar.tsx`
+
+**API cần thêm:**
+```python
+GET /api/v1/academic/my-schedule/
+# Trả về lịch học theo tuần cho học kỳ hiện tại
+```
+
+#### 3.1.3: Trang Điểm Số (4h)
+**Files cần tạo:**
+- `frontend/src/pages/student/Grades.tsx`
+- `frontend/src/components/grades/GradeTable.tsx`
+- `frontend/src/components/grades/GPAChart.tsx`
+
+#### 3.1.4: Trang Lịch Sử Học Tập (4h)
+**Files cần tạo:**
+- `frontend/src/pages/student/AcademicHistory.tsx`
+- Export bảng điểm PDF
+
+**Definition of Done:**
+- [ ] Dashboard hiển thị dữ liệu thật từ API
+- [ ] Thời khóa biểu dạng calendar tuần
+- [ ] Bảng điểm với GPA tính toán đúng
+- [ ] Responsive trên mobile
+
+---
+
+### ✅ Task 3.2: Quy Trình Đăng Ký Khóa Học (20h)
+
+**Subtasks:**
+
+#### 3.2.1: Backend APIs (6h)
+```python
+GET  /api/v1/academic/available-courses/   # Môn có thể đăng ký
+POST /api/v1/academic/enroll/              # Đăng ký môn
+DELETE /api/v1/academic/enroll/{id}/       # Hủy đăng ký
+POST /api/v1/academic/enroll/confirm/      # Xác nhận (submit)
+```
+
+#### 3.2.2: Frontend - Trang Đăng Ký (8h)
+**Files cần tạo:**
+- `frontend/src/pages/student/CourseRegistration.tsx`
+- `frontend/src/components/registration/CourseList.tsx`
+- `frontend/src/components/registration/SchedulePreview.tsx`
+- `frontend/src/components/registration/CartSummary.tsx`
+
+#### 3.2.3: Types & Hooks (3h)
+**Files cần tạo:**
+- `frontend/src/types/registration.ts`
+- `frontend/src/features/registration/hooks/useRegistration.ts`
+
+#### 3.2.4: Business Rules (3h)
+```python
+# Validation logic:
+# - Check prerequisite courses completed
+# - Check class capacity
+# - Check schedule conflicts
+# - Check max credits per semester (20)
+```
+
+**Definition of Done:**
+- [ ] API đăng ký hoàn chỉnh với validation
+- [ ] UI đăng ký với preview lịch học
+- [ ] Check prerequisite tự động
+- [ ] Cảnh báo trùng lịch
+- [ ] Đếm số chỗ còn trống realtime
+
+---
+
+### ✅ Task 3.3: Hệ Thống E-Approval (Đơn Từ) (16h)
+
+**Models có sẵn:** `PetitionType`, `Petition`, `PetitionHistory`
+
+**Subtasks:**
+
+#### 3.3.1: Backend APIs (4h)
+```python
+# Student
+GET  /api/v1/petitions/types/         # Loại đơn
+GET  /api/v1/petitions/my/            # Đơn của tôi
+POST /api/v1/petitions/               # Tạo đơn
+POST /api/v1/petitions/{id}/submit/   # Nộp đơn
+
+# Approver
+GET  /api/v1/petitions/pending/       # Đơn chờ duyệt
+POST /api/v1/petitions/{id}/approve/  # Duyệt
+POST /api/v1/petitions/{id}/reject/   # Từ chối
+```
+
+#### 3.3.2: Frontend - Student Side (6h)
+**Files cần tạo:**
+- `frontend/src/pages/student/Petitions.tsx`
+- `frontend/src/pages/student/PetitionCreate.tsx`
+- `frontend/src/pages/student/PetitionDetail.tsx`
+- `frontend/src/components/petition/PetitionForm.tsx`
+- `frontend/src/components/petition/Timeline.tsx`
+
+#### 3.3.3: Frontend - Approver Side (4h)
+**Files cần tạo:**
+- `frontend/src/pages/admin/PetitionQueue.tsx`
+- `frontend/src/pages/admin/PetitionReview.tsx`
+- `frontend/src/components/petition/ApprovalForm.tsx`
+
+#### 3.3.4: Notifications (2h)
+- Notify approvers khi có đơn mới
+- Notify student khi đơn được xử lý
+
+**Definition of Done:**
+- [ ] Student có thể tạo, nộp, theo dõi đơn
+- [ ] Approver có thể xem, duyệt, từ chối
+- [ ] Timeline hiển thị lịch sử đầy đủ
+- [ ] File upload hoạt động
+
+---
+
+### ✅ Task 3.4: Admin CMS Interface (16h)
+
+**Subtasks:**
+
+#### 3.4.1: Admin Layout (2h)
+**Files cần tạo:**
+- `frontend/src/layouts/AdminLayout.tsx`
+- `frontend/src/components/admin/Sidebar.tsx`
+
+#### 3.4.2: Quản Lý Tin Tức (4h)
+**Files cần tạo:**
+- `frontend/src/pages/admin/news/NewsList.tsx`
+- `frontend/src/pages/admin/news/NewsEditor.tsx`
+
+**Features:** Rich text editor, image upload, drafts, schedule publish
+
+#### 3.4.3: Quản Lý Trang (3h)
+**Files cần tạo:**
+- `frontend/src/pages/admin/pages/PageList.tsx`
+- `frontend/src/pages/admin/pages/PageEditor.tsx`
+
+#### 3.4.4: Quản Lý Nhân Sự (3h)
+**Files cần tạo:**
+- `frontend/src/pages/admin/staff/StaffList.tsx`
+- `frontend/src/pages/admin/staff/StaffEditor.tsx`
+
+#### 3.4.5: Cài Đặt Hệ Thống (2h)
+- Site name, logo, contact info, social links
+
+#### 3.4.6: Dashboard Admin (2h)
+- Widgets: Sinh viên, đơn chờ duyệt, audit log, quick actions
+
+**Definition of Done:**
+- [ ] CRUD đầy đủ cho News, Pages, Staff
+- [ ] Rich text editor hoạt động
+- [ ] Image upload hoạt động
+- [ ] Dashboard với real metrics
+
+---
+
+### ✅ Task 3.5: Phân Quyền RBAC Chi Tiết (12h)
+
+**Roles có sẵn:** admin, abbot, teacher, student, admission, content, secretary
+
+**Subtasks:**
+
+#### 3.5.1: Permission Matrix (2h)
+| Resource | admin | abbot | teacher | student | admission | content |
+|----------|-------|-------|---------|---------|-----------|---------|
+| CMS Edit | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| Grades Edit | ✅ | ❌ | ✅own | ❌ | ❌ | ❌ |
+| Petitions Approve | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ |
+
+#### 3.5.2: Backend Permission Classes (4h)
+```python
+# core/permissions.py
+class IsAdmin(BasePermission): ...
+class IsTeacher(BasePermission): ...
+class CanApprovePetitions(BasePermission): ...
+class CanEditGrades(BasePermission): ...
+```
+
+#### 3.5.3: Frontend Route Guards (3h)
+```tsx
+<ProtectedRoute allowedRoles={['admin', 'content']}>
+  <AdminLayout />
+</ProtectedRoute>
+```
+
+#### 3.5.4: UI Permission Checks (3h)
+```tsx
+const { can } = usePermissions();
+{can('edit', 'grades') && <EditButton />}
+```
+
+**Definition of Done:**
+- [ ] Permission matrix implemented
+- [ ] Backend checks ALL endpoints
+- [ ] Frontend hides unauthorized UI
+- [ ] Unauthorized access returns 403
+
+---
+
+### 📊 Tổng kết Phase 3
+
+| Task | Nội dung | Thời gian |
+|------|----------|-----------|
+| 3.1 | Student Dashboard | 16h |
+| 3.2 | Course Registration | 20h |
+| 3.3 | E-Approval System | 16h |
+| 3.4 | Admin CMS | 16h |
+| 3.5 | RBAC Permissions | 12h |
+| **Tổng** | | **80h** |
+
+**Dependencies cần cài:**
+```bash
+npm install @tiptap/react @tiptap/starter-kit  # Rich text
+npm install @fullcalendar/react                 # Calendar
+npm install react-dropzone                      # File upload
+```
+
+---
+
 
 ## 📋 PHASE 4: PRODUCTION DEPLOYMENT (Tuần 10)
 
