@@ -283,5 +283,126 @@ def get_my_grades(request):
             
         semesters_data[sem_key]['grades'].append(grade_data)
         
-    return Response(semesters_data.values())
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_available_classes(request):
+    """
+    Get classes available for registration in the current semester.
+    """
+    user = request.user
+    
+    # Get current semester
+    # Logic: Get semester with is_current=True in current academic year
+    # For now, just find any semester marked is_current=True on AcademicYear? 
+    # Or Semester model doesn't have is_current, AcademicYear does.
+    # Let's assume we find the active semester based on date or strict flag.
+    # Checking models again: AcademicYear has is_current. Semester is part of Year.
+    # We need to find the specific semester active NOW.
+    # Let's pick the semester within current year that contains Today, or just all classes of Current Year?
+    # Ideally: Classes belonging to AcademicYear.is_current=True. 
+    # But usually registration is for a specific semester (HK1 or HK2).
+    # Let's filter classes where class.semester.academic_year.is_current = True
+    
+    classes = Class.objects.filter(
+        semester__academic_year__is_current=True
+    ).select_related('course', 'instructor', 'semester').order_by('course__code')
+    
+    # Get IDs of classes user already enrolled in
+    enrolled_class_ids = Enrollment.objects.filter(
+        student=user,
+        status__in=['ENROLLED', 'APPROVED']
+    ).values_list('class_instance_id', flat=True)
+    
+    data = []
+    for cls in classes:
+        # Calculate current enrollment count
+        current_count = Enrollment.objects.filter(
+            class_instance=cls,
+            status__in=['ENROLLED', 'APPROVED']
+        ).count()
+        
+        is_full = current_count >= cls.max_students
+        is_enrolled = cls.id in enrolled_class_ids
+        
+        data.append({
+            'id': cls.id,
+            'class_code': cls.class_code,
+            'course_name': cls.course.name_vi,
+            'course_code': cls.course.code,
+            'credits': cls.course.credits,
+            'instructor': cls.instructor.display_name if cls.instructor else 'Chưa phân công',
+            'schedule': cls.schedule, # JSON
+            'room': cls.room,
+            'max_students': cls.max_students,
+            'current_students': current_count,
+            'is_full': is_full,
+            'is_enrolled': is_enrolled,
+            'semester': str(cls.semester)
+        })
+        
+    return Response(data)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def enroll_class(request):
+    """
+    Enroll in a class.
+    Body: { "class_id": 123 }
+    """
+    user = request.user
+    class_id = request.data.get('class_id')
+    
+    if not class_id:
+        return Response({'detail': 'Class ID is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    try:
+        cls = Class.objects.get(id=class_id)
+    except Class.DoesNotExist:
+        return Response({'detail': 'Class not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+    # Validation 1: Already enrolled?
+    if Enrollment.objects.filter(student=user, class_instance=cls, status__in=['ENROLLED', 'APPROVED']).exists():
+        return Response({'detail': 'Bạn đã đăng ký lớp này rồi'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    # Validation 2: Class full?
+    current_count = Enrollment.objects.filter(class_instance=cls, status__in=['ENROLLED', 'APPROVED']).count()
+    if current_count >= cls.max_students:
+        return Response({'detail': 'Lớp học đã đầy'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    # Validation 3: Time conflict?
+    # This is complex with JSON schedule. For MVP, we skip strictly checking overlapping times 
+    # unless we parse the JSON deeply. Let's start with basic enrollment.
+    # TODO: Implement time conflict checking
+    
+    # Create enrollment
+    Enrollment.objects.create(
+        student=user,
+        class_instance=cls,
+        status='ENROLLED'
+    )
+    
+    return Response({'detail': 'Đăng ký thành công', 'class_id': cls.id}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['DELETE'])
+@permission_classes([permissions.IsAuthenticated])
+def unenroll_class(request, class_id):
+    """
+    Cancel enrollment for a class.
+    """
+    user = request.user
+    
+    try:
+        enrollment = Enrollment.objects.get(
+            student=user, 
+            class_instance_id=class_id,
+            status__in=['ENROLLED', 'APPROVED']
+        )
+        enrollment.delete() # Or set to DROPPED if we want to keep history
+        # For registration phase, hard delete is usually fine.
+        return Response({'detail': 'Đã hủy đăng ký'}, status=status.HTTP_200_OK)
+    except Enrollment.DoesNotExist:
+        return Response({'detail': 'Không tìm thấy đăng ký hợp lệ'}, status=status.HTTP_404_NOT_FOUND)
 

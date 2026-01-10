@@ -17,8 +17,10 @@ export const academicApi = {
     getMyEnrollments: () => client.get<Enrollment[]>('/academic/enrollments/my_enrollments/'),
     getMyGrades: () => client.get<any[]>('/academic/student/grades/'),
 
-    // Actions
-    enrollCourse: (classId: string) => client.post('/academic/enrollments/', { class_id: classId }),
+    // Registration
+    getAvailableClasses: () => client.get<any[]>('/academic/registration/available-classes/'),
+    enrollClass: (classId: number) => client.post('/academic/registration/enroll/', { class_id: classId }),
+    unenrollClass: (classId: number) => client.delete(`/academic/registration/unenroll/${classId}/`),
 
     // Dashboard Stats
     getStudentStats: () => client.get('/academic/student/stats/'),

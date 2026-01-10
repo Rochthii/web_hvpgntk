@@ -9,6 +9,7 @@ export const ROUTES = {
     STUDENT_PORTAL: '/student',
     SCHEDULE: '/student/schedule',
     GRADES: '/student/grades',
+    REGISTRATION: '/student/registration',
 };
 
 export const API_ROUTES = {
