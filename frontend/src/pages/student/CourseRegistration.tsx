@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { ROUTES } from '../../router/routes';
 import { ArrowLeft, RefreshCw } from 'lucide-react';
 import { showToast } from '../../lib/toast';
+import { SchedulePreview } from '../../components/registration/SchedulePreview';
 
 const CourseRegistration: React.FC = () => {
     const { user } = useAuth();
@@ -69,9 +70,8 @@ const CourseRegistration: React.FC = () => {
     };
 
     // Calculate stats
-    const totalCredits = classes
-        .filter(c => c.is_enrolled)
-        .reduce((sum, c) => sum + c.credits, 0);
+    const enrolledClasses = classes.filter(c => c.is_enrolled);
+    const totalCredits = enrolledClasses.reduce((sum, c) => sum + c.credits, 0);
 
     return (
         <div className="min-h-screen bg-gray-50 pb-12">
@@ -116,8 +116,9 @@ const CourseRegistration: React.FC = () => {
                         <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div className="lg:col-span-3">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                        <div className="lg:col-span-2">
+                            <h2 className="font-bold text-lg mb-4 text-secondary">Danh sách môn học mở</h2>
                             <CourseList
                                 classes={classes}
                                 onEnroll={handleEnroll}
@@ -125,7 +126,31 @@ const CourseRegistration: React.FC = () => {
                                 loadingClassId={loadingClassId}
                             />
                         </div>
-                        {/* Future: Add Calendar Preview Sidebar here */}
+
+                        <div className="lg:col-span-1">
+                            <h2 className="font-bold text-lg mb-4 text-secondary">Lịch đã chọn</h2>
+                            <SchedulePreview enrolledClasses={enrolledClasses} />
+
+                            <div className="mt-6 bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                                <h3 className="font-bold text-gray-800 mb-2">Tóm tắt đăng ký</h3>
+                                <div className="flex justify-between text-sm mb-1">
+                                    <span className="text-gray-600">Số môn:</span>
+                                    <span className="font-bold">{enrolledClasses.length}</span>
+                                </div>
+                                <div className="flex justify-between text-sm mb-3">
+                                    <span className="text-gray-600">Tổng tín chỉ:</span>
+                                    <span className="font-bold">{totalCredits}/25</span>
+                                </div>
+
+                                <div className="w-full bg-gray-100 rounded-full h-2 mb-1">
+                                    <div
+                                        className={`h-2 rounded-full ${totalCredits < 12 ? 'bg-yellow-400' : totalCredits > 25 ? 'bg-red-500' : 'bg-green-500'}`}
+                                        style={{ width: `${Math.min(100, (totalCredits / 25) * 100)}%` }}
+                                    ></div>
+                                </div>
+                                <p className="text-xs text-right text-gray-400">Min 12 - Max 25</p>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>
