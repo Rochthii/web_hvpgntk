@@ -77,13 +77,13 @@ const Home: React.FC = () => {
       </header>
 
       {/* HERO SECTION */}
-      <HeroSection siteName={settings.site_name_vi} siteSlogan={settings.site_slogan_vi} />
+      <HeroSection siteName={siteSettings.site_name_vi} siteSlogan={siteSettings.site_slogan_vi} />
 
       {/* STATS CARDS */}
       <StatsCards
-        foundedYear={settings.founded_year}
-        studentCount={settings.student_count}
-        courseCount={settings.course_count}
+        foundedYear={siteSettings.founded_year}
+        studentCount={siteSettings.student_count}
+        courseCount={siteSettings.course_count}
       />
 
       {/* NEWS GRID */}
@@ -92,8 +92,8 @@ const Home: React.FC = () => {
       {/* FOOTER - Simplified */}
       <footer className="bg-secondary text-white/90 py-12 px-8 text-center">
         <div className="max-w-[1180px] mx-auto">
-          <p className="text-sm mb-2">{settings.contact_address}</p>
-          <p className="text-sm mb-2">Email: {settings.contact_email} | SĐT: {settings.contact_phone}</p>
+          <p className="text-sm mb-2">{siteSettings.contact_address}</p>
+          <p className="text-sm mb-2">Email: {siteSettings.contact_email} | SĐT: {siteSettings.contact_phone}</p>
           <p className="text-xs text-white/60 mt-4">© {new Date().getFullYear()} Học viện Phật giáo Nam tông Khmer. All rights reserved.</p>
         </div>
       </footer>
