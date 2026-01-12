@@ -21,11 +21,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ siteName, siteSlogan }
 
             {/* Content */}
             <div className="relative z-10 text-center max-w-[880px] px-8 animate-fade-in-up">
-                <h1 className="text-[2.625rem] font-extrabold text-[#FFD700] drop-shadow-[0_4px_8px_rgba(0,0,0,1)] mb-[1.125rem] tracking-[0.075em] leading-[1.4] font-serif-khmer">
+                <h1 className="text-[2.625rem] font-extrabold text-[#FFD700] drop-shadow-[0_4px_8px_rgba(0,0,0,1)] mb-[1.125rem] tracking-[0.05em] leading-[1.4] font-heading">
                     {siteName.toUpperCase()}
                 </h1>
 
-                <p className="text-[0.9375rem] text-white mb-[1.625rem] text-shadow-md font-medium opacity-95 tracking-wide">
+                <p className="text-[0.9375rem] text-white mb-[2rem] text-shadow-md font-medium opacity-95 tracking-wide">
                     {siteSlogan}
                 </p>
 

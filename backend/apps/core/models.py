@@ -1,9 +1,34 @@
 """
-Core Models - FileUpload, AuditLog
+Core Models - BaseModel, FileUpload, AuditLog, Notification
 """
 import uuid
 from django.db import models
 from django.conf import settings
+
+
+class BaseModel(models.Model):
+    """
+    Abstract base model with UUID primary key and timestamps.
+    
+    Dùng chung cho tất cả các models cần UUID và timestamps.
+    """
+    id = models.UUIDField(
+        primary_key=True, 
+        default=uuid.uuid4, 
+        editable=False,
+        verbose_name="ID"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True, 
+        verbose_name="Ngày tạo"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True, 
+        verbose_name="Ngày cập nhật"
+    )
+
+    class Meta:
+        abstract = True
 
 
 class FileUpload(models.Model):

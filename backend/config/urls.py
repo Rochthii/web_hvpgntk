@@ -31,9 +31,9 @@ urlpatterns = [
         path('academic/', include('apps.academic.urls')),
         path('cms/', include('apps.cms.urls')),
         path('core/', include('apps.core.urls')),
-        path('approvals/', include('apps.approvals.urls')),
+        # path('approvals/', include('apps.approvals.urls')),  # REMOVED - Merged into petitions
         path('petitions/', include('apps.petitions.urls')),
-        path('calendar/', include('apps.calendar_app.urls')),
+        path('calendar/', include('apps.calendar.urls')),
     ])),
     
     # API Documentation

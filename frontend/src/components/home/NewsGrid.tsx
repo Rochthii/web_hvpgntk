@@ -6,9 +6,10 @@ import { ROUTES } from '../../router/routes';
 interface NewsGridProps {
     news: NewsItem[];
     loading: boolean;
+    error?: boolean;
 }
 
-export const NewsGrid: React.FC<NewsGridProps> = ({ news, loading }) => {
+export const NewsGrid: React.FC<NewsGridProps> = ({ news, loading, error }) => {
     if (loading) {
         return (
             <section className="py-20 px-8 bg-cream">
@@ -27,6 +28,19 @@ export const NewsGrid: React.FC<NewsGridProps> = ({ news, loading }) => {
                             </div>
                         </div>
                     ))}
+                </div>
+            </section>
+        );
+    }
+
+    if (error || news.length === 0) {
+        return (
+            <section className="py-20 px-8 bg-cream">
+                <h2 className="text-center text-[2rem] font-bold text-secondary mb-11 font-serif tracking-wide">
+                    TIN TỨC HỌC VIỆN
+                </h2>
+                <div className="text-center text-gray-500 italic">
+                    {error ? 'Đang cập nhật tin tức...' : 'Chưa có tin tức nào.'}
                 </div>
             </section>
         );

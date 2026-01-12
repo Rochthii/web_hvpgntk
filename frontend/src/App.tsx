@@ -144,7 +144,6 @@ const App: React.FC = () => {
               <Route path={ROUTES.NEWS} element={<News />} />
               <Route path={ROUTES.NEWS_DETAIL} element={<NewsDetail />} />
               <Route path={ROUTES.ADMISSIONS} element={<Admissions />} />
-              <Route path={ROUTES.ADMISSIONS} element={<Admissions />} />
               <Route path={ROUTES.CONTACT} element={<Contact />} />
               <Route path={ROUTES.PROFILE} element={<Profile />} />
             </Route>

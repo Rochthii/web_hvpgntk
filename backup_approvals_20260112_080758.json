@@ -1,0 +1,8 @@
+[
+{
+  "model": "approvals.requesttype",
+  "pk": "00b5e4fe-8fb2-424f-8ee7-44231471f8d0",
+  "fields": {
+    "created_at": "2026-01-10T13:53:21.917Z",
+    "updated_at": "2026-01-10T13:53:21.917Z",
+    "name": 

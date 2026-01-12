@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from apps.users.models import User, MonkProfile, LaypersonProfile
 from apps.cms.models import News, SiteSetting, Page
-from apps.approvals.models import RequestType, StudentRequest
+from apps.petitions.models import PetitionType, Petition
 from apps.academic.models import Course, Enrollment, Semester, AcademicYear, Class
 
 class Command(BaseCommand):
@@ -75,14 +75,17 @@ class Command(BaseCommand):
                     }
                 )
 
-        # 3. Request Types
-        req_types = [
-            'Xin nghỉ phép', 'Xin bảo lưu', 'Xin bảng điểm', 'Xin giấy xác nhận sinh viên'
+        # 3. Petition Types
+        petition_types = [
+            {'name': 'Xin nghỉ phép', 'code': 'LEAVE'},
+            {'name': 'Xin bảo lưu', 'code': 'DEFER'},
+            {'name': 'Xin bảng điểm', 'code': 'TRANSCRIPT'},
+            {'name': 'Xin giấy xác nhận sinh viên', 'code': 'CONFIRM'}
         ]
-        for rt in req_types:
-            RequestType.objects.get_or_create(
-                name=rt,
-                defaults={'code': rt.upper().replace(' ', '_'), 'is_active': True}
+        for pt in petition_types:
+            PetitionType.objects.get_or_create(
+                code=pt['code'],
+                defaults={'name': pt['name'], 'is_active': True}
             )
 
         # 4. Run Sub-Seeders for Rich Content

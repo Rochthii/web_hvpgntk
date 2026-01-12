@@ -39,8 +39,8 @@ class SiteSetting(models.Model):
 
     # Stats (Số liệu thống kê)
     founded_year = models.CharField(max_length=20, default="2006")
-    student_count = models.CharField(max_length=20, default="150+")
-    course_count = models.CharField(max_length=20, default="30+")
+    student_count = models.CharField(max_length=20, default="300+")  # Graduates
+    course_count = models.CharField(max_length=20, default="8")  # Provinces served
     
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -392,6 +392,11 @@ class News(models.Model):
     )
     is_featured = models.BooleanField(default=False)
     is_pinned = models.BooleanField(default=False)
+    is_announcement = models.BooleanField(
+        default=False,
+        verbose_name="Thông báo quan trọng",
+        help_text="Đánh dấu là thông báo urgent hiển thị riêng trên trang chủ"
+    )
     
     published_at = models.DateTimeField(null=True, blank=True)
     view_count = models.IntegerField(default=0)

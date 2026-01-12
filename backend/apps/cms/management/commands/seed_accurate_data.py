@@ -3,7 +3,7 @@ from django.utils import timezone
 from apps.cms.models import SiteSetting, Page, Department, StaffMember, News, FAQ, Partner
 from apps.academic.models import AcademicYear, Semester, Course
 from apps.petitions.models import PetitionType
-from apps.calendar_app.models import KhmerCalendar
+from apps.calendar.models import KhmerCalendar
 from datetime import date, timedelta
 import uuid
 

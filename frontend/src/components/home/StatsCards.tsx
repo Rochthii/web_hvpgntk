@@ -20,8 +20,8 @@ export const StatsCards: React.FC<StatsCardsProps> = ({
 }) => {
     const stats: StatCardData[] = [
         { num: foundedYear || '2006', label: 'Năm thành lập' },
-        { num: studentCount || '150+', label: 'Tăng tín đồ' },
-        { num: courseCount || '30+', label: 'Khóa học' },
+        { num: studentCount || '300+', label: 'Sinh viên tốt nghiệp' },
+        { num: courseCount || '8', label: 'Tỉnh Nam Bộ' },
     ];
 
     return (

@@ -67,8 +67,8 @@ INSTALLED_APPS = [
     'apps.admissions',
     'apps.academic',
     'apps.petitions',
-    'apps.calendar_app',
-    'apps.approvals',
+    'apps.calendar',
+    # 'apps.approvals',  # REMOVED - Merged into petitions
 ]
 
 MIDDLEWARE = [

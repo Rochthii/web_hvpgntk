@@ -86,7 +86,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         return NewsSerializer
 
     def get_permissions(self):
-        if self.action in ['list', 'retrieve', 'featured', 'latest']:
+        if self.action in ['list', 'retrieve', 'featured', 'latest', 'announcements']:
             return [permissions.AllowAny()]
         return [CanEditCMS()]
 
@@ -95,15 +95,25 @@ class NewsViewSet(viewsets.ModelViewSet):
     @action(detail=False)
     def featured(self, request):
         """Get featured news"""
-        featured = self.queryset.filter(is_featured=True)[:5]
+        featured = self.get_queryset().filter(is_featured=True)[:5]
         serializer = self.get_serializer(featured, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
     def latest(self, request):
         """Get latest 3 news for Home Page"""
-        latest = self.queryset[:3]
+        latest = self.get_queryset()[:3]
         serializer = self.get_serializer(latest, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False)
+    def announcements(self, request):
+        """Get urgent announcements (Thông báo quan trọng)"""
+        announcements = self.get_queryset().filter(
+            is_announcement=True,
+            status='PUBLISHED'
+        )[:5]
+        serializer = self.get_serializer(announcements, many=True)
         return Response(serializer.data)
 
 class FAQViewSet(viewsets.ReadOnlyModelViewSet):

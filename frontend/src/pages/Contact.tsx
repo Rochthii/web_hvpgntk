@@ -3,7 +3,10 @@ import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import client from '../api/client';
 import toast, { Toaster } from 'react-hot-toast';
 
+import { useSiteSettings } from '../features/news/hooks/useNews';
+
 const Contact: React.FC = () => {
+   const { data: settings } = useSiteSettings();
    const [formData, setFormData] = React.useState({ name: '', email: '', message: '' });
    const [loading, setLoading] = React.useState(false);
 
@@ -98,7 +101,7 @@ const Contact: React.FC = () => {
                         </div>
                         <div>
                            <h4 className="font-bold text-gray-800">Điện thoại:</h4>
-                           <p className="text-sm text-gray-600">0292 738 925</p>
+                           <p className="text-sm text-gray-600">{settings?.contact_phone || '0292 738 925'}</p>
                         </div>
                      </div>
                      <div className="flex items-start space-x-3">

@@ -2,14 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { approvalsApi, StudentRequest } from '../../api/approvals';
+import { petitionsApi, Petition } from '../../api/petitions';
 import { ROUTES } from '../../router/routes';
 import { ArrowLeft, Plus, FileText, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { showToast } from '../../lib/toast';
 import { cn } from '../../lib/utils';
 
 const MyRequests: React.FC = () => {
-    const [requests, setRequests] = useState<StudentRequest[]>([]);
+    const [requests, setRequests] = useState<Petition[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -18,7 +18,7 @@ const MyRequests: React.FC = () => {
 
     const fetchRequests = async () => {
         try {
-            const res = await approvalsApi.getMyRequests();
+            const res = await petitionsApi.getMyPetitions();
             setRequests(res.data);
         } catch (error) {
             console.error(error);
@@ -32,8 +32,9 @@ const MyRequests: React.FC = () => {
         switch (status) {
             case 'APPROVED': return 'text-green-600 bg-green-50 border-green-200';
             case 'REJECTED': return 'text-red-600 bg-red-50 border-red-200';
-            case 'PENDING': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
+            case 'SUBMITTED': case 'IN_REVIEW': return 'text-yellow-600 bg-yellow-50 border-yellow-200';
             case 'CANCELLED': return 'text-gray-500 bg-gray-50 border-gray-200';
+            case 'DRAFT': return 'text-gray-400 bg-gray-50 border-gray-200';
             default: return 'text-blue-600 bg-blue-50 border-blue-200';
         }
     };
@@ -106,7 +107,7 @@ const MyRequests: React.FC = () => {
                                 <h3 className="font-bold text-gray-800 text-lg mb-1 line-clamp-1" title={req.title}>
                                     {req.title}
                                 </h3>
-                                <p className="text-sm text-primary font-medium mb-3">{req.request_type_name}</p>
+                                <p className="text-sm text-primary font-medium mb-3">{req.petition_type_detail?.name || 'Đơn từ'}</p>
 
                                 <p className="text-sm text-gray-600 line-clamp-2 mb-4 h-10">
                                     {req.reason}
@@ -120,11 +121,11 @@ const MyRequests: React.FC = () => {
                                 )}
 
                                 <div className="flex justify-end pt-3 border-t border-gray-100">
-                                    {req.status === 'PENDING' && (
+                                    {req.status === 'SUBMITTED' && (
                                         <button
                                             onClick={async () => {
                                                 if (window.confirm('Hủy đơn này?')) {
-                                                    await approvalsApi.cancelRequest(req.id);
+                                                    await petitionsApi.cancelPetition(req.id);
                                                     fetchRequests();
                                                 }
                                             }}

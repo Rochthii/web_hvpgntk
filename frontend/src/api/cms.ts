@@ -72,6 +72,7 @@ export const cmsApi = {
     // News Public/Filter
     getLatestNews: () => axiosClient.get<NewsItem[]>('/cms/news/latest/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
     getFeaturedNews: () => axiosClient.get<NewsItem[]>('/cms/news/featured/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
+    getAnnouncements: () => axiosClient.get<NewsItem[]>('/cms/news/announcements/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
     getNewsBySlug: (slug: string) => axiosClient.get<NewsItem>(`/cms/news/${slug}/`),
 
     // Pages

@@ -1,14 +1,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { approvalsApi, RequestType } from '../../api/approvals';
+import { petitionsApi, PetitionType } from '../../api/petitions';
 import { ROUTES } from '../../router/routes';
 import { ArrowLeft, Save, Upload } from 'lucide-react';
 import { showToast } from '../../lib/toast';
 
 const CreateRequest: React.FC = () => {
     const navigate = useNavigate();
-    const [types, setTypes] = useState<RequestType[]>([]);
+    const [types, setTypes] = useState<PetitionType[]>([]);
     const [loading, setLoading] = useState(false); // For submitting
 
     const [formData, setFormData] = React.useState({
@@ -19,7 +19,7 @@ const CreateRequest: React.FC = () => {
     });
 
     useEffect(() => {
-        approvalsApi.getRequestTypes().then(res => setTypes(res.data)).catch(console.error);
+        petitionsApi.getPetitionTypes().then(res => setTypes(res.data)).catch(console.error);
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -31,17 +31,13 @@ const CreateRequest: React.FC = () => {
 
         setLoading(true);
 
-        // Create FormData object for file upload
-        const data = new FormData();
-        data.append('request_type', formData.type_id);
-        data.append('title', formData.title);
-        data.append('reason', formData.reason);
-        if (formData.attachment) {
-            data.append('attachment', formData.attachment);
-        }
-
         try {
-            await approvalsApi.createRequest(data);
+            await petitionsApi.createPetition({
+                petition_type: formData.type_id,
+                title: formData.title,
+                reason: formData.reason,
+                attachment: formData.attachment || undefined,
+            });
             showToast.success('Gửi đơn thành công!');
             navigate(ROUTES.MY_REQUESTS);
         } catch (error: any) {

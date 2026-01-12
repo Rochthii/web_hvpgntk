@@ -10,7 +10,7 @@ from rest_framework import generics
 
 # Import models
 from apps.users.models import User
-from apps.approvals.models import StudentRequest
+from apps.petitions.models import Petition
 from apps.cms.models import News
 from rest_framework.views import APIView
 
@@ -38,20 +38,20 @@ class DashboardStatsView(APIView):
                 'time': log.created_at
             })
 
-        # Fallback if no logs, use requests
+        # Fallback if no logs, use petitions
         if not recent_activities:
-            latest_requests = StudentRequest.objects.all().order_by('-created_at')[:5]
-            for req in latest_requests:
+            latest_petitions = Petition.objects.all().order_by('-created_at')[:5]
+            for petition in latest_petitions:
                 recent_activities.append({
-                    'id': req.id,
-                    'text': f"{req.user.full_name} gửi đơn {req.request_type_display}",
-                    'time': req.created_at
+                    'id': petition.id,
+                    'text': f"{petition.petitioner.get_display_name()} gửi đơn {petition.title}",
+                    'time': petition.created_at
                 })
 
         return Response({
             'total_students': User.objects.filter(role='STUDENT').count(),
-            'pending_requests': StudentRequest.objects.filter(status='PENDING').count(),
-            'processed_requests': StudentRequest.objects.exclude(status='PENDING').count(),
+            'pending_requests': Petition.objects.filter(status__in=['SUBMITTED', 'IN_REVIEW']).count(),
+            'processed_requests': Petition.objects.filter(status__in=['APPROVED', 'REJECTED']).count(),
             'total_news': News.objects.count(),
             'recent_activities': recent_activities
         })

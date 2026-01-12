@@ -68,12 +68,12 @@ export default {
                 },
             },
 
-            // Typography - Khmer & Vietnamese fonts
+            // Typography - Unified Noto Stack
             fontFamily: {
-                heading: ['"Noto Serif Khmer"', '"Merriweather"', 'Georgia', 'serif'],
-                body: ['"Noto Sans Khmer"', '"Inter"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'sans-serif'],
-                sans: ['"Noto Sans Khmer"', '"Inter"', 'sans-serif'],
-                serif: ['"Noto Serif Khmer"', '"Merriweather"', 'serif'],
+                heading: ['"Noto Serif"', '"Noto Serif Khmer"', 'serif'],
+                body: ['"Noto Sans"', '"Noto Sans Khmer"', 'sans-serif'],
+                sans: ['"Noto Sans"', '"Noto Sans Khmer"', 'sans-serif'],
+                serif: ['"Noto Serif"', '"Noto Serif Khmer"', 'serif'],
             },
 
             // Shadows with warm golden tones
@@ -147,10 +147,7 @@ export default {
                 'primary-glow-lg': '0 10px 28px rgba(255,152,0,0.65)',
             },
 
-            // Font families
-            fontFamily: {
-                'serif-khmer': ['"Noto Serif Khmer"', 'Georgia', 'serif'],
-            },
+
         },
     },
     plugins: [

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { approvalsApi, StudentRequest } from '../../api/approvals';
+import { petitionsApi, Petition } from '../../api/petitions';
 import { showToast } from '../../lib/toast';
 import { CheckCircle, XCircle, Clock, Eye, Filter } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { Link } from 'react-router-dom';
 
 export const PetitionQueue: React.FC = () => {
-    const [requests, setRequests] = useState<StudentRequest[]>([]);
+    const [requests, setRequests] = useState<Petition[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'pending' | 'processed'>('pending');
 
@@ -18,14 +18,8 @@ export const PetitionQueue: React.FC = () => {
     const fetchRequests = async () => {
         setLoading(true);
         try {
-            // TODO: Implement getPendingRequests/getAllRequests API for admin
-            // For now reusing getMyRequests (which returns student's own requests) 
-            // BUT WE NEED ADMIN ENDPOINT. 
-            // Using a temporary mock or needing to update approvals.ts and backend.
-            // Let's assume we update backend to allow listing all requests for admin.
-
-            // Temporary: Fetching from same endpoint but assuming backend handles permission to return ALL
-            const res = await approvalsApi.getMyRequests();
+            // Now using petitions API with status filtering
+            const res = await petitionsApi.getAllPetitions();
             setRequests(res.data);
         } catch (error) {
             console.error(error);
@@ -36,7 +30,7 @@ export const PetitionQueue: React.FC = () => {
     };
 
     const filteredRequests = requests.filter(r => {
-        if (filter === 'pending') return r.status === 'PENDING' || r.status === 'REVIEWING';
+        if (filter === 'pending') return r.status === 'SUBMITTED' || r.status === 'IN_REVIEW';
         if (filter === 'processed') return ['APPROVED', 'REJECTED', 'CANCELLED'].includes(r.status);
         return true;
     });
@@ -86,7 +80,7 @@ export const PetitionQueue: React.FC = () => {
                                     {/* Mock student data if missing from API response */}
                                     ID: {req.id.substring(0, 4)}...
                                 </td>
-                                <td className="py-4 px-6 text-sm text-gray-600">{req.request_type_name}</td>
+                                <td className="py-4 px-6 text-sm text-gray-600">{req.petition_type_detail?.name || 'Đơn từ'}</td>
                                 <td className="py-4 px-6 text-sm text-gray-800 font-medium">{req.title}</td>
                                 <td className="py-4 px-6 text-sm text-gray-500">{new Date(req.created_at).toLocaleDateString()}</td>
                                 <td className="py-4 px-6">
@@ -94,12 +88,12 @@ export const PetitionQueue: React.FC = () => {
                                         "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border",
                                         req.status === 'APPROVED' ? "bg-green-100 text-green-800 border-green-200" :
                                             req.status === 'REJECTED' ? "bg-red-100 text-red-800 border-red-200" :
-                                                req.status === 'PENDING' ? "bg-yellow-100 text-yellow-800 border-yellow-200" :
+                                                (req.status === 'SUBMITTED' || req.status === 'IN_REVIEW') ? "bg-yellow-100 text-yellow-800 border-yellow-200" :
                                                     "bg-gray-100 text-gray-800 border-gray-200"
                                     )}>
                                         {req.status === 'APPROVED' && <CheckCircle size={10} className="mr-1" />}
                                         {req.status === 'REJECTED' && <XCircle size={10} className="mr-1" />}
-                                        {req.status === 'PENDING' && <Clock size={10} className="mr-1" />}
+                                        {(req.status === 'SUBMITTED' || req.status === 'IN_REVIEW') && <Clock size={10} className="mr-1" />}
                                         {req.status_display}
                                     </span>
                                 </td>

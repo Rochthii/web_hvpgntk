@@ -47,3 +47,10 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
+
+# Binary files & installers (prevent accidental commits)
+*.exe
+*.msi
+*.dmg
+get-pip.py
+python-installer.*
