@@ -1,0 +1,61 @@
+/* HVPGNTK Brand Colors: Brown #6B2C2C, Gold #DAA520 */
+
+/* Main Header / Navbar */
+.main-header.navbar {
+    background-color: #6B2C2C !important;
+    border-bottom: 2px solid #DAA520 !important;
+}
+
+/* Brand Logo Area */
+.main-header .navbar-brand {
+    background-color: #552222 !important;
+}
+
+.brand-link {
+    background-color: #552222 !important;
+    border-bottom: 1px solid #7a3a3a !important;
+}
+
+/* Sidebar Active Items (Gold) */
+.sidebar-dark-warning .nav-sidebar>.nav-item>.nav-link.active,
+.sidebar-light-warning .nav-sidebar>.nav-item>.nav-link.active {
+    background-color: #DAA520 !important;
+    color: #4E342E !important;
+    font-weight: bold;
+}
+
+/* Accent Colors */
+.btn-primary {
+    background-color: #6B2C2C !important;
+    border-color: #6B2C2C !important;
+}
+
+.btn-primary:hover {
+    background-color: #8B4513 !important;
+    border-color: #8B4513 !important;
+}
+
+.btn-success {
+    background-color: #2E7D32 !important;
+    /* Buddhist Green */
+}
+
+/* Module Headers */
+.card-primary.card-outline {
+    border-top: 3px solid #DAA520 !important;
+}
+
+/* Login Page Styling */
+body.login-page {
+    background: linear-gradient(135deg, #6B2C2C 0%, #3E2723 100%) !important;
+}
+
+.login-logo a {
+    color: #DAA520 !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-family: 'Times New Roman', serif;
+}
+
+.card-primary.card-outline {
+    border-top: 3px solid #DAA520;
+}

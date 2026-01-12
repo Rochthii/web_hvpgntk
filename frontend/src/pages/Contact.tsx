@@ -92,7 +92,7 @@ const Contact: React.FC = () => {
                         </div>
                         <div>
                            <h4 className="font-bold text-gray-800">Địa chỉ:</h4>
-                           <p className="text-sm text-gray-600">Học Viện Phật Giáo Nam Tông Cần Thơ, Thới Long, Ô Môn, Cần Thơ</p>
+                           <p className="text-sm text-gray-600">{settings?.contact_address || 'Khu vực 12, Phường Châu Văn Liêm, Quận Ô Môn, TP. Cần Thơ'}</p>
                         </div>
                      </div>
                      <div className="flex items-start space-x-3">
@@ -110,7 +110,7 @@ const Contact: React.FC = () => {
                         </div>
                         <div>
                            <h4 className="font-bold text-gray-800">Email:</h4>
-                           <p className="text-sm text-gray-600">contact@hvpgntk.edu.vn</p>
+                           <p className="text-sm text-gray-600">{settings?.contact_email || 'contact@hvpgntk.edu.vn'}</p>
                         </div>
                      </div>
                   </div>

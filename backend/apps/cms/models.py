@@ -14,33 +14,33 @@ class SiteSetting(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
     # Tên trang
-    site_name_vi = models.CharField(max_length=200)
-    site_name_km = models.CharField(max_length=200, blank=True)
-    site_slogan_vi = models.CharField(max_length=300, blank=True)
-    site_slogan_km = models.CharField(max_length=300, blank=True)
+    site_name_vi = models.CharField(max_length=200, verbose_name="Tên Website (Tiếng Việt)")
+    site_name_km = models.CharField(max_length=200, blank=True, verbose_name="Tên Website (Tiếng Khmer)")
+    site_slogan_vi = models.CharField(max_length=300, blank=True, verbose_name="Khẩu hiệu (Tiếng Việt)")
+    site_slogan_km = models.CharField(max_length=300, blank=True, verbose_name="Khẩu hiệu (Tiếng Khmer)")
     
     # Logo
-    logo_url = models.URLField(blank=True)
-    favicon_url = models.URLField(blank=True)
+    logo_url = models.URLField(blank=True, verbose_name="URL Logo")
+    favicon_url = models.URLField(blank=True, verbose_name="URL Favicon")
     
     # Liên hệ
-    contact_email = models.EmailField(blank=True)
-    contact_phone = models.CharField(max_length=50, blank=True)
-    contact_address = models.TextField(blank=True)
-    google_maps_embed = models.TextField(blank=True)
+    contact_email = models.EmailField(blank=True, verbose_name="Email liên hệ")
+    contact_phone = models.CharField(max_length=50, blank=True, verbose_name="Số điện thoại")
+    contact_address = models.TextField(blank=True, verbose_name="Địa chỉ")
+    google_maps_embed = models.TextField(blank=True, verbose_name="Mã nhúng Google Maps")
     
     # Social
-    facebook_url = models.URLField(blank=True)
-    youtube_url = models.URLField(blank=True)
+    facebook_url = models.URLField(blank=True, verbose_name="URL Facebook")
+    youtube_url = models.URLField(blank=True, verbose_name="URL Youtube")
     
     # Footer
-    footer_text_vi = models.TextField(blank=True)
-    footer_text_km = models.TextField(blank=True)
+    footer_text_vi = models.TextField(blank=True, verbose_name="Nội dung Footer (Tiếng Việt)")
+    footer_text_km = models.TextField(blank=True, verbose_name="Nội dung Footer (Tiếng Khmer)")
 
     # Stats (Số liệu thống kê)
-    founded_year = models.CharField(max_length=20, default="2006")
-    student_count = models.CharField(max_length=20, default="300+")  # Graduates
-    course_count = models.CharField(max_length=20, default="8")  # Provinces served
+    founded_year = models.CharField(max_length=20, default="2006", verbose_name="Năm thành lập")
+    student_count = models.CharField(max_length=20, default="300+", verbose_name="Số Tăng sinh tốt nghiệp")
+    course_count = models.CharField(max_length=20, default="8", verbose_name="Số tỉnh thành đào tạo")
     
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -75,22 +75,22 @@ class Banner(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
-    title_vi = models.CharField(max_length=200, blank=True)
-    title_km = models.CharField(max_length=200, blank=True)
-    subtitle_vi = models.CharField(max_length=300, blank=True)
-    subtitle_km = models.CharField(max_length=300, blank=True)
+    title_vi = models.CharField(max_length=200, blank=True, verbose_name="Tiêu đề (Tiếng Việt)")
+    title_km = models.CharField(max_length=200, blank=True, verbose_name="Tiêu đề (Tiếng Khmer)")
+    subtitle_vi = models.CharField(max_length=300, blank=True, verbose_name="Phụ đề (Tiếng Việt)")
+    subtitle_km = models.CharField(max_length=300, blank=True, verbose_name="Phụ đề (Tiếng Khmer)")
     
-    image_url = models.URLField()
-    image_url_mobile = models.URLField(blank=True)
+    image_url = models.URLField(verbose_name="URL Hình ảnh (Desktop)")
+    image_url_mobile = models.URLField(blank=True, verbose_name="URL Hình ảnh (Mobile)")
     
-    link_url = models.URLField(blank=True)
-    link_target = models.CharField(max_length=20, default='_self')
+    link_url = models.URLField(blank=True, verbose_name="Đường dẫn khi click")
+    link_target = models.CharField(max_length=20, default='_self', verbose_name="Cách mở tab")
     
-    display_order = models.IntegerField(default=0)
-    is_active = models.BooleanField(default=True)
+    display_order = models.IntegerField(default=0, verbose_name="Thứ tự hiển thị")
+    is_active = models.BooleanField(default=True, verbose_name="Kích hoạt")
     
-    start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True, verbose_name="Ngày bắt đầu")
+    end_date = models.DateField(null=True, blank=True, verbose_name="Ngày kết thúc")
     
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -116,25 +116,26 @@ class Menu(models.Model):
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
-    location = models.CharField(max_length=50, choices=Location.choices)
+    location = models.CharField(max_length=50, choices=Location.choices, verbose_name="Vị trí Menu")
     
-    title_vi = models.CharField(max_length=100)
-    title_km = models.CharField(max_length=100, blank=True)
+    title_vi = models.CharField(max_length=100, verbose_name="Tên Menu (Tiếng Việt)")
+    title_km = models.CharField(max_length=100, blank=True, verbose_name="Tên Menu (Tiếng Khmer)")
     
-    url = models.CharField(max_length=255, blank=True)
-    target = models.CharField(max_length=20, default='_self')
-    icon = models.CharField(max_length=50, blank=True)
+    url = models.CharField(max_length=255, blank=True, verbose_name="Đường dẫn")
+    target = models.CharField(max_length=20, default='_self', verbose_name="Cách mở tab")
+    icon = models.CharField(max_length=50, blank=True, verbose_name="Icon (Class)")
     
     parent = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name='children'
+        related_name='children',
+        verbose_name="Menu cha"
     )
-    display_order = models.IntegerField(default=0)
+    display_order = models.IntegerField(default=0, verbose_name="Thứ tự")
     
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True, verbose_name="Kích hoạt")
     
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -170,45 +171,47 @@ class Page(models.Model):
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
-    slug = models.SlugField(max_length=100, unique=True)
-    page_type = models.CharField(max_length=50, choices=PageType.choices)
+    slug = models.SlugField(max_length=100, unique=True, verbose_name="Slug (Đường dẫn)")
+    page_type = models.CharField(max_length=50, choices=PageType.choices, verbose_name="Loại trang")
     
-    title_vi = models.CharField(max_length=300)
-    title_km = models.CharField(max_length=300, blank=True)
+    title_vi = models.CharField(max_length=300, verbose_name="Tiêu đề (Tiếng Việt)")
+    title_km = models.CharField(max_length=300, blank=True, verbose_name="Tiêu đề (Tiếng Khmer)")
     
-    content_vi = models.TextField()
-    content_km = models.TextField(blank=True)
+    content_vi = models.TextField(verbose_name="Nội dung (Tiếng Việt)")
+    content_km = models.TextField(blank=True, verbose_name="Nội dung (Tiếng Khmer)")
     
-    excerpt_vi = models.TextField(blank=True)
-    excerpt_km = models.TextField(blank=True)
+    excerpt_vi = models.TextField(blank=True, verbose_name="Tóm tắt (Tiếng Việt)")
+    excerpt_km = models.TextField(blank=True, verbose_name="Tóm tắt (Tiếng Khmer)")
     
-    featured_image_url = models.URLField(blank=True)
-    gallery_images = models.JSONField(null=True, blank=True)
+    featured_image_url = models.URLField(blank=True, verbose_name="URL Ảnh đại diện")
+    gallery_images = models.JSONField(null=True, blank=True, verbose_name="Thư viện ảnh")
     
     # SEO
-    meta_title = models.CharField(max_length=200, blank=True)
-    meta_description = models.CharField(max_length=500, blank=True)
+    meta_title = models.CharField(max_length=200, blank=True, verbose_name="SEO Title")
+    meta_description = models.CharField(max_length=500, blank=True, verbose_name="SEO Description")
     
-    template = models.CharField(max_length=50, default='default')
+    template = models.CharField(max_length=50, default='default', verbose_name="Template")
     
     parent = models.ForeignKey(
         'self',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='children'
+        related_name='children',
+        verbose_name="Trang cha"
     )
-    menu_order = models.IntegerField(default=0)
-    show_in_menu = models.BooleanField(default=True)
+    menu_order = models.IntegerField(default=0, verbose_name="Thứ tự Menu")
+    show_in_menu = models.BooleanField(default=True, verbose_name="Hiển thị trên Menu")
     
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
-        default=Status.DRAFT
+        default=Status.DRAFT,
+        verbose_name="Trạng thái"
     )
-    published_at = models.DateTimeField(null=True, blank=True)
+    published_at = models.DateTimeField(null=True, blank=True, verbose_name="Thời gian xuất bản")
     
-    view_count = models.IntegerField(default=0)
+    view_count = models.IntegerField(default=0, verbose_name="Lượt xem")
     
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -245,24 +248,25 @@ class Department(models.Model):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
-    code = models.CharField(max_length=20, unique=True)
-    name_vi = models.CharField(max_length=200)
-    name_km = models.CharField(max_length=200, blank=True)
+    code = models.CharField(max_length=20, unique=True, verbose_name="Mã khoa")
+    name_vi = models.CharField(max_length=200, verbose_name="Tên Khoa (Tiếng Việt)")
+    name_km = models.CharField(max_length=200, blank=True, verbose_name="Tên Khoa (Tiếng Khmer)")
     
-    description_vi = models.TextField(blank=True)
-    description_km = models.TextField(blank=True)
+    description_vi = models.TextField(blank=True, verbose_name="Mô tả (Tiếng Việt)")
+    description_km = models.TextField(blank=True, verbose_name="Mô tả (Tiếng Khmer)")
     
     head = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='headed_departments'
+        related_name='headed_departments',
+        verbose_name="Trưởng khoa"
     )
     
-    image_url = models.URLField(blank=True)
-    display_order = models.IntegerField(default=0)
-    is_active = models.BooleanField(default=True)
+    image_url = models.URLField(blank=True, verbose_name="URL Ảnh")
+    display_order = models.IntegerField(default=0, verbose_name="Thứ tự")
+    is_active = models.BooleanField(default=True, verbose_name="Kích hoạt")
     
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -293,40 +297,43 @@ class StaffMember(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='staff_profile'
+        related_name='staff_profile',
+        verbose_name="Tài khoản hệ thống"
     )
     department = models.ForeignKey(
         Department,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='staff_members'
+        related_name='staff_members',
+        verbose_name="Khoa / Phòng ban"
     )
     
-    display_name_vi = models.CharField(max_length=200)
-    display_name_km = models.CharField(max_length=200, blank=True)
+    display_name_vi = models.CharField(max_length=200, verbose_name="Tên hiển thị (Tiếng Việt)")
+    display_name_km = models.CharField(max_length=200, blank=True, verbose_name="Tên hiển thị (Tiếng Khmer)")
     
-    title_vi = models.CharField(max_length=100, blank=True)
-    title_km = models.CharField(max_length=100, blank=True)
+    title_vi = models.CharField(max_length=100, blank=True, verbose_name="Học hàm/Học vị (Tiếng Việt)")
+    title_km = models.CharField(max_length=100, blank=True, verbose_name="Học hàm/Học vị (Tiếng Khmer)")
     
-    position = models.CharField(max_length=100, blank=True)
+    position = models.CharField(max_length=100, blank=True, verbose_name="Chức vụ")
     
-    bio_vi = models.TextField(blank=True)
-    bio_km = models.TextField(blank=True)
+    bio_vi = models.TextField(blank=True, verbose_name="Tiểu sử (Tiếng Việt)")
+    bio_km = models.TextField(blank=True, verbose_name="Tiểu sử (Tiếng Khmer)")
     
-    photo_url = models.URLField(blank=True)
-    email = models.EmailField(blank=True)
-    phone = models.CharField(max_length=20, blank=True)
+    photo_url = models.URLField(blank=True, verbose_name="URL Ảnh")
+    email = models.EmailField(blank=True, verbose_name="Email")
+    phone = models.CharField(max_length=20, blank=True, verbose_name="Số điện thoại")
     
     staff_type = models.CharField(
         max_length=50,
         choices=StaffType.choices,
-        default=StaffType.FACULTY
+        default=StaffType.FACULTY,
+        verbose_name="Loại nhân sự"
     )
     
-    display_order = models.IntegerField(default=0)
-    is_featured = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    display_order = models.IntegerField(default=0, verbose_name="Thứ tự")
+    is_featured = models.BooleanField(default=False, verbose_name="Nổi bật")
+    is_active = models.BooleanField(default=True, verbose_name="Kích hoạt")
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -359,47 +366,49 @@ class News(models.Model):
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
-    slug = models.SlugField(max_length=200, unique=True)
+    slug = models.SlugField(max_length=200, unique=True, verbose_name="Slug (Đường dẫn)")
     
-    title_vi = models.CharField(max_length=300)
-    title_km = models.CharField(max_length=300, blank=True)
+    title_vi = models.CharField(max_length=300, verbose_name="Tiêu đề (Tiếng Việt)")
+    title_km = models.CharField(max_length=300, blank=True, verbose_name="Tiêu đề (Tiếng Khmer)")
     
-    excerpt_vi = models.TextField(blank=True)
-    excerpt_km = models.TextField(blank=True)
+    excerpt_vi = models.TextField(blank=True, verbose_name="Tóm tắt (Tiếng Việt)")
+    excerpt_km = models.TextField(blank=True, verbose_name="Tóm tắt (Tiếng Khmer)")
     
-    content_vi = models.TextField()
-    content_km = models.TextField(blank=True)
+    content_vi = models.TextField(verbose_name="Nội dung (Tiếng Việt)")
+    content_km = models.TextField(blank=True, verbose_name="Nội dung (Tiếng Khmer)")
     
-    featured_image_url = models.URLField(blank=True)
-    gallery_images = models.JSONField(null=True, blank=True)
+    featured_image_url = models.URLField(blank=True, verbose_name="URL Ảnh đại diện")
+    gallery_images = models.JSONField(null=True, blank=True, verbose_name="Thư viện ảnh")
     
     category = models.CharField(
         max_length=50,
         choices=Category.choices,
-        default=Category.ACADEMY_NEWS
+        default=Category.ACADEMY_NEWS,
+        verbose_name="Danh mục"
     )
     
-    tags = models.JSONField(null=True, blank=True)
+    tags = models.JSONField(null=True, blank=True, verbose_name="Tags")
     
     # SEO
-    meta_title = models.CharField(max_length=200, blank=True)
-    meta_description = models.CharField(max_length=500, blank=True)
+    meta_title = models.CharField(max_length=200, blank=True, verbose_name="SEO Title")
+    meta_description = models.CharField(max_length=500, blank=True, verbose_name="SEO Description")
     
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
-        default=Status.DRAFT
+        default=Status.DRAFT,
+        verbose_name="Trạng thái"
     )
-    is_featured = models.BooleanField(default=False)
-    is_pinned = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False, verbose_name="Nổi bật")
+    is_pinned = models.BooleanField(default=False, verbose_name="Ghim lên đầu")
     is_announcement = models.BooleanField(
         default=False,
         verbose_name="Thông báo quan trọng",
         help_text="Đánh dấu là thông báo urgent hiển thị riêng trên trang chủ"
     )
     
-    published_at = models.DateTimeField(null=True, blank=True)
-    view_count = models.IntegerField(default=0)
+    published_at = models.DateTimeField(null=True, blank=True, verbose_name="Thời gian xuất bản")
+    view_count = models.IntegerField(default=0, verbose_name="Lượt xem")
     
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,

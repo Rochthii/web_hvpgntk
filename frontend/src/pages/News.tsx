@@ -12,19 +12,33 @@ const News: React.FC = () => {
    const [debouncedSearch, setDebouncedSearch] = useState('');
 
    // Debounce search
+   const [page, setPage] = useState(1);
+
+   // Debounce search
    useEffect(() => {
-      const timer = setTimeout(() => setDebouncedSearch(search), 500);
+      const timer = setTimeout(() => {
+         setDebouncedSearch(search);
+         setPage(1); // Reset to page 1 on new search
+      }, 500);
       return () => clearTimeout(timer);
    }, [search]);
 
+   // Reset page when category changes
+   useEffect(() => {
+      setPage(1);
+   }, [category]);
+
    const fetchNews = useCallback(() => {
-      const params: any = {};
+      const params: any = { page }; // Add page param
       if (debouncedSearch) params.search = debouncedSearch;
       if (category) params.category = category;
       return cmsApi.getNews(params);
-   }, [debouncedSearch, category]);
+   }, [debouncedSearch, category, page]);
 
-   const { data: news, loading } = useFetch(fetchNews);
+   const { data: newsData, loading } = useFetch(fetchNews);
+   const news = newsData?.results || [];
+   const totalCount = newsData?.count || 0;
+   const totalPages = Math.ceil(totalCount / 10); // Assuming page_size is 10
 
    // Hardcoded categories list mapped to model choices
    // In a real scenario, we might fetch these from an API endpoint like /cms/news/categories/
@@ -38,7 +52,7 @@ const News: React.FC = () => {
       { label: 'Thông báo', value: 'THONG_BAO' },
    ];
 
-   if (loading && !news) {
+   if (loading && !newsData) {
       return (
          <div className="min-h-screen flex items-center justify-center bg-[#FDF5E6]">
             <div className="w-16 h-16 border-4 border-[#DAA520] border-t-transparent rounded-full animate-spin"></div>
@@ -46,10 +60,12 @@ const News: React.FC = () => {
       );
    }
 
-   // Client-side sort if API doesn't order by published_at (it should, but safety first)
-   const sortedNews = news ? [...news].sort((a, b) => new Date(b.published_at || b.created_at).getTime() - new Date(a.published_at || a.created_at).getTime()) : [];
-   const featuredNews = sortedNews.length > 0 ? sortedNews[0] : null;
-   const otherNews = sortedNews.slice(1);
+   // Client-side sort if needed, but API should handle it. 
+   // We trust API order for pagination, but can still sort the current page if really needed.
+   // Ideally, we shouldn't sort client-side with pagination because it only sorts the CURRENT page.
+   // So we rely on API order.
+   const featuredNews = (page === 1 && !debouncedSearch && !category && news.length > 0) ? news[0] : null;
+   const otherNews = featuredNews ? news.slice(1) : news;
 
    return (
       <div className="min-h-screen bg-[#FDF5E6] pb-20 font-sans">
@@ -70,8 +86,8 @@ const News: React.FC = () => {
                {/* Main Content */}
                <div className="lg:w-3/4">
 
-                  {/* HERO NEWS (Featured) - Only show if no search filter active to focus results */}
-                  {!debouncedSearch && !category && featuredNews && (
+                  {/* HERO NEWS (Featured) - Only show on Page 1 if no filter */}
+                  {featuredNews && (
                      <div className="mb-12 group">
                         <Link to={`${ROUTES.NEWS}/${featuredNews.slug}`} className="block relative h-[500px] rounded-2xl overflow-hidden shadow-2xl border-4 border-[#DAA520]">
                            <img
@@ -98,39 +114,96 @@ const News: React.FC = () => {
                   )}
 
                   {/* GRID NEWS */}
-                  {((!debouncedSearch && !category) ? otherNews : sortedNews).length > 0 ? (
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {((!debouncedSearch && !category) ? otherNews : sortedNews).map((item) => (
-                           <div key={item.id} className="bg-white rounded-xl shadow-gold-sm border border-[#E5CFA0] overflow-hidden group hover:shadow-gold-md transition-all hover:-translate-y-1 duration-300">
-                              <div className="relative h-56 overflow-hidden">
-                                 <img
-                                    src={item.featured_image_url || "https://picsum.photos/500/300"}
-                                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-                                    alt={item.title_vi}
-                                 />
-                                 <div className="absolute top-4 right-4 bg-[#6B2C2C] text-white text-xs font-bold px-3 py-1 rounded shadow-lg">
-                                    {new Date(item.published_at || item.created_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })}
+                  {otherNews.length > 0 ? (
+                     <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                           {otherNews.map((item) => (
+                              <article key={item.id} className="bg-white rounded-[16px] shadow-sm hover:shadow-xl border border-[#E5CFA0]/50 overflow-hidden group transition-all duration-300 flex flex-col h-full">
+                                 {/* Image Container */}
+                                 <div className="relative h-60 overflow-hidden">
+                                    <img
+                                       src={item.featured_image_url || "https://picsum.photos/500/300"}
+                                       className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                                       alt={item.title_vi}
+                                    />
+
+                                    {/* Category Badge - Floating */}
+                                    <div className="absolute top-4 left-4">
+                                       <span className="bg-[#DAA520] text-[#4E342E] text-[10px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
+                                          {CATEGORIES.find(c => c.value === item.category)?.label || item.category || 'Tin tức'}
+                                       </span>
+                                    </div>
+
+                                    {/* Date Badge - Floating Right */}
+                                    <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm text-white text-[11px] font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                                       <Calendar size={12} className="text-[#DAA520]" />
+                                       {new Date(item.published_at || item.created_at).toLocaleDateString('vi-VN')}
+                                    </div>
                                  </div>
-                              </div>
-                              <div className="p-6">
-                                 <div className="text-[#DAA520] text-xs font-bold uppercase mb-2 tracking-wide">
-                                    {CATEGORIES.find(c => c.value === item.category)?.label || item.category || 'Tin tức'}
+
+                                 {/* Content */}
+                                 <div className="p-6 flex flex-col flex-grow">
+                                    <Link to={`${ROUTES.NEWS}/${item.slug}`} className="block">
+                                       <h3 className="font-serif font-bold text-[1.25rem] text-[#4E342E] mb-3 group-hover:text-[#DAA520] transition-colors leading-[1.4] line-clamp-2">
+                                          {item.title_vi}
+                                       </h3>
+                                    </Link>
+
+                                    <p className="text-gray-600 text-[0.925rem] line-clamp-3 mb-6 leading-relaxed flex-grow font-light">
+                                       {item.excerpt_vi}
+                                    </p>
+
+                                    {/* Footer Metadata */}
+                                    <div className="pt-5 border-t border-[#F5E6D3] flex items-center justify-between text-xs text-gray-500 font-medium mt-auto">
+                                       <div className="flex items-center gap-2">
+                                          <Eye size={14} className="text-gray-400" />
+                                          {item.view_count || 0} lượt xem
+                                       </div>
+
+                                       <Link to={`${ROUTES.NEWS}/${item.slug}`} className="flex items-center text-[#8B4513] hover:text-[#DAA520] transition-colors gap-1 font-bold group/btn">
+                                          ĐỌC TIẾP
+                                          <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                                       </Link>
+                                    </div>
                                  </div>
-                                 <Link to={`${ROUTES.NEWS}/${item.slug}`}>
-                                    <h3 className="font-serif font-bold text-xl text-[#6B2C2C] mb-3 group-hover:text-[#8B4513] transition-colors line-clamp-2 height-[3.5rem]">
-                                       {item.title_vi}
-                                    </h3>
-                                 </Link>
-                                 <p className="text-gray-600 text-sm line-clamp-3 mb-6 leading-relaxed">
-                                    {item.excerpt_vi}
-                                 </p>
-                                 <Link to={`${ROUTES.NEWS}/${item.slug}`} className="inline-flex items-center text-[#8B4513] font-bold text-sm hover:text-[#DAA520] transition-colors group/link">
-                                    XEM CHI TIẾT <ChevronRight size={16} className="ml-1 transform group-hover/link:translate-x-1 transition-transform" />
-                                 </Link>
-                              </div>
+                              </article>
+                           ))}
+                        </div>
+
+                        {/* PAGINATION CONTROLS */}
+                        {totalPages > 1 && (
+                           <div className="mt-12 flex justify-center items-center gap-2">
+                              <button
+                                 onClick={() => setPage(p => Math.max(1, p - 1))}
+                                 disabled={page === 1}
+                                 className="px-4 py-2 rounded-lg bg-white border border-[#E5CFA0] text-[#6B2C2C] hover:bg-[#FFF8E1] disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                 Trước
+                              </button>
+
+                              {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+                                 <button
+                                    key={pageNum}
+                                    onClick={() => setPage(pageNum)}
+                                    className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold transition-colors ${page === pageNum
+                                       ? 'bg-[#6B2C2C] text-[#FFD700] border border-[#6B2C2C]'
+                                       : 'bg-white text-[#6B2C2C] border border-[#E5CFA0] hover:bg-[#FFF8E1]'
+                                       }`}
+                                 >
+                                    {pageNum}
+                                 </button>
+                              ))}
+
+                              <button
+                                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                                 disabled={page === totalPages}
+                                 className="px-4 py-2 rounded-lg bg-white border border-[#E5CFA0] text-[#6B2C2C] hover:bg-[#FFF8E1] disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                 Sau
+                              </button>
                            </div>
-                        ))}
-                     </div>
+                        )}
+                     </>
                   ) : (
                      <div className="text-center py-20 bg-white rounded-xl border border-dashed border-[#E5CFA0]">
                         <p className="text-gray-500 italic">Không tìm thấy tin tức nào phù hợp.</p>

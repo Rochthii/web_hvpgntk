@@ -76,7 +76,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         can_view_all = user.is_authenticated and (
             user.role in ['admin', 'abbot', 'teacher', 'content', 'secretary'] or user.is_staff
         )
-        if self.action in ['list', 'retrieve'] and not can_view_all:
+        if self.action in ['list', 'retrieve', 'featured', 'latest', 'announcements'] and not can_view_all:
              return News.objects.filter(status='PUBLISHED').order_by('-published_at')
         return News.objects.all().order_by('-created_at')
     

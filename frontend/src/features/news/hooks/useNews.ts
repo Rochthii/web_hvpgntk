@@ -21,6 +21,16 @@ export const useSiteSettings = () => {
     return useQuery({
         queryKey: ['settings'],
         queryFn: () => cmsApi.getSettings().then(res => res.data),
-        staleTime: 15 * 60 * 1000, // Settings rarely change - 15 minutes
+        staleTime: 15 * 60 * 1000,
+    });
+};
+
+/**
+ * Fetch announcements
+ */
+export const useAnnouncements = () => {
+    return useQuery({
+        queryKey: ['announcements'],
+        queryFn: () => cmsApi.getAnnouncements().then(res => res.data),
     });
 };

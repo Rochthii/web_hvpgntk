@@ -7,16 +7,16 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { StatsCards } from '../components/home/StatsCards';
 import { NewsGrid } from '../components/home/NewsGrid';
-import { useNews, useSiteSettings } from '../features/news/hooks/useNews';
+import { useNews, useSiteSettings, useAnnouncements } from '../features/news/hooks/useNews';
 import { AnnouncementsSection } from '../components/home/AnnouncementsSection';
 
 /** NOTE: Header & Footer are kept inline for now - will extract later **/
 
 const Home: React.FC = () => {
   // Use React Query hooks
-  // Use React Query hooks
   const { data: siteSettings } = useSiteSettings();
   const { data: news = [], isLoading: newsLoading, isError: newsError } = useNews();
+  const { data: announcements = [], isLoading: announcementsLoading } = useAnnouncements();
 
   return (
     <div className="min-h-screen bg-cream">
@@ -30,7 +30,7 @@ const Home: React.FC = () => {
       />
 
       {/* ANNOUNCEMENTS SECTION */}
-      <AnnouncementsSection />
+      <AnnouncementsSection announcements={announcements} loading={announcementsLoading} />
 
       {/* STATS CARDS */}
       <StatsCards

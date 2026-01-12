@@ -1,19 +1,15 @@
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { cmsApi } from '../../api/cms';
 import { Bell, ChevronRight } from 'lucide-react';
+import { NewsItem } from '../../api/cms';
 
-export const AnnouncementsSection: React.FC = () => {
-    const { data: announcements, isLoading } = useQuery({
-        queryKey: ['announcements'],
-        queryFn: async () => {
-            const response = await cmsApi.getAnnouncements();
-            return response.data;
-        }
-    });
+interface AnnouncementsSectionProps {
+    announcements: NewsItem[];
+    loading?: boolean;
+}
 
-    if (isLoading) {
+export const AnnouncementsSection: React.FC<AnnouncementsSectionProps> = ({ announcements, loading }) => {
+    if (loading) {
         return (
             <section className="bg-gradient-to-r from-[#FFF8E1] to-[#FFF3E0] py-6">
                 <div className="container mx-auto px-4">

@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django import forms
+from ckeditor.widgets import CKEditorWidget
+from django.db import models
 from .models import (
     SiteSetting, Banner, Menu, Page, Department,
     StaffMember, News, FAQ, Partner, ContactMessage
@@ -35,6 +38,10 @@ class PageAdmin(admin.ModelAdmin):
     search_fields = ['title_vi', 'title_km', 'content_vi']
     prepopulated_fields = {'slug': ('title_vi',)}
     ordering = ['menu_order']
+    
+    formfield_overrides = {
+        models.TextField: {'widget': CKEditorWidget},
+    }
 
 
 @admin.register(Department)
@@ -59,6 +66,10 @@ class NewsAdmin(admin.ModelAdmin):
     search_fields = ['title_vi', 'title_km', 'content_vi']
     prepopulated_fields = {'slug': ('title_vi',)}
     ordering = ['-published_at', '-created_at']
+    
+    formfield_overrides = {
+        models.TextField: {'widget': CKEditorWidget},
+    }
     
     fieldsets = (
         ('Nội dung', {

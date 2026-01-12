@@ -1,7 +1,4 @@
 import axiosClient from './client';
-// Using types from local definition to avoid circular checks or if types/cms.ts is missing
-// But wait, user said "declares SiteSettings locally". 
-// I should define it here and export it if the app uses it from here.
 
 export interface SiteSettings {
     site_name_vi: string;
@@ -37,11 +34,10 @@ export interface NewsItem {
     status: 'draft' | 'published' | 'archived';
     published_at: string | null;
     created_at: string;
+    view_count: number;
     // aliases for compatibility
     thumbnail_url?: string;
 }
-
-// ... existing code ...
 
 export interface StaffMember {
     id: string;
@@ -54,6 +50,22 @@ export interface StaffMember {
     bio_vi?: string;
 }
 
+export interface PaginatedResponse<T> {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: T[];
+}
+
+export interface Page {
+    id: string;
+    title_vi: string;
+    slug: string;
+    content_vi: string;
+    status: 'draft' | 'published';
+    updated_at: string;
+}
+
 export const cmsApi = {
     // Dashboard
     getDashboardStats: () => axiosClient.get('/core/dashboard/stats/'),
@@ -61,9 +73,9 @@ export const cmsApi = {
     // Site Settings
     getSettings: () => axiosClient.get<SiteSettings>('/cms/settings/'),
     updateSettings: (data: Partial<SiteSettings>) => axiosClient.post('/cms/settings/update_settings/', data),
-    // ... rest same
+
     // News
-    getNews: (params?: any) => axiosClient.get<NewsItem[]>('/cms/news/', { params }).then(res => ({ ...res, data: (res.data as any).results || res.data })),
+    getNews: (params?: any) => axiosClient.get<PaginatedResponse<NewsItem>>('/cms/news/', { params }),
     getNewsDetail: (slug: string) => axiosClient.get<NewsItem>(`/cms/news/${slug}/`),
     createNews: (data: Partial<NewsItem>) => axiosClient.post('/cms/news/', data),
     updateNews: (id: string, data: Partial<NewsItem>) => axiosClient.patch(`/cms/news/${id}/`, data),
@@ -90,12 +102,3 @@ export const cmsApi = {
     deleteStaff: (id: string) => axiosClient.delete(`/cms/staff/${id}/`),
     getLeadership: () => axiosClient.get<StaffMember[]>('/cms/staff/leadership/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
 };
-
-export interface Page {
-    id: string;
-    title_vi: string;
-    slug: string;
-    content_vi: string;
-    status: 'draft' | 'published';
-    updated_at: string;
-}

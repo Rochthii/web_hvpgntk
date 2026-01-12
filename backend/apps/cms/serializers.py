@@ -30,7 +30,7 @@ class NewsLiteSerializer(serializers.ModelSerializer):
     """Lighter serializer for list views"""
     class Meta:
         model = News
-        fields = ['id', 'title_vi', 'slug', 'excerpt_vi', 'featured_image_url', 'published_at', 'category']
+        fields = ['id', 'title_vi', 'slug', 'excerpt_vi', 'featured_image_url', 'published_at', 'category', 'view_count']
 
 class FAQSerializer(serializers.ModelSerializer):
     class Meta:
