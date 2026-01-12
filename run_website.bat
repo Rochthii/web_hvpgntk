@@ -4,7 +4,7 @@ color 0f
 
 echo ==================================================
 echo   HVPGNTK - WEB PORTAL LAUNCHER
-echo   (Backend: Django | Frontend: React/Vite)
+echo   (Backend: Django ^| Frontend: React/Vite)
 echo ==================================================
 echo.
 

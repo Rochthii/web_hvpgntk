@@ -77,7 +77,7 @@ class NewsViewSet(viewsets.ModelViewSet):
             user.role in ['admin', 'abbot', 'teacher', 'content', 'secretary'] or user.is_staff
         )
         if self.action in ['list', 'retrieve', 'featured', 'latest', 'announcements'] and not can_view_all:
-             return News.objects.filter(status='PUBLISHED').order_by('-published_at')
+             return News.objects.filter(status='published').order_by('-published_at')
         return News.objects.all().order_by('-created_at')
     
     def get_serializer_class(self):
@@ -111,7 +111,7 @@ class NewsViewSet(viewsets.ModelViewSet):
         """Get urgent announcements (Thông báo quan trọng)"""
         announcements = self.get_queryset().filter(
             is_announcement=True,
-            status='PUBLISHED'
+            status='published'
         )[:5]
         serializer = self.get_serializer(announcements, many=True)
         return Response(serializer.data)

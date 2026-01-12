@@ -29,8 +29,7 @@ const Home: React.FC = () => {
         siteSlogan={siteSettings?.site_slogan_vi || 'Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự'}
       />
 
-      {/* ANNOUNCEMENTS SECTION */}
-      <AnnouncementsSection announcements={announcements} loading={announcementsLoading} />
+
 
       {/* STATS CARDS */}
       <StatsCards

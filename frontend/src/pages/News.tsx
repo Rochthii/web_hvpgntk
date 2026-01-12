@@ -44,12 +44,11 @@ const News: React.FC = () => {
    // In a real scenario, we might fetch these from an API endpoint like /cms/news/categories/
    const CATEGORIES = [
       { label: 'Tất cả', value: '' },
-      { label: 'Phật sự', value: 'PHAT_SU' },
-      { label: 'Hoằng pháp', value: 'HOANG_PHAP' },
-      { label: 'Giáo dục', value: 'GIAO_DUC' },
-      { label: 'Từ thiện', value: 'TU_THIEN' },
-      { label: 'Văn hóa', value: 'VAN_HOA' },
-      { label: 'Thông báo', value: 'THONG_BAO' },
+      { label: 'Tin Học viện', value: 'academy_news' },
+      { label: 'Phật sự', value: 'buddhist_news' },
+      { label: 'Lễ hội Khmer', value: 'khmer_festival' },
+      { label: 'Thông báo', value: 'announcement' },
+      { label: 'Sự kiện', value: 'event' },
    ];
 
    if (loading && !newsData) {

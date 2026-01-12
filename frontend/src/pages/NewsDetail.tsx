@@ -59,7 +59,15 @@ const NewsDetail: React.FC = () => {
                     <div className="flex items-center space-x-4 text-sm text-gray-500 mb-4">
                         <span className="flex items-center"><Calendar size={14} className="mr-1" /> {new Date(news.published_at).toLocaleDateString('vi-VN')}</span>
                         <span className="flex items-center"><User size={14} className="mr-1" /> Ban Biên Tập</span>
-                        <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-xs font-semibold">{news.category}</span>
+                        <span className="bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-xs font-semibold">
+                            {{
+                                'academy_news': 'Tin Học viện',
+                                'buddhist_news': 'Phật sự cộng đồng',
+                                'khmer_festival': 'Lễ hội Khmer',
+                                'announcement': 'Thông báo',
+                                'event': 'Sự kiện'
+                            }[news.category] || news.category}
+                        </span>
                     </div>
                     <h1 className="text-3xl md:text-5xl font-serif font-bold text-[#6B2C2C] leading-tight mb-6">
                         {news.title_vi}

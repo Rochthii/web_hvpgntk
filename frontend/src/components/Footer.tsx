@@ -112,14 +112,7 @@ const Footer: React.FC = () => {
               </div>
             </div>
 
-            {/* Newsletter (Optional) */}
-            <div className="mt-8 bg-[#6B2C2C]/30 p-4 rounded-lg border border-[#6B2C2C]">
-              <h5 className="font-bold text-[#FFD700] mb-2 text-sm uppercase">Đăng ký nhận tin</h5>
-              <div className="flex gap-2">
-                <input type="email" placeholder="Nhập email của bạn..." className="flex-1 bg-transparent border-b border-[#E5CFA0] text-sm py-1 px-2 focus:border-[#FFD700] outline-none placeholder-[#E5CFA0]/50" />
-                <button className="text-sm font-bold text-[#FFD700] hover:text-white uppercase tracking-wider">Gửi</button>
-              </div>
-            </div>
+
           </div>
         </div>
 
