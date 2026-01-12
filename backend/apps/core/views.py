@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, permissions, status, parsers
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.utils import timezone
@@ -15,6 +15,46 @@ from apps.cms.models import News
 from rest_framework.views import APIView
 
 from apps.core.models import AuditLog
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.conf import settings
+import os
+import uuid
+
+class PublicFileUploadView(APIView):
+    """
+    API for uploading files publicly (for Admissions)
+    """
+    permission_classes = [permissions.AllowAny]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+
+    def post(self, request):
+        file_obj = request.FILES.get('file')
+        if not file_obj:
+            return Response({'error': 'No file provided'}, status=400)
+
+        # 1. Validate Size (< 5MB)
+        if file_obj.size > 5 * 1024 * 1024:
+            return Response({'error': 'File too large (Max 5MB)'}, status=400)
+
+        # 2. Validate Extension
+        ext = os.path.splitext(file_obj.name)[1].lower()
+        if ext not in ['.jpg', '.jpeg', '.png', '.pdf']:
+            return Response({'error': 'Invalid file type. Only JPG, PNG, PDF allowed.'}, status=400)
+
+        # 3. Save File
+        # Path: uploads/admissions/{year}/{uuid}{ext}
+        filename = f"{uuid.uuid4()}{ext}"
+        save_path = f"uploads/admissions/{filename}"
+        
+        path = default_storage.save(save_path, ContentFile(file_obj.read()))
+        
+        full_url = request.build_absolute_uri(settings.MEDIA_URL + path)
+        
+        return Response({
+            'url': full_url,
+            'path': path
+        })
 
 class ContactMessageView(generics.CreateAPIView):
     """

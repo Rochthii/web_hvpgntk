@@ -17,4 +17,15 @@ export const admissionsApi = {
 
     // Submit application
     submitApplication: (data: any) => client.post('/admissions/applications/', data),
+
+    // Upload file
+    uploadFile: (file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        return client.post<{ url: string, path: string }>('/core/upload/', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+    }
 };
