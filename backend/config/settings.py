@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'django_filters',
     'axes',  # Brute-force protection
+    'import_export', # Bulk Import Excelction
     
     # Local apps
     'ckeditor',
@@ -406,6 +407,8 @@ if not DEBUG:
 CORS_ALLOW_CREDENTIALS = True
 
 
+
+
 # API Documentation
 SPECTACULAR_SETTINGS = {
     'TITLE': 'HVPGNTK API',
@@ -413,6 +416,33 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.0/howto/static-files/
+
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Media files (User-uploaded content)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# Django Import Export
+IMPORT_EXPORT_USE_TRANSACTIONS = True
+IMPORT_EXPORT_SKIP_ADMIN_LOG = True
+from import_export.formats.base_formats import XLSX, CSV
+IMPORT_EXPORT_FORMATS = [XLSX, CSV]
+
+# Supabase Storage Configuration
+SUPABASE_URL = os.environ.get('SUPABASE_URL', '')
+SUPABASE_KEY = os.environ.get('SUPABASE_KEY', '')
+SUPABASE_BUCKET = os.environ.get('SUPABASE_BUCKET', 'hvpgntk-media')
+
+# Use Supabase Storage for file uploads
+if SUPABASE_URL and SUPABASE_KEY:
+    DEFAULT_FILE_STORAGE = 'config.storage_backends.SupabaseStorage'
 
 
 # File Upload Settings

@@ -1,10 +1,11 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import SiteSetting, Page, Department, StaffMember, News, FAQ, Partner
+from .models import SiteSetting, Page, Department, StaffMember, News, FAQ, Partner, ContactMessage, HistoryMilestone
 from .serializers import (
     SiteSettingSerializer, PageSerializer, DepartmentSerializer,
-    StaffMemberSerializer, NewsSerializer, NewsLiteSerializer, FAQSerializer, PartnerSerializer
+    StaffMemberSerializer, NewsSerializer, NewsLiteSerializer, FAQSerializer, PartnerSerializer,
+    ContactMessageSerializer, HistoryMilestoneSerializer
 )
 
 from apps.core.permissions import CanEditCMS, CanViewCMS
@@ -125,5 +126,21 @@ class FAQViewSet(viewsets.ReadOnlyModelViewSet):
 class PartnerViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Partner.objects.filter(is_active=True).order_by('display_order')
     serializer_class = PartnerSerializer
+    permission_classes = [permissions.AllowAny]
+    pagination_class = None
+
+
+class ContactMessageViewSet(viewsets.ModelViewSet):
+    queryset = ContactMessage.objects.all()
+    serializer_class = ContactMessageSerializer
+    permission_classes = [permissions.AllowAny] # Allow public to send messages
+
+
+class HistoryMilestoneViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet for History Milestones.
+    """
+    queryset = HistoryMilestone.objects.filter(is_active=True).order_by('display_order', 'year')
+    serializer_class = HistoryMilestoneSerializer
     permission_classes = [permissions.AllowAny]
     pagination_class = None

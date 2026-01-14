@@ -1,10 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { HistoryTimeline } from '../components/about/HistoryTimeline';
 import { MissionVisionCards } from '../components/about/MissionVisionCards';
 import { OrgChart } from '../components/about/OrgChart';
-import { historyData, missionData } from '../data/AboutData';
+import { missionData } from '../data/AboutData';
+import { cmsApi, HistoryMilestone } from '../api/cms';
 
 const About: React.FC = () => {
+  const [milestones, setMilestones] = useState<HistoryMilestone[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const response = await cmsApi.getHistoryMilestones();
+        // If API returns data, use it
+        if (response.data && response.data.length > 0) {
+          setMilestones(response.data);
+        } else {
+          // Fallback to empty or specific logic if needed
+        }
+      } catch (error) {
+        console.error("Failed to fetch history:", error);
+        // Fallback handled by empty state or UI
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHistory();
+  }, []);
+
   return (
     <div className="font-body">
 
@@ -36,7 +61,14 @@ const About: React.FC = () => {
             Chặng đường 20 năm xây dựng và phát triển (2006 - 2026).
           </p>
         </div>
-        <HistoryTimeline data={historyData} />
+
+        {loading ? (
+          <div className="flex justify-center py-10">
+            <div className="w-10 h-10 border-4 border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <HistoryTimeline data={milestones} />
+        )}
       </section>
 
       {/* Organizational Structure */}

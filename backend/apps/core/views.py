@@ -49,7 +49,11 @@ class PublicFileUploadView(APIView):
         
         path = default_storage.save(save_path, ContentFile(file_obj.read()))
         
-        full_url = request.build_absolute_uri(settings.MEDIA_URL + path)
+        # FIX: Use storage.url() to get the correct URL (Supabase or Local)
+        # detailed comparison: 
+        # Old: full_url = request.build_absolute_uri(settings.MEDIA_URL + path) -> Points to Django server (404)
+        # New: full_url = default_storage.url(path) -> Points to Supabase (200)
+        full_url = default_storage.url(path)
         
         return Response({
             'url': full_url,

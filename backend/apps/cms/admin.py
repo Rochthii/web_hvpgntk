@@ -4,7 +4,8 @@ from ckeditor.widgets import CKEditorWidget
 from django.db import models
 from .models import (
     SiteSetting, Banner, Menu, Page, Department,
-    StaffMember, News, FAQ, Partner, ContactMessage
+    StaffMember, News, FAQ, Partner, ContactMessage,
+    HistoryMilestone
 )
 
 
@@ -76,7 +77,8 @@ class NewsAdmin(admin.ModelAdmin):
             'fields': ('slug', 'title_vi', 'title_km', 'excerpt_vi', 'excerpt_km', 'content_vi', 'content_km')
         }),
         ('Media', {
-            'fields': ('featured_image_url', 'gallery_images')
+            'fields': ('featured_image_url', 'thumbnail_url', 'gallery_images'),
+            'description': "Chọn 'Ảnh đại diện' (upload) HOẶC nhập 'URL Thumbnail' (link ngoài)."
         }),
         ('Phân loại', {
             'fields': ('category', 'tags')
@@ -125,3 +127,12 @@ class ContactMessageAdmin(admin.ModelAdmin):
             'fields': ('status', 'replied_by', 'replied_at', 'reply_content')
         }),
     )
+
+
+@admin.register(HistoryMilestone)
+class HistoryMilestoneAdmin(admin.ModelAdmin):
+    list_display = ['year', 'title_vi', 'display_order', 'is_active', 'created_at']
+    list_editable = ['display_order', 'is_active']
+    search_fields = ['year', 'title_vi', 'title_km']
+    list_filter = ['is_active']
+    ordering = ['display_order', 'year']

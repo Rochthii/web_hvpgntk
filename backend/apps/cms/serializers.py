@@ -1,5 +1,6 @@
+
 from rest_framework import serializers
-from .models import SiteSetting, Page, Department, StaffMember, News, FAQ, Partner
+from .models import SiteSetting, Page, Department, StaffMember, News, FAQ, Partner, ContactMessage, HistoryMilestone
 
 class SiteSettingSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,6 +21,17 @@ class StaffMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = StaffMember
         fields = '__all__'
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactMessage
+        fields = ['id', 'sender_name', 'sender_email', 'sender_phone', 'subject', 'message', 'created_at']
+
+class HistoryMilestoneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HistoryMilestone
+        fields = ['id', 'year', 'title_vi', 'title_km', 'description_vi', 'description_km', 'image', 'display_order']
+        read_only_fields = ['id', 'created_at']
 
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:

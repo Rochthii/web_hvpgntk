@@ -1,8 +1,8 @@
 import React from 'react';
-import { Milestone } from '../../data/AboutData';
+import { HistoryMilestone } from '../../api/cms';
 
 interface HistoryTimelineProps {
-    data: Milestone[];
+    data: HistoryMilestone[];
 }
 
 export const HistoryTimeline: React.FC<HistoryTimelineProps> = ({ data }) => {
@@ -14,7 +14,7 @@ export const HistoryTimeline: React.FC<HistoryTimelineProps> = ({ data }) => {
             <div className="flex flex-col gap-12">
                 {data.map((item, index) => (
                     <div
-                        key={index}
+                        key={item.id || index}
                         className={`flex flex-col md:flex-row items-center gap-8 ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'
                             }`}
                     >
@@ -28,10 +28,10 @@ export const HistoryTimeline: React.FC<HistoryTimelineProps> = ({ data }) => {
                                 {item.year}
                             </span>
                             <h3 className="text-xl font-bold text-secondary mb-3 font-heading flex items-center gap-3">
-                                <span className="text-[#D4AF37] text-2xl">•</span> {item.title}
+                                <span className="text-[#D4AF37] text-2xl">•</span> {item.title_vi}
                             </h3>
                             <p className="text-gray-600 leading-relaxed text-sm text-justify">
-                                {item.description}
+                                {item.description_vi}
                             </p>
                         </div>
 
@@ -43,15 +43,17 @@ export const HistoryTimeline: React.FC<HistoryTimelineProps> = ({ data }) => {
                         {/* Image (Optional) or Spacer */}
                         <div className="flex-1 w-full hidden md:block">
                             {/* We can place an image here later if available, for now it balances the layout */}
-                            {item.image && (
+                            {item.image ? (
                                 <div className="w-full h-48 rounded-lg overflow-hidden border-2 border-[#D4AF37]/30 shadow-md">
                                     <img
                                         src={item.image}
-                                        alt={item.title}
+                                        alt={item.title_vi}
                                         className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                                         onError={(e) => (e.target as HTMLImageElement).src = '/images/temple-hero.jpg'} // Fallback
                                     />
                                 </div>
+                            ) : (
+                                <div className="w-full h-48 bg-transparent"></div>
                             )}
                         </div>
                     </div>

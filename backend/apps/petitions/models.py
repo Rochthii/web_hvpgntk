@@ -27,6 +27,7 @@ class PetitionType(BaseModel):
     code = models.CharField(
         max_length=50, 
         unique=True,
+        default="DEFAULT",
         verbose_name="Mã loại đơn",
         help_text="Ví dụ: LEAVE, DEFER, TRANSCRIPT"
     )

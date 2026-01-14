@@ -20,8 +20,8 @@ class SiteSetting(models.Model):
     site_slogan_km = models.CharField(max_length=300, blank=True, verbose_name="Khẩu hiệu (Tiếng Khmer)")
     
     # Logo
-    logo_url = models.URLField(blank=True, verbose_name="URL Logo")
-    favicon_url = models.URLField(blank=True, verbose_name="URL Favicon")
+    logo_url = models.ImageField(upload_to='site/logos/', blank=True, null=True, verbose_name="Logo Website")
+    favicon_url = models.ImageField(upload_to='site/favicons/', blank=True, null=True, verbose_name="Favicon")
     
     # Liên hệ
     contact_email = models.EmailField(blank=True, verbose_name="Email liên hệ")
@@ -80,8 +80,18 @@ class Banner(models.Model):
     subtitle_vi = models.CharField(max_length=300, blank=True, verbose_name="Phụ đề (Tiếng Việt)")
     subtitle_km = models.CharField(max_length=300, blank=True, verbose_name="Phụ đề (Tiếng Khmer)")
     
-    image_url = models.URLField(verbose_name="URL Hình ảnh (Desktop)")
-    image_url_mobile = models.URLField(blank=True, verbose_name="URL Hình ảnh (Mobile)")
+    image_url = models.ImageField(
+        upload_to='banners/images/',
+        verbose_name="Hình ảnh (Desktop)",
+        help_text="Kích thước đề xuất: 1920x600px"
+    )
+    image_url_mobile = models.ImageField(
+        upload_to='banners/mobile/',
+        blank=True,
+        null=True,
+        verbose_name="Hình ảnh (Mobile)",
+        help_text="Kích thước đề xuất: 800x600px"
+    )
     
     link_url = models.URLField(blank=True, verbose_name="Đường dẫn khi click")
     link_target = models.CharField(max_length=20, default='_self', verbose_name="Cách mở tab")
@@ -183,7 +193,12 @@ class Page(models.Model):
     excerpt_vi = models.TextField(blank=True, verbose_name="Tóm tắt (Tiếng Việt)")
     excerpt_km = models.TextField(blank=True, verbose_name="Tóm tắt (Tiếng Khmer)")
     
-    featured_image_url = models.URLField(blank=True, verbose_name="URL Ảnh đại diện")
+    featured_image_url = models.ImageField(
+        upload_to='pages/images/',
+        blank=True,
+        null=True,
+        verbose_name="Ảnh đại diện"
+    )
     gallery_images = models.JSONField(null=True, blank=True, verbose_name="Thư viện ảnh")
     
     # SEO
@@ -264,7 +279,12 @@ class Department(models.Model):
         verbose_name="Trưởng khoa"
     )
     
-    image_url = models.URLField(blank=True, verbose_name="URL Ảnh")
+    image_url = models.ImageField(
+        upload_to='departments/images/',
+        blank=True,
+        null=True,
+        verbose_name="Ảnh đại diện Khoa"
+    )
     display_order = models.IntegerField(default=0, verbose_name="Thứ tự")
     is_active = models.BooleanField(default=True, verbose_name="Kích hoạt")
     
@@ -320,7 +340,12 @@ class StaffMember(models.Model):
     bio_vi = models.TextField(blank=True, verbose_name="Tiểu sử (Tiếng Việt)")
     bio_km = models.TextField(blank=True, verbose_name="Tiểu sử (Tiếng Khmer)")
     
-    photo_url = models.URLField(blank=True, verbose_name="URL Ảnh")
+    photo_url = models.ImageField(
+        upload_to='staff/photos/',
+        blank=True,
+        null=True,
+        verbose_name="Ảnh chân dung"
+    )
     email = models.EmailField(blank=True, verbose_name="Email")
     phone = models.CharField(max_length=20, blank=True, verbose_name="Số điện thoại")
     
@@ -377,7 +402,20 @@ class News(models.Model):
     content_vi = models.TextField(verbose_name="Nội dung (Tiếng Việt)")
     content_km = models.TextField(blank=True, verbose_name="Nội dung (Tiếng Khmer)")
     
-    featured_image_url = models.URLField(blank=True, verbose_name="URL Ảnh đại diện")
+    
+    featured_image_url = models.ImageField(
+        upload_to='news/images/',
+        blank=True,
+        null=True,
+        default="",
+        verbose_name="Ảnh đại diện",
+        help_text="Upload ảnh trực tiếp (khuyến nghị)" 
+    )
+    thumbnail_url = models.URLField(
+        blank=True,
+        verbose_name="URL Thumbnail (tuỳ chọn)",
+        help_text="Hoặc dán link ảnh từ nguồn bên ngoài"
+    )
     gallery_images = models.JSONField(null=True, blank=True, verbose_name="Thư viện ảnh")
     
     category = models.CharField(
@@ -487,7 +525,7 @@ class Partner(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
     name = models.CharField(max_length=200)
-    logo_url = models.URLField(blank=True)
+    logo_url = models.ImageField(upload_to='partners/logos/', blank=True, null=True, verbose_name="Logo Đối tác")
     website_url = models.URLField(blank=True)
     
     partner_type = models.CharField(
@@ -559,3 +597,35 @@ class ContactMessage(models.Model):
     
     def __str__(self):
         return f"{self.sender_name} - {self.subject or 'Không có tiêu đề'}"
+
+
+class HistoryMilestone(models.Model):
+    """
+    Model for History Timeline milestones.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
+    year = models.CharField(max_length=20, verbose_name="Năm (Ví dụ: 2006)")
+    
+    title_vi = models.CharField(max_length=200, verbose_name="Tiêu đề (Tiếng Việt)")
+    title_km = models.CharField(max_length=200, blank=True, verbose_name="Tiêu đề (Tiếng Khmer)")
+    
+    description_vi = models.TextField(verbose_name="Mô tả (Tiếng Việt)")
+    description_km = models.TextField(blank=True, verbose_name="Mô tả (Tiếng Khmer)")
+    
+    image = models.ImageField(upload_to='history/images/', blank=True, null=True, verbose_name="Ảnh minh họa")
+    
+    display_order = models.IntegerField(default=0, verbose_name="Thứ tự hiển thị")
+    is_active = models.BooleanField(default=True, verbose_name="Hiển thị")
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'history_milestones'
+        verbose_name = 'Mốc lịch sử'
+        verbose_name_plural = 'Mốc lịch sử'
+        ordering = ['display_order', 'year']
+    
+    def __str__(self):
+        return f"{self.year} - {self.title_vi}"

@@ -100,5 +100,17 @@ export const cmsApi = {
     createStaff: (data: Partial<StaffMember>) => axiosClient.post('/cms/staff/', data),
     updateStaff: (id: string, data: Partial<StaffMember>) => axiosClient.patch(`/cms/staff/${id}/`, data),
     deleteStaff: (id: string) => axiosClient.delete(`/cms/staff/${id}/`),
-    getLeadership: () => axiosClient.get<StaffMember[]>('/cms/staff/leadership/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
+    // History Milestones
+    getHistoryMilestones: () => axiosClient.get<HistoryMilestone[]>('/cms/history-milestones/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
 };
+
+export interface HistoryMilestone {
+    id: string;
+    year: string;
+    title_vi: string;
+    title_km?: string;
+    description_vi: string;
+    description_km?: string;
+    image: string;
+    display_order: number;
+}

@@ -4,17 +4,19 @@ Admin configuration for User models.
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User, MonkProfile, LaypersonProfile
+from import_export.admin import ImportExportModelAdmin
+from .resources import MonkProfileResource
 
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    list_display = ['email', 'phone', 'user_type', 'role', 'is_active', 'is_verified']
+    list_display = ['username', 'email', 'phone', 'user_type', 'role', 'is_active', 'is_verified']
     list_filter = ['user_type', 'role', 'is_active', 'is_verified']
-    search_fields = ['email', 'phone']
+    search_fields = ['username', 'email', 'phone']
     ordering = ['-created_at']
     
     fieldsets = (
-        (None, {'fields': ('email', 'phone', 'password')}),
+        (None, {'fields': ('username', 'email', 'phone', 'password')}),
         ('Phân loại', {'fields': ('user_type', 'role')}),
         ('Trạng thái', {'fields': ('is_active', 'is_verified', 'is_staff', 'is_superuser')}),
         ('Cài đặt', {'fields': ('preferred_language',)}),
@@ -24,7 +26,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'phone', 'password1', 'password2', 'user_type', 'role'),
+            'fields': ('username', 'email', 'phone', 'password1', 'password2', 'user_type', 'role'),
         }),
     )
     
@@ -32,7 +34,8 @@ class UserAdmin(BaseUserAdmin):
 
 
 @admin.register(MonkProfile)
-class MonkProfileAdmin(admin.ModelAdmin):
+class MonkProfileAdmin(ImportExportModelAdmin):
+    resource_class = MonkProfileResource
     list_display = ['dharma_name_khmer', 'student_code', 'vassa_count', 'status', 'cohort']
     list_filter = ['status', 'cohort', 'current_year']
     search_fields = ['dharma_name_khmer', 'dharma_name_pali', 'student_code']

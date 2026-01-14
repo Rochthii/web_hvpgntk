@@ -16,19 +16,19 @@ from django.utils import timezone
 class UserManager(BaseUserManager):
     """Custom user manager for email/phone authentication."""
     
-    def create_user(self, email=None, phone=None, password=None, **extra_fields):
-        if not email and not phone:
-            raise ValueError('User must have either email or phone')
+    def create_user(self, email=None, phone=None, username=None, password=None, **extra_fields):
+        if not email and not phone and not username:
+            raise ValueError('User must have either email, phone or username')
         
         if email:
             email = self.normalize_email(email)
         
-        user = self.model(email=email, phone=phone, **extra_fields)
+        user = self.model(email=email, phone=phone, username=username, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
     
-    def create_superuser(self, email=None, phone=None, password=None, **extra_fields):
+    def create_superuser(self, email=None, phone=None, username=None, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
@@ -36,7 +36,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('role', 'admin')
         extra_fields.setdefault('user_type', 'layperson')
         
-        return self.create_user(email, phone, password, **extra_fields)
+        return self.create_user(email, phone, username, password, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -63,6 +63,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Login credentials
     email = models.EmailField(unique=True, null=True, blank=True)
     phone = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    username = models.CharField(max_length=50, unique=True, null=True, blank=True, verbose_name="Tên đăng nhập / Mã SV")
     
     # User classification
     user_type = models.CharField(
@@ -108,12 +109,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         indexes = [
             models.Index(fields=['email']),
             models.Index(fields=['phone']),
+            models.Index(fields=['username']),
             models.Index(fields=['role']),
             models.Index(fields=['user_type']),
         ]
     
     def __str__(self):
-        return self.email or self.phone or str(self.id)
+        return self.username or self.email or self.phone or str(self.id)
     
     def get_display_name(self):
         """Lấy tên hiển thị dựa trên loại người dùng."""
@@ -121,12 +123,12 @@ class User(AbstractBaseUser, PermissionsMixin):
             try:
                 return f"ភិក្ខុ {self.monk_profile.dharma_name_khmer}"
             except MonkProfile.DoesNotExist:
-                return self.email or self.phone
+                return self.username or self.email or self.phone
         else:
             try:
                 return self.layperson_profile.full_name
             except LaypersonProfile.DoesNotExist:
-                return self.email or self.phone
+                return self.username or self.email or self.phone
 
 
 class MonkProfile(models.Model):
@@ -178,9 +180,9 @@ class MonkProfile(models.Model):
     vassa_updated_at = models.DateTimeField(null=True, blank=True)
     
     # Tài liệu
-    photo_url = models.URLField(blank=True)
-    ordination_certificate_url = models.URLField(blank=True)  # Chứng điệp thọ giới
-    id_card_url = models.URLField(blank=True)  # CMND/CCCD
+    photo_url = models.ImageField(upload_to='monks/photos/', blank=True, null=True, verbose_name="Ảnh chân dung")
+    ordination_certificate_url = models.ImageField(upload_to='monks/certs/', blank=True, null=True, verbose_name="Chứng điệp thọ giới")
+    id_card_url = models.ImageField(upload_to='monks/ids/', blank=True, null=True, verbose_name="CMND/CCCD")
     
     # Học vấn thế tục
     secular_education = models.JSONField(null=True, blank=True)
@@ -272,8 +274,8 @@ class LaypersonProfile(models.Model):
     refuge_temple = models.CharField(max_length=200, blank=True)
     
     # Tài liệu
-    photo_url = models.URLField(blank=True)
-    id_card_url = models.URLField(blank=True)
+    photo_url = models.ImageField(upload_to='laypeople/photos/', blank=True, null=True, verbose_name="Ảnh chân dung")
+    id_card_url = models.ImageField(upload_to='laypeople/ids/', blank=True, null=True, verbose_name="CMND/CCCD")
     
     # Thông tin học tại Học viện
     student_code = models.CharField(max_length=20, unique=True, null=True, blank=True)
