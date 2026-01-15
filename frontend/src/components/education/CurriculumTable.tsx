@@ -1,6 +1,12 @@
 import React from 'react';
-import { Subject } from '../../data/EducationData';
 import { BookOpen, Star } from 'lucide-react';
+
+interface Subject {
+    id: string;
+    code: string;
+    name: string;
+    credits: number;
+}
 
 interface CurriculumTableProps {
     subjects: Subject[];

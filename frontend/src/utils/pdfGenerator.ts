@@ -1,6 +1,18 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { educationData, YearCurriculum } from '../data/EducationData';
+
+// Define interfaces locally to match Education page
+interface Subject {
+    id: string;
+    code: string;
+    name: string;
+    credits: number;
+}
+
+interface YearCurriculum {
+    year: number;
+    subjects: Subject[];
+}
 
 // Helper to load font
 const loadFont = async (url: string): Promise<string> => {
@@ -15,7 +27,7 @@ const loadFont = async (url: string): Promise<string> => {
     return window.btoa(binary);
 };
 
-export const generateCurriculumPDF = async () => {
+export const generateCurriculumPDF = async (educationData: YearCurriculum[]) => {
     const doc = new jsPDF();
 
     // Add metadata

@@ -86,7 +86,7 @@ const Education: React.FC = () => {
     setIsGenerating(true);
     const toastId = toast.loading(t('common.generating', 'Đang tạo file PDF...'));
     try {
-      await generateCurriculumPDF();
+      await generateCurriculumPDF(educationData);
       toast.success(t('common.success', 'Tải xuống thành công!'), { id: toastId });
     } catch (error) {
       console.error(error);
