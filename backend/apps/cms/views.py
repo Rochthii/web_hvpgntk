@@ -18,13 +18,13 @@ class SiteSettingViewSet(viewsets.ViewSet):
     
     def list(self, request):
         settings = SiteSetting.get_settings()
-        serializer = SiteSettingSerializer(settings)
+        serializer = SiteSettingSerializer(settings, context={'request': request})
         return Response(serializer.data)
 
     @action(detail=False, methods=['post', 'patch'], permission_classes=[CanEditCMS])
     def update_settings(self, request):
         settings = SiteSetting.get_settings()
-        serializer = SiteSettingSerializer(settings, data=request.data, partial=True)
+        serializer = SiteSettingSerializer(settings, data=request.data, partial=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
