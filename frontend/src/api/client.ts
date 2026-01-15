@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { tokenManager } from '../lib/tokenManager';
 import { authApi } from './auth';
+import i18n from '../i18n';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 
@@ -10,13 +11,15 @@ const client = axios.create({
     headers: { 'Content-Type': 'application/json' },
 });
 
-// Request interceptor - attach token
+// Request interceptor - attach token and language
 client.interceptors.request.use(
     (config) => {
         const token = tokenManager.getAccessToken();
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+        // Add current language to Accept-Language header
+        config.headers['Accept-Language'] = i18n.language || 'vi';
         return config;
     },
     (error) => Promise.reject(error)

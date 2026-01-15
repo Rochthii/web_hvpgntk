@@ -37,6 +37,9 @@ export interface NewsItem {
     view_count: number;
     // aliases for compatibility
     thumbnail_url?: string;
+    title?: string;
+    excerpt?: string;
+    content?: string;
 }
 
 export interface StaffMember {
@@ -111,6 +114,9 @@ export interface HistoryMilestone {
     title_km?: string;
     description_vi: string;
     description_km?: string;
+    // Localized fields returned by BilingualSerializerMixin
+    title?: string;
+    description?: string;
     image: string;
     display_order: number;
 }

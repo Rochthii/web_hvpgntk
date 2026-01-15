@@ -8,16 +8,14 @@ from django.utils import timezone
 from apps.cms.models import News
 from datetime import timedelta
 import uuid
-
+import os
+from django.core.files import File
 
 class Command(BaseCommand):
     help = 'Seeds 10 real news articles about HVPGNTK'
 
     def handle(self, *args, **options):
         self.stdout.write('Seeding news articles...')
-
-        # Delete existing news if you want a clean slate
-        # News.objects.all().delete()
 
         base_url = '/images/news/'
 
@@ -26,7 +24,9 @@ class Command(BaseCommand):
             {
                 'slug': 'le-khanh-thanh-chanh-dien-2025',
                 'title_vi': 'Lễ Khánh Thành Chánh Điện và Kiết Giới Sima tại Học viện Phật giáo Nam tông Khmer',
+                'title_km': 'ពិធីសម្ពោធព្រះវិហារធំ និងបញ្ចុះសីមានៅពុទ្ធិកវិទ្យាល័យ',
                 'excerpt_vi': 'Ngày 15/2/2025, Học viện Phật giáo Nam tông Khmer tổ chức trọng thể Lễ Khánh thành Chánh điện - công trình 20 năm xây dựng, đánh dấu bước ngoặt quan trọng trong sự nghiệp đào tạo Tăng tài.',
+                'excerpt_km': 'នៅថ្ងៃទី១៥/០២/២០២៥ ពុទ្ធិកវិទ្យាល័យបានរៀបចំពិធីសម្ពោធព្រះវិហារធំ បញ្ចប់សំណង់បន្ទាប់ពីការសាងសង់ជិត២០ឆ្នាំ។',
                 'content_vi': '''
 <h2>Sự kiện trọng đại của Phật giáo Nam tông Khmer</h2>
 
@@ -42,6 +42,10 @@ class Command(BaseCommand):
 
 <blockquote>"Đây là niềm vui lớn của đồng bào Phật tử Khmer. Chánh điện hoàn thành không chỉ là công trình kiến trúc mà còn là biểu tượng của sự đoàn kết, tinh thần hộ trì Tam Bảo của toàn thể Tăng Ni, Phật tử." - Trích lời Ban Giám hiệu Học viện.</blockquote>
                 ''',
+                'content_km': '''
+<p>បន្ទាប់ពីការសាងសង់ជិត២០ឆ្នាំ ព្រះវិហារធំរបស់ពុទ្ធិកវិទ្យាល័យពុទ្ធសាសនានិកាយខ្មែរ Can Tho ត្រូវបានសម្ពោធជាផ្លូវការនៅថ្ងៃទី១៥ ខែកុម្ភៈ ឆ្នាំ២០៥...</p>
+<p>ពិធីនេះគឺជាព្រឹត្តិការណ៍ប្រវត្តិសាស្ត្រដែលសម្គាល់ការបញ្ចប់នៃធាតុសំខាន់ៗរបស់សាលា។</p>
+                ''',
                 'featured_image_url': f'{base_url}buddhist_ceremony.png',
                 'category': 'academy_news',
                 'is_pinned': True,
@@ -53,7 +57,9 @@ class Command(BaseCommand):
             {
                 'slug': 'tong-ket-khoa-thien-vipassana-2024',
                 'title_vi': 'Tổng Kết Khóa Thiền Vipassana: Hơn 200 Thiền Sinh Hoàn Thành Chương Trình',
+                'title_km': 'ពិធីបិទវគ្គសមាធិវិបស្សនា៖ សិក្ខាកាមជាង ២០០ អង្គ/នាក់ បានបញ្ចប់',
                 'excerpt_vi': 'Ngày 3/8/2024, Học viện đã tổ chức lễ tổng kết khóa thiền Vipassana với sự tham gia của hơn 200 thiền sinh và Phật tử, đánh dấu thành công của chương trình tu học mùa hè.',
+                'excerpt_km': 'នៅថ្ងៃទី៣/៨/២០២៤ ពុទ្ធិកវិទ្យាល័យបានរៀបចំពិធីបិទវគ្គសមាធិវិបស្សនា ដោយមានការចូលរួមពីសិក្ខាកាមជាង២០០អង្គ/នាក់។',
                 'content_vi': '''
 <h2>Khóa Thiền Vipassana - Trở về với hiện tại</h2>
 
@@ -77,6 +83,10 @@ class Command(BaseCommand):
 
 <p>Kết thúc khóa thiền, nhiều thiền sinh chia sẻ những trải nghiệm sâu sắc về sự an lạc, tĩnh tâm và cái nhìn mới về cuộc sống.</p>
                 ''',
+                'content_km': '''
+<p>នៅថ្ងៃទី៣ ខែសីហា ឆ្នាំ២០២៤ ពុទ្ធិកវិទ្យាល័យពុទ្ធសាសនានិកាយខ្មែរ បានរៀបចំយ៉ាងឱឡារិកនូវពិធីបិទវគ្គសមាធិវិបស្សនារដូវក្តៅ...</p>
+<p>សមាធិវិបស្សនា គឺជាវិធីសាស្ត្រសមាធិបុរាណរបស់ពុទ្ធសាសនាថេរវាទ ដែលព្រះពុទ្ធបានបង្រៀនជាង ២.៥០០ ឆ្នាំមុន។</p>
+                ''',
                 'featured_image_url': f'{base_url}vipassana_meditation.png',
                 'category': 'academy_news',
                 'is_pinned': False,
@@ -88,7 +98,9 @@ class Command(BaseCommand):
             {
                 'slug': 'mung-tet-chol-chnam-thmay-2024',
                 'title_vi': 'Rộn Ràng Không Khí Đón Tết Chol Chnam Thmay 2024 tại Học Viện',
+                'title_km': 'បរិយាកាសរីករាយទទួលបុណ្យចូលឆ្នាំថ្មីប្រពៃណីជាតិខ្មែរ ឆ្នាំ២០២៤',
                 'excerpt_vi': 'Từ ngày 13-16/4/2024, Học viện Phật giáo Nam tông Khmer tổ chức các hoạt động mừng Tết cổ truyền Chol Chnam Thmay với nhiều nghi lễ truyền thống đặc sắc.',
+                'excerpt_km': 'ចាប់ពីថ្ងៃទី១៣-១៦/៤/២០២៤ ពុទ្ធិកវិទ្យាល័យរៀបចំកម្មវិធីបុណ្យចូលឆ្នាំថ្មីប្រពៃណីជាតិខ្មែរ ជាមួយនឹងពិធីសាសនាជាច្រើន។',
                 'content_vi': '''
 <h2>Tết Chol Chnam Thmay - Nét đẹp văn hóa Khmer</h2>
 
@@ -106,6 +118,10 @@ class Command(BaseCommand):
 
 <p>Tại Học viện, các Tăng sinh đã chuẩn bị chu đáo cho dịp lễ với việc trang hoàng khuôn viên, chuẩn bị các món ăn truyền thống như bánh tét, bánh gừng, bánh ít. Đặc biệt, các hoạt động văn hóa như hát Aday, múa Lâm thôn đã thu hút đông đảo Phật tử về tham dự.</p>
                 ''',
+                'content_km': '''
+<p>បុណ្យចូលឆ្នាំថ្មី គឺជាបុណ្យប្រពៃណីជាតិធំបំផុតប្រចាំឆ្នាំរបស់ជនជាតិខ្មែរ។</p>
+<p>នៅពុទ្ធិកវិទ្យាល័យ សមណនិស្សិតបានរៀបចំយ៉ាងយកចិត្តទុកដាក់សម្រាប់ពិធីបុណ្យនេះ ជាមួយនឹងការតុបតែងបរិវេណ និងរៀបចំម្ហូបអាហារប្រពៃណី។</p>
+                ''',
                 'featured_image_url': f'{base_url}khmer_new_year.png',
                 'category': 'khmer_festival',
                 'is_pinned': False,
@@ -117,7 +133,9 @@ class Command(BaseCommand):
             {
                 'slug': 'le-ok-om-bok-cung-trang-2024',
                 'title_vi': 'Lung Linh Đêm Hội Ok Om Bok - Lễ Cúng Trăng Của Đồng Bào Khmer',
+                'title_km': 'រាត្រីដ៏ស្រស់ស្អាតនៃពិធីបុណ្យអកអំបុក - សំពះព្រះខែ',
                 'excerpt_vi': 'Lễ hội Ok Om Bok 2024 được tổ chức vào ngày rằm tháng 10 âm lịch với nghi thức cúng trăng linh thiêng, đua ghe Ngo và nhiều hoạt động văn hóa đặc sắc.',
+                'excerpt_km': 'ពិធីបុណ្យអកអំបុក ឆ្នាំ២០២៤ ត្រូវបានរៀបចំឡើងនៅថ្ងៃពេញបូណ៌មីខែកត្ដិក ជាមួយនឹងពិធីសំពះព្រះខែ និងការប្រណាំងទូកង។',
                 'content_vi': '''
 <h2>Ok Om Bok - Di sản văn hóa phi vật thể Quốc gia</h2>
 
@@ -137,6 +155,10 @@ class Command(BaseCommand):
 
 <p>Lễ hội Ok Om Bok đã được Bộ Văn hóa, Thể thao và Du lịch công nhận là Di sản văn hóa phi vật thể Quốc gia, khẳng định giá trị văn hóa đặc sắc của đồng bào Khmer.</p>
                 ''',
+                'content_km': '''
+<p>ពិធីបុណ្យអកអំបុក ឬហៅថា "ពិធីសំពះព្រះខែ" គឺជាពិធីបុណ្យធំមួយក្នុងចំណោមពិធីបុណ្យធំទាំងបីប្រចាំឆ្នាំរបស់ជនជាតិខ្មែរនៅតំបន់ណាមបូ។</p>
+<p>តាមរឿងព្រេង ព្រះចន្ទគឺជាទេវតាដែលការពាររដូវដំណាំ ធ្វើឱ្យអាកាសធាតុមានតុល្យភាព និងនាំមកនូវភាពសម្បូរសប្បាយដល់មនុស្ស។</p>
+                ''',
                 'featured_image_url': f'{base_url}ok_om_bok.png',
                 'category': 'khmer_festival',
                 'is_pinned': False,
@@ -148,7 +170,9 @@ class Command(BaseCommand):
             {
                 'slug': 'trao-hoc-bong-duc-nhuan-2024',
                 'title_vi': 'Chư Tôn Đức Hội Đồng Chứng Minh Trao Học Bổng Đức Nhuận Cho Tăng Sinh',
+                'title_km': 'ព្រះថេរានុត្ថេរៈជាន់ខ្ពស់ប្រគល់អាហារូបករណ៍ Đức Nhuận ដល់សមណនិស្សិត',
                 'excerpt_vi': 'Ngày 13-14/7/2024, Chư vị Trưởng lão Hội đồng Chứng minh GHPGVN đã đến thăm Học viện và trao học bổng Đức Nhuận cho các Tăng sinh xuất sắc.',
+                'excerpt_km': 'ថ្ងៃទី១៣-១៤/៧/២០២៤ ព្រះថេរានុត្ថេរៈនៃក្រុមប្រឹក្សាភិបាលសង្ឃ បាននិមន្តមកសួរសុខទុក្ខ និងប្រគល់អាហារូបករណ៍។',
                 'content_vi': '''
 <h2>Học bổng Đức Nhuận - Khuyến khích Tăng tài</h2>
 
@@ -164,6 +188,10 @@ class Command(BaseCommand):
 
 <blockquote>"Các Tăng sinh hãy lấy Giới - Định - Tuệ làm nền tảng, chuyên cần học tập kinh điển Pali, giữ gìn và phát huy bản sắc văn hóa Phật giáo Nam tông Khmer. Mai sau có đủ tài đức, các con sẽ là những vị Tăng tài hoằng pháp lợi sinh, phụng sự đạo pháp và dân tộc."</blockquote>
                 ''',
+                'content_km': '''
+<p>ក្នុងរយៈពេលពីរថ្ងៃទី១៣-១៤ ខែកក្កដា ឆ្នាំ២០២៤ ពុទ្ធិកវិទ្យាល័យពុទ្ធសាសនានិកាយខ្មែរ មានកិត្តិយសស្វាគមន៍ព្រះថេរានុត្ថេរៈជាន់ខ្ពស់...</p>
+<p>អាហារូបករណ៍ Đức Nhuận ត្រូវបានបង្កើតឡើងដើម្បីលើកតម្កើងនិងលើកទឹកចិត្តដល់សមណនិស្សិតដែលមានស្នាដៃសិក្សាល្អ។</p>
+                ''',
                 'featured_image_url': f'{base_url}scholarship.png',
                 'category': 'academy_news',
                 'is_pinned': False,
@@ -175,7 +203,9 @@ class Command(BaseCommand):
             {
                 'slug': 'le-sene-dolta-bao-hieu-2024',
                 'title_vi': 'Lễ Sene Dolta - Mùa Báo Hiếu Của Đồng Bào Khmer',
+                'title_km': 'ពិធីបុណ្យភ្ជុំបិណ្ឌ - រដូវកាលតបស្នងសងគុណរបស់ជនជាតិខ្មែរ',
                 'excerpt_vi': 'Lễ Sene Dolta là dịp để người Khmer tưởng nhớ công ơn tổ tiên, ông bà, cha mẹ. Năm 2024, Học viện tổ chức lễ với nhiều nghi thức truyền thống trang nghiêm.',
+                'excerpt_km': 'ពិធីបុណ្យភ្ជុំបិណ្ឌ គឺជាឱកាសសម្រាប់ជនជាតិខ្មែររំលឹកគុណដូនតា។ ឆ្នាំ២០២៤ ពុទ្ធិកវិទ្យាល័យរៀបចំពិធីនេះយ៉ាងឱឡារិក។',
                 'content_vi': '''
 <h2>Sene Dolta - Vu Lan của đồng bào Khmer</h2>
 
@@ -195,6 +225,10 @@ class Command(BaseCommand):
 
 <p>Tại Học viện, lễ Sene Dolta năm 2024 đã thu hút hàng ngàn Phật tử từ các tỉnh Cần Thơ, An Giang, Sóc Trăng, Kiên Giang... về tham dự. Không khí trang nghiêm, thiêng liêng lan tỏa khắp khuôn viên Học viện.</p>
                 ''',
+                'content_km': '''
+<p>Sene Dolta (​បុណ្យភ្ជុំបិណ្ឌ) គឺជាពិធីបុណ្យធំទីពីរប្រចាំឆ្នាំរបស់ជនជាតិខ្មែរ...</p>
+<p>ក្នុងរយៈពេល ១៥ ថ្ងៃនៃពិធីបុណ្យភ្ជុំបិណ្ឌ វិញ្ញាណក្ខន្ធអ្នកដែលបានចែកឋានទៅត្រូវបានអនុញ្ញាតឱ្យត្រឡប់មកសួរសុខទុក្ខកូនចៅ។</p>
+                ''',
                 'featured_image_url': f'{base_url}sene_dolta.png',
                 'category': 'khmer_festival',
                 'is_pinned': False,
@@ -206,7 +240,9 @@ class Command(BaseCommand):
             {
                 'slug': 'chuong-trinh-dao-tao-cu-nhan-phat-hoc-pali',
                 'title_vi': 'Giới Thiệu Chương Trình Đào Tạo Cử Nhân Phật Học Pali - Khmer',
+                'title_km': 'ណែនាំកម្មវិធីបណ្តុះបណ្តាលបរិញ្ញាបត្រពុទ្ធសាសនា បាលី-ខ្មែរ',
                 'excerpt_vi': 'Học viện Phật giáo Nam tông Khmer là nơi duy nhất tại Việt Nam đào tạo Cử nhân Phật học chuyên ngành Pali - Khmer, với chương trình 4 năm bài bản.',
+                'excerpt_km': 'ពុទ្ធិកវិទ្យាល័យគឺជាកន្លែងតែមួយគត់នៅវៀតណាមដែលបណ្តុះបណ្តាលបរិញ្ញាបត្រពុទ្ធសាសនាជំនាញ បាលី-ខ្មែរ។',
                 'content_vi': '''
 <h2>Đào tạo Tăng tài - Sứ mệnh thiêng liêng</h2>
 
@@ -249,6 +285,10 @@ class Command(BaseCommand):
 
 <p>Sau khi tốt nghiệp, các Tăng sinh được cấp bằng Cử nhân Phật học, có đủ năng lực trụ trì các chùa Khmer và tham gia công tác Giáo hội.</p>
                 ''',
+                'content_km': '''
+<p>ពុទ្ធិកវិទ្យាល័យពុទ្ធសាសនានិកាយខ្មែរ ត្រូវបានបង្កើតឡើងក្នុងឆ្នាំ ២០០៦...</p>
+<p>កម្មវិធីបណ្តុះបណ្តាលត្រូវបានរចនាឡើងតាមបែបវិទ្យាសាស្ត្រ ដោយរួមបញ្ចូលរវាងចំណេះដឹងពុទ្ធសាសនាប្រពៃណី និងចំណេះដឹងសង្គមទំនើប។</p>
+                ''',
                 'featured_image_url': f'{base_url}monks_studying.png',
                 'category': 'academy_news',
                 'is_pinned': False,
@@ -260,7 +300,9 @@ class Command(BaseCommand):
             {
                 'slug': 'kien-truc-chua-khmer-ban-sac-doc-dao',
                 'title_vi': 'Kiến Trúc Chùa Khmer - Nét Đẹp Bản Sắc Văn Hóa Đặc Đáo',
+                'title_km': 'ស្ថាបត្យកម្មវត្តខ្មែរ - សម្រស់អត្តសញ្ញាណវប្បធម៌ដ៏ពិសេស',
                 'excerpt_vi': 'Tìm hiểu về kiến trúc độc đáo của chùa Phật giáo Nam tông Khmer với những ngôi tháp vàng rực rỡ, hoa văn tinh xảo mang đậm bản sắc văn hóa Khmer.',
+                'excerpt_km': 'ស្វែងយល់អំពីស្ថាបត្យកម្មដ៏ពិសេសរបស់វត្តពុទ្ធសាសនានិកាយខ្មែរ ជាមួយនឹងកំពូលចេតិយពណ៌មាសដ៏ស្រស់ស្អាត។',
                 'content_vi': '''
 <h2>Chùa Khmer - Tác phẩm nghệ thuật kiến trúc</h2>
 
@@ -284,6 +326,10 @@ class Command(BaseCommand):
 
 <p>Học viện Phật giáo Nam tông Khmer được xây dựng theo phong cách kiến trúc truyền thống này, vừa là nơi tu học vừa là công trình nghệ thuật giá trị.</p>
                 ''',
+                'content_km': '''
+<p>វត្តពុទ្ធសាសនានិកាយខ្មែរ គឺជាសំណង់ស្ថាបត្យកម្មដ៏ពិសេស...</p>
+<p>ពណ៌មាស និងពណ៌ក្រហមត្នោត គឺជាពណ៌ចម្បងពីររបស់វត្តខ្មែរ។</p>
+                ''',
                 'featured_image_url': f'{base_url}temple_architecture.png',
                 'category': 'buddhist_news',
                 'is_pinned': False,
@@ -295,7 +341,9 @@ class Command(BaseCommand):
             {
                 'slug': 'hoc-vien-xay-duong-noi-bo-chung-tay-cong-dong',
                 'title_vi': 'Quân Dân Chung Tay Xây Dựng Đường Nội Bộ Tại Học Viện',
+                'title_km': 'កងទ័ពនិងប្រជាជនរួមដៃកសាងផ្លូវលំក្នុងពុទ្ធិកវិទ្យាល័យ',
                 'excerpt_vi': 'Trong khuôn khổ hoạt động mừng Chôl Chnăm Thmây 2024, các cán bộ, chiến sĩ quân đội và dân quân đã hỗ trợ Học viện xây dựng và nâng cấp hệ thống đường nội bộ.',
+                'excerpt_km': 'កម្មាភិបាល យុទ្ធជនកងទ័ព និងប្រជាការពារបាមជួយឧបត្ថម្ភពុទ្ធិកវិទ្យាល័យកសាងផ្លូវ។',
                 'content_vi': '''
 <h2>Tình quân dân - Sức mạnh đoàn kết</h2>
 
@@ -317,6 +365,10 @@ class Command(BaseCommand):
 
 <p>Hoạt động này nằm trong chuỗi các chương trình "Quân đội chung tay vì người Khmer" do Bộ Chỉ huy Quân sự TP. Cần Thơ tổ chức hàng năm, góp phần củng cố khối đại đoàn kết toàn dân tộc.</p>
                 ''',
+                'content_km': '''
+<p>នៅថ្ងៃទី១១ ខែមេសា ឆ្នាំ២០២៤ នៅក្នុងក្របខ័ណ្ឌនៃសកម្មភាពអបអរសាទរបុណ្យចូលឆ្នាំថ្មី...</p>
+<p>សកម្មភាពនេះស្ថិតនៅក្នុងបណ្តាកម្មវិធី "កងទ័ពរួមដៃដើម្បីជនជាតិខ្មែរ"។</p>
+                ''',
                 'featured_image_url': f'{base_url}community_service.png',
                 'category': 'buddhist_news',
                 'is_pinned': False,
@@ -328,7 +380,9 @@ class Command(BaseCommand):
             {
                 'slug': 'thong-bao-tuyen-sinh-khoa-xviii-2025',
                 'title_vi': 'Thông Báo Tuyển Sinh Khóa XVIII Năm 2025 - Cử Nhân Phật Học Pali - Khmer',
+                'title_km': 'សេចក្តីជូនដំណឹងជ្រើសរើសសមណនិស្សិត វគ្គទី ១៨ ឆ្នាំ ២០២៥',
                 'excerpt_vi': 'Học viện Phật giáo Nam tông Khmer thông báo tuyển sinh khóa XVIII (2025-2029) với chỉ tiêu 50 Tăng sinh từ các tỉnh Nam Bộ.',
+                'excerpt_km': 'ពុទ្ធិកវិទ្យាល័យជូនដំណឹងជ្រើសរើសសមណនិស្សិតវគ្គទី ១៨ (២០២៥-២០២៩) ចំនួន ៥០ អង្គ។',
                 'content_vi': '''
 <h2>Thông Báo Tuyển Sinh Khóa XVIII</h2>
 
@@ -376,6 +430,10 @@ class Command(BaseCommand):
 
 <p><em>Mọi chi tiết xin liên hệ Phòng Đào tạo trong giờ hành chính.</em></p>
                 ''',
+                'content_km': '''
+<p>ពុទ្ធិកវិទ្យាល័យពុទ្ធសាសនានិកាយខ្មែរ សូមជូនដំណឹងដល់បណ្តាវត្ត អំពីការជ្រើសរើសសមណនិស្សិតបរិញ្ញាបត្រពុទ្ធសាសនា បាលី-ខ្មែរ វគ្គទី ១៨ (២០២៥-២០២៩)។</p>
+<p>លក្ខខណ្ឌនៃការជ្រើសរើស៖ ជាភិក្ខុ ឬសាមណេរ ដែលបានបួសយ៉ាងតិច ១ ឆ្នាំ។</p>
+                ''',
                 'featured_image_url': f'{base_url}graduation.png',
                 'category': 'announcement',
                 'is_pinned': True,
@@ -386,18 +444,31 @@ class Command(BaseCommand):
             },
         ]
 
-        created_count = 0
+        # Path to images
+        image_dir = r"e:\web_HVPGNTK\frontend\public\images\news"
+
         for data in news_data:
-            # Check if slug already exists
-            if not News.objects.filter(slug=data['slug']).exists():
-                News.objects.create(
-                    id=uuid.uuid4(),
-                    status='published',
-                    **data
-                )
-                created_count += 1
+            # Extract image filename
+            image_filename = data['featured_image_url'].split('/')[-1]
+            image_path = os.path.join(image_dir, image_filename)
+            
+            # Update or create
+            news_obj, created = News.objects.update_or_create(
+                slug=data['slug'],
+                defaults={k: v for k, v in data.items() if k != 'featured_image_url'}
+            )
+            
+            # Handle Image Upload
+            if os.path.exists(image_path):
+                with open(image_path, 'rb') as f:
+                    news_obj.featured_image_url.save(image_filename, File(f), save=True)
+                    self.stdout.write(f"    - Uploaded image: {image_filename}")
+            else:
+                self.stdout.write(self.style.WARNING(f"    - Image not found: {image_path}"))
+
+            if created:
                 self.stdout.write(self.style.SUCCESS(f"Created: {data['title_vi'][:50]}..."))
             else:
-                self.stdout.write(self.style.WARNING(f"Skipped (exists): {data['slug']}"))
+                self.stdout.write(self.style.WARNING(f"Updated: {data['slug']}"))
 
-        self.stdout.write(self.style.SUCCESS(f'\n✅ Successfully seeded {created_count} news articles!'))
+        self.stdout.write(self.style.SUCCESS(f'\n✅ Successfully seeded {len(news_data)} news articles with images!'))

@@ -2,12 +2,18 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { NotificationBell } from './layout/NotificationBell';
+import { useTranslation } from 'react-i18next';
 
 import { ROUTES } from '../router/routes';
 
 const Header: React.FC = () => {
   const location = useLocation();
   const { user } = useAuth();
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
 
   const isActive = (path: string) => {
     if (path === ROUTES.HOME) {
@@ -46,22 +52,22 @@ const Header: React.FC = () => {
 
           <nav className="flex items-center gap-2">
             <Link to={ROUTES.HOME} className={getLinkClass(ROUTES.HOME)}>
-              Trang chủ
+              {t('nav.home')}
             </Link>
             <Link to={ROUTES.ABOUT} className={getLinkClass(ROUTES.ABOUT)}>
-              Giới thiệu
+              {t('nav.about')}
             </Link>
             <Link to={ROUTES.EDUCATION} className={getLinkClass(ROUTES.EDUCATION)}>
-              Đào tạo
+              {t('nav.education')}
             </Link>
             <Link to={ROUTES.NEWS} className={getLinkClass(ROUTES.NEWS)}>
-              Tin tức
+              {t('nav.news')}
             </Link>
             <Link to={ROUTES.ADMISSIONS} className={getLinkClass(ROUTES.ADMISSIONS)}>
-              Tuyển sinh
+              {t('nav.admissions')}
             </Link>
             <Link to={ROUTES.CONTACT} className={getLinkClass(ROUTES.CONTACT)}>
-              Liên hệ
+              {t('nav.contact')}
             </Link>
 
 
@@ -78,14 +84,30 @@ const Header: React.FC = () => {
               </Link>
             ) : (
               <Link to={ROUTES.STUDENT_PORTAL} className="text-sm font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded transition-colors">
-                Đăng nhập
+                {t('nav.login')}
               </Link>
             )}
 
             <div className="flex items-center gap-2">
-              <button className="text-white/80 hover:text-white transition-colors text-sm">VI</button>
+              <button
+                onClick={() => changeLanguage('vi')}
+                className={`text-sm font-bold transition-colors ${i18n.language === 'vi'
+                    ? 'text-[#FFA726]'
+                    : 'text-white/80 hover:text-white'
+                  }`}
+              >
+                VI
+              </button>
               <div className="w-px h-4 bg-white/20"></div>
-              <button className="text-white/80 hover:text-white transition-colors text-sm">KH</button>
+              <button
+                onClick={() => changeLanguage('km')}
+                className={`text-sm font-bold transition-colors ${i18n.language === 'km'
+                    ? 'text-[#FFA726]'
+                    : 'text-white/80 hover:text-white'
+                  }`}
+              >
+                KH
+              </button>
             </div>
           </div>
         </div>

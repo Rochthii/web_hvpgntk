@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Calendar, ChevronRight, Clock, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { cmsApi } from '../api/cms';
 import { ROUTES } from '../router/routes';
 import { useFetch } from '../hooks/useFetch';
 
 const News: React.FC = () => {
+   const { i18n } = useTranslation(); // Get i18n instance
    // State for filters
    const [search, setSearch] = useState('');
    const [category, setCategory] = useState<string>('');
@@ -33,7 +35,7 @@ const News: React.FC = () => {
       if (debouncedSearch) params.search = debouncedSearch;
       if (category) params.category = category;
       return cmsApi.getNews(params);
-   }, [debouncedSearch, category, page]);
+   }, [debouncedSearch, category, page, i18n.language]); // Added i18n.language dependency
 
    const { data: newsData, loading } = useFetch(fetchNews);
    const news = newsData?.results || [];
@@ -99,13 +101,13 @@ const News: React.FC = () => {
                                  {CATEGORIES.find(c => c.value === featuredNews.category)?.label || featuredNews.category || 'Nổi bật'}
                               </span>
                               <h2 className="text-3xl md:text-4xl font-serif font-bold text-white mb-4 leading-tight group-hover:text-[#E5CFA0] transition-colors shadow-black drop-shadow-lg">
-                                 {featuredNews.title_vi}
+                                 {featuredNews.title || featuredNews.title_vi}
                               </h2>
                               <div className="flex items-center text-gray-300 text-sm mb-4 space-x-4">
                                  <span className="flex items-center"><Calendar size={14} className="mr-1 text-[#DAA520]" /> {new Date(featuredNews.published_at || featuredNews.created_at).toLocaleDateString('vi-VN')}</span>
                               </div>
                               <p className="text-gray-200 text-lg line-clamp-2 max-w-3xl font-light">
-                                 {featuredNews.excerpt_vi}
+                                 {featuredNews.excerpt || featuredNews.excerpt_vi}
                               </p>
                            </div>
                         </Link>
@@ -123,7 +125,7 @@ const News: React.FC = () => {
                                     <img
                                        src={item.featured_image_url || "https://picsum.photos/500/300"}
                                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-                                       alt={item.title_vi}
+                                       alt={item.title || item.title_vi}
                                     />
 
                                     {/* Category Badge - Floating */}
@@ -144,12 +146,12 @@ const News: React.FC = () => {
                                  <div className="p-6 flex flex-col flex-grow">
                                     <Link to={`${ROUTES.NEWS}/${item.slug}`} className="block">
                                        <h3 className="font-serif font-bold text-[1.25rem] text-[#4E342E] mb-3 group-hover:text-[#DAA520] transition-colors leading-[1.4] line-clamp-2">
-                                          {item.title_vi}
+                                          {item.title || item.title_vi}
                                        </h3>
                                     </Link>
 
                                     <p className="text-gray-600 text-[0.925rem] line-clamp-3 mb-6 leading-relaxed flex-grow font-light">
-                                       {item.excerpt_vi}
+                                       {item.excerpt || item.excerpt_vi}
                                     </p>
 
                                     {/* Footer Metadata */}

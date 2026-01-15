@@ -28,10 +28,10 @@ export const HistoryTimeline: React.FC<HistoryTimelineProps> = ({ data }) => {
                                 {item.year}
                             </span>
                             <h3 className="text-xl font-bold text-secondary mb-3 font-heading flex items-center gap-3">
-                                <span className="text-[#D4AF37] text-2xl">•</span> {item.title_vi}
+                                <span className="text-[#D4AF37] text-2xl">•</span> {item.title || item.title_vi}
                             </h3>
                             <p className="text-gray-600 leading-relaxed text-sm text-justify">
-                                {item.description_vi}
+                                {item.description || item.description_vi}
                             </p>
                         </div>
 
@@ -47,7 +47,7 @@ export const HistoryTimeline: React.FC<HistoryTimelineProps> = ({ data }) => {
                                 <div className="w-full h-48 rounded-lg overflow-hidden border-2 border-[#D4AF37]/30 shadow-md">
                                     <img
                                         src={item.image}
-                                        alt={item.title_vi}
+                                        alt={item.title || item.title_vi || item.year}
                                         className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
                                         onError={(e) => (e.target as HTMLImageElement).src = '/images/temple-hero.jpg'} // Fallback
                                     />

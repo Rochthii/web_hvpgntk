@@ -1,0 +1,60 @@
+{
+    "nav": {
+        "home": "Trang chủ",
+        "about": "Giới thiệu",
+        "education": "Đào tạo",
+        "news": "Tin tức",
+        "admissions": "Tuyển sinh",
+        "contact": "Liên hệ",
+        "portal": "Cổng thông tin",
+        "login": "Đăng nhập",
+        "logout": "Đăng xuất",
+        "profile": "Hồ sơ cá nhân"
+    },
+    "roles": {
+        "academy": "Học viện Phật giáo Nam tông Khmer",
+        "mostVenerable": "Hòa thượng",
+        "venerable": "Thượng tọa",
+        "bhikkhu": "Đại đức",
+        "studentMonk": "Tăng sinh",
+        "samanera": "Sa-di",
+        "layDevotee": "Cư sĩ",
+        "rector": "Viện trưởng",
+        "lecturer": "Giảng viên"
+    },
+    "academic": {
+        "degree": "Cử nhân Phật học",
+        "credits": "Tín chỉ",
+        "semester": "Học kỳ",
+        "course": "Khóa học",
+        "schedule": "Thời khóa biểu",
+        "transcript": "Bảng điểm",
+        "vinaya": "Luật Tạng",
+        "sutta": "Kinh Tạng",
+        "abhidhamma": "Luận Tạng",
+        "vassa": "An cư Kiết hạ",
+        "vassaAge": "Hạ lạp"
+    },
+    "admissions": {
+        "apply": "Đăng ký tuyển sinh",
+        "documents": "Hồ sơ đính kèm",
+        "dharmaName": "Pháp danh",
+        "temple": "Chùa đang trú",
+        "ordinationDate": "Ngày thọ giới",
+        "birthPlace": "Nơi sinh",
+        "submitted": "Đã nộp thành công",
+        "status": "Trạng thái"
+    },
+    "ui": {
+        "confirm": "Xác nhận",
+        "cancel": "Hủy bỏ",
+        "save": "Lưu lại",
+        "edit": "Chỉnh sửa",
+        "delete": "Xóa",
+        "loading": "Đang tải...",
+        "pleaseWait": "Vui lòng đợi",
+        "success": "Thành công",
+        "error": "Thất bại",
+        "search": "Tìm kiếm"
+    }
+}
