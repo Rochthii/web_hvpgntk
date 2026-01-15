@@ -79,6 +79,7 @@ class Course(models.Model):
     name_km = models.CharField(max_length=200, blank=True, default='', verbose_name='Tên tiếng Khmer')
     name_pali = models.CharField(max_length=200, blank=True, verbose_name='Tên Pali')
     credits = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)], verbose_name='Số tín chỉ')
+    study_year = models.IntegerField(default=1, validators=[MinValueValidator(1), MaxValueValidator(4)], verbose_name='Năm học (CTĐT)')
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, verbose_name='Cấp độ')
     category = models.CharField(max_length=30, choices=CATEGORY_CHOICES, default='REQUIRED', verbose_name='Loại')
     knowledge_block = models.CharField(max_length=30, choices=KNOWLEDGE_BLOCK_CHOICES, default='OTHER', verbose_name='Khối kiến thức')

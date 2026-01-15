@@ -47,18 +47,10 @@ const Education: React.FC = () => {
 
         courses.forEach((course) => {
           const name = i18n.language === 'km' && course.name_km ? course.name_km : course.name_vi;
-          let year = 1; // default
 
-          // Detect year from name pattern
-          if (name.includes(' I') || name.includes(' ១')) {
-            year = 1;
-          } else if (name.includes(' II') || name.includes(' ២')) {
-            year = 2;
-          } else if (name.includes(' III') || name.includes(' ៣')) {
-            year = 3;
-          } else if (name.includes(' IV') || name.includes(' ៤')) {
-            year = 4;
-          }
+          // Use study_year directly from API
+          // Ensure it falls within 1-4 range, default to 1
+          const year = (course.study_year >= 1 && course.study_year <= 4) ? course.study_year : 1;
 
           grouped[year - 1].subjects.push({
             id: course.id,

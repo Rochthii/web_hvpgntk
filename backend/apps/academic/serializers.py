@@ -18,7 +18,7 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = [
             'id', 'code', 'name_vi', 'name_km', 'name_pali', 'description', 
-            'credits', 'level', 'category', 'knowledge_block'
+            'credits', 'study_year', 'level', 'category', 'knowledge_block'
         ]
 
 class ClassSerializer(serializers.ModelSerializer):

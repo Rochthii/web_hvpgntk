@@ -22,6 +22,7 @@ export interface Course {
     name_km: string | null;
     name_pali: string | null;
     credits: number;
+    study_year: number;
     level: string; // 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
     category: string; // 'REQUIRED' | 'ELECTIVE'
     knowledge_block: string; // 'VINAYA' | 'SUTTA' | etc.
