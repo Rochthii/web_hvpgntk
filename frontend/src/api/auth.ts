@@ -2,7 +2,7 @@ import client from './client';
 import { LoginResponse, User } from '../types/auth';
 
 export const authApi = {
-    login: (credentials: { email?: string; phone?: string; password: string }) =>
+    login: (credentials: { login_id: string; password: string }) =>
         client.post<LoginResponse>('/auth/login/', credentials),
 
     logout: (refreshToken: string) =>

@@ -6,17 +6,34 @@ from django.contrib.auth import authenticate
 from .models import User, MonkProfile, LaypersonProfile
 
 
+class MonkProfileNestedSerializer(serializers.ModelSerializer):
+    """Lightweight MonkProfile serializer for nesting in UserSerializer."""
+    class Meta:
+        model = MonkProfile
+        fields = ['id', 'dharma_name_khmer', 'student_code', 'cohort', 'current_year', 'vassa_count']
+
+
+class LaypersonProfileNestedSerializer(serializers.ModelSerializer):
+    """Lightweight LaypersonProfile serializer for nesting in UserSerializer."""
+    class Meta:
+        model = LaypersonProfile
+        fields = ['id', 'full_name', 'student_code', 'cohort', 'current_year']
+
+
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for User model."""
     
     display_name = serializers.SerializerMethodField()
+    monk_profile = MonkProfileNestedSerializer(read_only=True)
+    layperson_profile = LaypersonProfileNestedSerializer(read_only=True)
     
     class Meta:
         model = User
         fields = [
             'id', 'email', 'phone', 'user_type', 'role',
             'is_active', 'is_verified', 'preferred_language',
-            'display_name', 'created_at', 'updated_at'
+            'display_name', 'monk_profile', 'layperson_profile',
+            'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
     
@@ -62,33 +79,27 @@ class UserCreateSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     """Serializer for user login."""
     
+    login_id = serializers.CharField(required=False)
     email = serializers.EmailField(required=False)
     phone = serializers.CharField(required=False)
     password = serializers.CharField()
     
     def validate(self, attrs):
-        email = attrs.get('email')
-        phone = attrs.get('phone')
+        login_id = attrs.get('login_id') or attrs.get('email') or attrs.get('phone')
         password = attrs.get('password')
         
-        if not email and not phone:
+        if not login_id:
             raise serializers.ValidationError(
-                'Phải có email hoặc số điện thoại'
+                'Vui lòng nhập Email, SĐT hoặc Mã số'
             )
         
-        # Find user by email or phone
-        if email:
-            try:
-                user = User.objects.get(email=email)
-            except User.DoesNotExist:
-                raise serializers.ValidationError('Thông tin đăng nhập không đúng')
-        else:
-            try:
-                user = User.objects.get(phone=phone)
-            except User.DoesNotExist:
-                raise serializers.ValidationError('Thông tin đăng nhập không đúng')
+        # Use Django's authenticate to support MultiFieldModelBackend
+        # We pass context['request'] if available, though not strictly required for ModelBackend
+        request = self.context.get('request')
+        user = authenticate(request=request, username=login_id, password=password)
         
-        if not user.check_password(password):
+        if not user:
+            # Generic error message for security
             raise serializers.ValidationError('Thông tin đăng nhập không đúng')
         
         if not user.is_active:

@@ -33,6 +33,32 @@ class SemesterViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['academic_year']
+    
+    @action(detail=False)
+    def current(self, request):
+        """Get the current active semester based on date."""
+        from django.utils import timezone
+        today = timezone.now().date()
+        
+        # First try to find semester that contains today
+        semester = Semester.objects.filter(
+            start_date__lte=today,
+            end_date__gte=today
+        ).select_related('academic_year').first()
+        
+        # Fallback: get latest semester from current academic year
+        if not semester:
+            current_year = AcademicYear.objects.filter(is_current=True).first()
+            if current_year:
+                semester = Semester.objects.filter(
+                    academic_year=current_year
+                ).order_by('-start_date').first()
+        
+        if semester:
+            serializer = self.get_serializer(semester)
+            return Response(serializer.data)
+        
+        return Response({'detail': 'Không tìm thấy học kỳ hiện tại'}, status=404)
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Course.objects.all().order_by('code')
@@ -56,6 +82,57 @@ class EnrollmentViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['student', 'class_instance', 'status']
+    
+    @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
+    def my_enrollments(self, request):
+        """Get current user's enrollments for the active academic year."""
+        enrollments = Enrollment.objects.filter(
+            student=request.user,
+            status='ENROLLED',
+            class_instance__semester__academic_year__is_current=True
+        ).select_related(
+            'class_instance',
+            'class_instance__course',
+            'class_instance__semester',
+            'class_instance__instructor'
+        )
+        
+        # Build response with detailed class info
+        data = []
+        for enrollment in enrollments:
+            cls = enrollment.class_instance
+            course = cls.course
+            
+            # Parse schedule
+            schedule_day = None
+            schedule_time = None
+            if cls.schedule:
+                schedules = cls.schedule if isinstance(cls.schedule, list) else [cls.schedule]
+                if schedules and isinstance(schedules[0], dict):
+                    day_num = schedules[0].get('day', 2)
+                    day_names = {2: 'Thứ 2', 3: 'Thứ 3', 4: 'Thứ 4', 5: 'Thứ 5', 6: 'Thứ 6', 7: 'Thứ 7'}
+                    schedule_day = day_names.get(day_num, f'Thứ {day_num}')
+                    schedule_time = f"{schedules[0].get('start', '')} - {schedules[0].get('end', '')}"
+            
+            data.append({
+                'id': enrollment.id,
+                'status': enrollment.status,
+                'class_info': {
+                    'id': cls.id,
+                    'class_code': cls.class_code,
+                    'course': {
+                        'id': course.id,
+                        'code': course.code,
+                        'name_vi': course.name_vi,
+                        'credits': course.credits,
+                    },
+                    'classroom': cls.room,
+                    'schedule_day': schedule_day,
+                    'schedule_time': schedule_time,
+                }
+            })
+        
+        return Response(data)
 
 from apps.core.permissions import CanViewGrades, CanEditGrades
 
@@ -127,7 +204,7 @@ def get_student_stats(request):
     # Calculate earned credits from completed enrollments
     enrollments = Enrollment.objects.filter(
         student=user,
-        status='APPROVED'
+        status='COMPLETED'
     ).select_related('class_instance__course')
     
     earned_credits = 0
@@ -141,8 +218,8 @@ def get_student_stats(request):
                 course_credits = enrollment.class_instance.course.credits
                 earned_credits += course_credits
                 
-                if grade.grade_point:
-                    total_grade_points += grade.grade_point * course_credits
+                if grade.gpa_points: # Note: model has gpa_points, script used gpa_points
+                    total_grade_points += grade.gpa_points * course_credits
                     completed_courses += 1
         except:
             pass
@@ -153,10 +230,11 @@ def get_student_stats(request):
         gpa = round(total_grade_points / earned_credits, 2)
     
     # Get current semester courses count
+    # Logic: Enrolled in classes of current academic year
     current_semester_courses = Enrollment.objects.filter(
         student=user,
-        status__in=['ENROLLED', 'APPROVED'],
-        class_instance__semester__is_current=True
+        status='ENROLLED',
+        class_instance__semester__academic_year__is_current=True
     ).count()
     
     # Get upcoming exams (next 30 days)
@@ -206,10 +284,11 @@ def get_my_schedule(request):
     user = request.user
     
     # Get enrollments for current semester
+    # Use academic_year__is_current=True.
     enrollments = Enrollment.objects.filter(
         student=user,
-        status__in=['ENROLLED', 'APPROVED'],
-        class_instance__semester__is_current=True
+        status='ENROLLED',
+        class_instance__semester__academic_year__is_current=True
     ).select_related('class_instance', 'class_instance__course', 'class_instance__instructor')
     
     schedule_data = []
@@ -339,7 +418,7 @@ def get_available_classes(request):
     # Get IDs of classes user already enrolled in
     enrolled_class_ids = Enrollment.objects.filter(
         student=user,
-        status__in=['ENROLLED', 'APPROVED']
+        status='ENROLLED'
     ).values_list('class_instance_id', flat=True)
     
     data = []
@@ -438,7 +517,7 @@ def enroll_class(request):
     current_enrollments = Enrollment.objects.filter(
         student=user, 
         class_instance__semester=cls.semester,
-        status__in=['ENROLLED', 'APPROVED']
+        status='ENROLLED'
     ).select_related('class_instance', 'class_instance__course')
 
     # 3. Check Max Credits (Limit: 25)

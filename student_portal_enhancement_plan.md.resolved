@@ -1,0 +1,131 @@
+# KẾ HOẠCH CẢI THIỆN CỔNG THÔNG TIN TĂNG SINH
+## Học viện Phật giáo Nam tông Khmer - Phiên bản Tu viện
+
+**Ngày lập:** 15/01/2026  
+**Đặc thù:** Cơ sở đào tạo Tăng sinh Phật giáo Theravada
+
+---
+
+## 1. BỐI CẢNH ĐẶC THÙ
+
+| Đặc điểm | Giá trị |
+|----------|---------|
+| Chương trình | Cử nhân Phật học Pali-Khmer (4 năm) |
+| Số môn học | 51 môn / 228 tín chỉ |
+| Đối tượng | Tăng sinh Khmer (đã thọ giới) |
+| Phạm vi | 8 tỉnh Nam Bộ |
+| Đặc thù | Sống nội trú tại chùa, tuân thủ Vinaya |
+
+---
+
+## 2. TÍNH NĂNG CẦN TRIỂN KHAI
+
+### 🟢 PHASE 1: Tính năng Cốt lõi (2 tuần)
+
+| # | Tính năng | Mô tả | Đặc thù Phật giáo |
+|---|-----------|-------|-------------------|
+| 1.1 | **Đăng ký môn học hoàn chỉnh** | Chọn lớp, prerequisite, max tín chỉ | Theo khối kiến thức: Vinaya, Sutta, Abhidhamma |
+| 1.2 | **Xem & In bảng điểm** | Export PDF có xác nhận của Học viện | Bao gồm cả điểm Pali, điểm hạnh kiểm |
+| 1.3 | **Tiến độ tốt nghiệp** | % hoàn thành 228 tín chỉ | Theo 4 năm học |
+| 1.4 | **Cập nhật hồ sơ Tăng sinh** | Chùa trực thuộc, pháp danh, hạ lạp | Thông tin tu sĩ đặc thù |
+
+### 🟡 PHASE 2: Tính năng Quản lý Tu viện (1 tháng)
+
+| # | Tính năng | Mô tả | Quyền duyệt |
+|---|-----------|-------|-------------|
+| 2.1 | **Xin giấy xác nhận** | Xác nhận đang học, hoàn thành môn | Ban Giám hiệu |
+| 2.2 | **Xin phép rời chùa** | Pass ra/vào ký túc xá (theo mẫu Nalanda) | Thầy Tri sự |
+| 2.3 | **Theo dõi Hạ lạp** | Tự động tính số hạ từ ngày thọ Cụ túc | Hệ thống |
+| 2.4 | **Lịch Phật sự** | Thời khóa tụng kinh, lễ lớn (Vesak, Kathina) | Tất cả |
+| 2.5 | **Thông báo quan trọng** | Deadline, lịch thi, thông báo từ Ban Giám hiệu | Tất cả |
+
+### 🔵 PHASE 3: Quản lý Giáo vụ (2 tháng)
+
+| # | Tính năng | Mô tả | Quyền |
+|---|-----------|-------|-------|
+| 3.1 | **Quản lý điểm danh** | Ghi nhận tham dự lớp, buổi tụng kinh | Giảng viên |
+| 3.2 | **Báo cáo tổng hợp** | Thống kê SV theo khóa, chùa, tỉnh | Admin, BGH |
+| 3.3 | **Kết nối Cựu Tăng sinh** | Danh bạ các vị đã tốt nghiệp | Alumni |
+| 3.4 | **Hồ sơ Chùa trực thuộc** | Thông tin các chùa có SV đang học | Admin |
+
+---
+
+## 3. MA TRẬN PHÂN QUYỀN
+
+| Tính năng | Tăng sinh | Giảng viên | Tri sự | BGH | Admin |
+|-----------|:---------:|:----------:|:------:|:---:|:-----:|
+| Xem điểm bản thân | ✅ | - | - | ✅ | ✅ |
+| Đăng ký môn | ✅ | ❌ | ❌ | ✅ | ✅ |
+| Xin phép rời chùa | ✅ | ❌ | ✅ Duyệt | ✅ | ✅ |
+| Xin giấy xác nhận | ✅ | ❌ | ❌ | ✅ Duyệt | ✅ |
+| Cập nhật hồ sơ | ✅ (giới hạn) | ❌ | ❌ | ✅ | ✅ |
+| Nhập điểm | ❌ | ✅ | ❌ | ✅ | ✅ |
+| Xem báo cáo | ❌ | ⚠️ (lớp mình) | ⚠️ | ✅ | ✅ |
+| Quản lý người dùng | ❌ | ❌ | ❌ | ⚠️ | ✅ |
+
+---
+
+## 4. APIs CẦN BỔ SUNG
+
+| Endpoint | Method | Mô tả |
+|----------|--------|-------|
+| `/academic/transcript/` | GET | Bảng điểm đầy đủ |
+| `/academic/transcript/pdf/` | GET | Export PDF |
+| `/academic/graduation-progress/` | GET | Tiến độ tốt nghiệp |
+| `/petitions/exit-pass/` | POST | Xin phép rời chùa |
+| `/petitions/document-request/` | POST | Xin giấy xác nhận |
+| `/users/profile/vassa/` | GET | Thông tin Hạ lạp |
+| `/calendar/buddhist-events/` | GET | Lịch Phật sự |
+| `/notifications/` | GET | Thông báo |
+
+---
+
+## 5. FRONTEND PAGES CẦN BỔ SUNG
+
+| Route | Component | Mô tả |
+|-------|-----------|-------|
+| `/student/registration` | `CourseRegistration.tsx` | Đăng ký môn học |
+| `/student/transcript` | `Transcript.tsx` | Bảng điểm |
+| `/student/graduation` | `GraduationProgress.tsx` | Tiến độ tốt nghiệp |
+| `/student/requests` | `DocumentRequests.tsx` | Xin giấy tờ |
+| `/student/exit-pass` | `ExitPassRequest.tsx` | Xin phép rời chùa |
+| `/calendar` | `BuddhistCalendar.tsx` | Lịch Phật sự |
+
+---
+
+## 6. ƯU TIÊN THỰC HIỆN NGAY
+
+> [!IMPORTANT]
+> **Top 3 tính năng tuần này:**
+
+1. **Hoàn thiện đăng ký môn học**
+   - [ ] UI đẹp hơn (card view theo khối kiến thức)
+   - [ ] Hiển thị prerequisite
+   - [ ] Confirm dialog
+
+2. **Tiến độ tốt nghiệp**
+   - [ ] API tính % (credits earned / 228)
+   - [ ] Donut chart visualization
+   - [ ] Danh sách môn còn thiếu
+
+3. **Xem & In bảng điểm**
+   - [ ] API trả full transcript
+   - [ ] Export PDF với header HVPGNTK
+   - [ ] Tính GPA theo học kỳ & tổng
+
+---
+
+## 7. TÍNH NĂNG ĐÃ LOẠI BỎ
+
+| Tính năng | Lý do loại |
+|-----------|------------|
+| ~~Thanh toán học phí~~ | Tăng sinh không đóng học phí |
+| ~~E-Learning Video~~ | Không phù hợp phương pháp tu viện |
+| ~~AI Chatbot~~ | Chưa cần thiết |
+| ~~Mobile App nâng cao~~ | Đã có app riêng |
+| ~~Đánh giá môn học~~ | Không phù hợp văn hóa tu viện |
+
+---
+
+**Thời gian hoàn thành Phase 1:** 2 tuần  
+**Thời gian hoàn thành toàn bộ:** 2 tháng

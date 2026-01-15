@@ -1,7 +1,6 @@
 export interface AcademicYear {
     id: string;
-    code: string;
-    name: string;
+    year_code: string; // Backend uses 'year_code', not 'code'
     start_date: string;
     end_date: string;
     is_current: boolean;
@@ -10,10 +9,10 @@ export interface AcademicYear {
 export interface Semester {
     id: string;
     academic_year: string | AcademicYear;
-    term: string; // 'SEMESTER_1' | 'SEMESTER_2' | 'SUMMER'
+    academic_year_code: string; // From serializer
+    semester_number: number; // Backend uses 'semester_number', not 'term'
     start_date: string;
     end_date: string;
-    is_current: boolean;
 }
 
 export interface Course {

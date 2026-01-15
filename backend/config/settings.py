@@ -301,6 +301,7 @@ AUTH_USER_MODEL = 'users.User'
 # Authentication Backends
 AUTHENTICATION_BACKENDS = [
     'axes.backends.AxesStandaloneBackend',
+    'apps.users.backends.MultiFieldModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 

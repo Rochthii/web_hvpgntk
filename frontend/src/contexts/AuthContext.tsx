@@ -48,6 +48,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         tokenManager.clearTokens();
         setUser(null);
+        // Redirect to home after logout
+        window.location.href = '/';
     };
 
     return (

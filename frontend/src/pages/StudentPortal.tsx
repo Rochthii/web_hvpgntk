@@ -4,14 +4,16 @@ import { authApi } from '../api/auth';
 import { academicApi } from '../api/academic';
 import { AcademicYear, Semester, Enrollment } from '../types/academic';
 import { Book, Calendar, Clock, User, LogOut, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../router/routes';
 
 const StudentPortal: React.FC = () => {
    const { user, isAuthenticated, login, logout, isLoading: authLoading } = useAuth();
+   const navigate = useNavigate();
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [error, setError] = useState('');
+   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
    // Academic Data State
    const [currentYear, setCurrentYear] = useState<AcademicYear | null>(null);
@@ -25,19 +27,15 @@ const StudentPortal: React.FC = () => {
          const fetchData = async () => {
             setDataLoading(true);
             try {
-               // Fetch basic academic context
-               const [yearRes, semRes] = await Promise.all([
+               // Fetch all data in parallel for faster loading
+               const [yearRes, semRes, enrollRes, statsRes] = await Promise.all([
                   academicApi.getCurrentYear(),
-                  academicApi.getCurrentSemester()
-               ]);
-               setCurrentYear(yearRes.data);
-               setCurrentSemester(semRes.data);
-
-               // Fetch student specific data
-               const [enrollRes, statsRes] = await Promise.all([
+                  academicApi.getCurrentSemester(),
                   academicApi.getMyEnrollments(),
                   academicApi.getStudentStats()
                ]);
+               setCurrentYear(yearRes.data);
+               setCurrentSemester(semRes.data);
                setEnrollments(enrollRes.data);
                setStudentStats(statsRes.data);
             } catch (err) {
@@ -53,33 +51,35 @@ const StudentPortal: React.FC = () => {
    const handleLogin = async (e: React.FormEvent) => {
       e.preventDefault();
       setError('');
-      try {
-         const isEmail = email.includes('@');
-         const payload = isEmail
-            ? { email: email, password }
-            : { phone: email, password };
+      setIsLoggingIn(true);
 
+      try {
+         const payload = { login_id: email, password };
          const res = await authApi.login(payload);
          login(res.data);
       } catch (err: any) {
          console.error(err);
-         // Show detailed error if available
          const msg = err.response?.data?.non_field_errors?.[0] ||
-            err.response?.data?.email?.[0] ||
-            err.response?.data?.phone?.[0] ||
+            err.response?.data?.login_id?.[0] ||
             'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.';
          setError(msg);
+      } finally {
+         setIsLoggingIn(false);
       }
    };
 
    const handleLogout = () => {
       logout();
+      navigate(ROUTES.HOME); // Redirect to homepage after logout
    };
 
    if (authLoading) {
       return (
-         <div className="min-h-screen flex items-center justify-center bg-cream">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-cream-100 to-cream-200">
+            <div className="text-center">
+               <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-primary mx-auto mb-4"></div>
+               <p className="text-secondary font-medium">Đang tải...</p>
+            </div>
          </div>
       );
    }
@@ -87,53 +87,78 @@ const StudentPortal: React.FC = () => {
    if (!isAuthenticated) {
       return (
          <div className="min-h-screen bg-cream flex items-center justify-center p-4">
-            <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-amber-100">
-               <div className="text-center mb-8">
-                  <img src="/logo-hvpgntk.png" alt="Logo" className="w-20 h-20 mx-auto mb-4" />
-                  <h1 className="text-2xl font-serif font-bold text-secondary">Cổng Thông Tin Tăng Sinh</h1>
-                  <p className="text-gray-500 text-sm mt-2">Vui lòng đăng nhập để tiếp tục</p>
+            <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border border-amber-100 transform transition-all duration-300 hover:shadow-gold-md">
+               <div className="text-center mb-8 animate-fade-in">
+                  <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
+                     <img src="/logo-hvpgntk.png" alt="Logo HVPGNTK" className="w-full h-full object-contain drop-shadow-md" />
+                  </div>
+                  <h1 className="text-3xl font-serif font-bold text-secondary mb-2">Cổng Thông Tin Tăng Sinh</h1>
+                  <p className="text-gray-500 text-sm">Học viện Phật giáo Nam tông Khmer</p>
                </div>
 
-               <form onSubmit={handleLogin} className="space-y-6">
+               <form onSubmit={handleLogin} className="space-y-5">
                   {error && (
-                     <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-100">
+                     <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg text-sm border border-red-200 animate-fade-in-up flex items-center gap-2">
+                        <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
                         {error}
                      </div>
                   )}
 
-                  <div>
-                     <label className="block text-sm font-medium text-gray-700 mb-1">Email hoặc Số điện thoại</label>
+                  <div className="space-y-2">
+                     <label className="block text-sm font-semibold text-gray-700">Mã số SV, Email hoặc SĐT</label>
                      <input
                         type="text"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-                        placeholder="Nhập email/SĐT..."
+                        className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all duration-200 text-gray-800"
+                        placeholder="VD: TS2024001"
                         required
+                        disabled={isLoggingIn}
                      />
                   </div>
 
-                  <div>
-                     <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu</label>
+                  <div className="space-y-2">
+                     <label className="block text-sm font-semibold text-gray-700">Mật khẩu</label>
                      <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                        className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all duration-200 text-gray-800"
                         placeholder="••••••••"
                         required
+                        disabled={isLoggingIn}
                      />
                   </div>
 
                   <button
                      type="submit"
-                     className="w-full bg-secondary text-white py-3 rounded-lg font-bold hover:bg-secondary-accent transition-colors shadow-md"
+                     disabled={isLoggingIn}
+                     className="w-full bg-gradient-to-r from-secondary to-secondary-accent text-white py-3.5 rounded-lg font-bold hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                     Đăng Nhập
+                     {isLoggingIn ? (
+                        <>
+                           <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                           Đang đăng nhập...
+                        </>
+                     ) : (
+                        <>
+                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                           </svg>
+                           Đăng Nhập
+                        </>
+                     )}
                   </button>
 
-                  <div className="text-center mt-4">
-                     <Link to={ROUTES.HOME} className="text-sm text-gray-500 hover:text-primary">Quay về trang chủ</Link>
+                  <div className="text-center mt-6 pt-4 border-t border-gray-100">
+                     <Link to={ROUTES.HOME} className="text-sm text-gray-500 hover:text-primary transition-colors duration-200 inline-flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Quay về trang chủ
+                     </Link>
                   </div>
                </form>
             </div>
@@ -245,9 +270,9 @@ const StudentPortal: React.FC = () => {
                      <div className="bg-white p-5 rounded-xl shadow-sm border border-purple-100">
                         <p className="text-gray-500 text-xs uppercase font-bold">Học kỳ hiện tại</p>
                         <h3 className="text-lg font-bold text-secondary mt-1">
-                           {currentSemester ? `HK${currentSemester.term === 'SEMESTER_1' ? '1' : '2'}` : '...'}
+                           {currentSemester ? `HK${currentSemester.semester_number}` : '...'}
                         </h3>
-                        <p className="text-xs text-gray-400 mt-1">{currentYear?.name || '...'}</p>
+                        <p className="text-xs text-gray-400 mt-1">{currentYear?.year_code || '...'}</p>
                      </div>
                   </div>
 
