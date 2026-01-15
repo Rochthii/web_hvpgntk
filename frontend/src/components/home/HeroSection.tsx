@@ -9,7 +9,7 @@ interface HeroSectionProps {
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ siteName, siteSlogan, backgroundImage }) => {
-    const bgImage = backgroundImage || '/images/temple-hero.jpg';
+    const bgImage = backgroundImage || '/images/CHANHDIENTRANGCHU.png';
 
     return (
         <section className="relative h-[460px] flex items-center justify-center overflow-hidden">
