@@ -19,7 +19,10 @@ const Home: React.FC = () => {
   const { data: announcements = [], isLoading: announcementsLoading } = useAnnouncements();
   const { data: banners = [] } = useBanners();
 
-  const bannerImage = banners.length > 0 ? banners[0].image_url : undefined;
+  const activeBanner = banners.length > 0 ? banners[0] : null;
+  const heroTitle = activeBanner?.title || siteSettings?.site_name_vi || 'Học viện Phật giáo Nam tông Khmer';
+  const heroSubtitle = activeBanner?.subtitle || siteSettings?.site_slogan_vi || 'Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự';
+  const heroImage = activeBanner?.image_url;
 
   return (
     <div className="min-h-screen bg-cream">
@@ -28,9 +31,9 @@ const Home: React.FC = () => {
 
       {/* HERO SECTION */}
       <HeroSection
-        siteName={siteSettings?.site_name_vi || 'Học viện Phật giáo Nam tông Khmer'}
-        siteSlogan={siteSettings?.site_slogan_vi || 'Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự'}
-        backgroundImage={bannerImage}
+        siteName={heroTitle}
+        siteSlogan={heroSubtitle}
+        backgroundImage={heroImage}
       />
 
 
