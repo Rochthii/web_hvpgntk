@@ -21,7 +21,6 @@ export const useSiteSettings = () => {
     return useQuery({
         queryKey: ['settings'],
         queryFn: () => cmsApi.getSettings().then(res => res.data),
-        staleTime: 15 * 60 * 1000,
     });
 };
 
@@ -29,7 +28,6 @@ export const useBanners = () => {
     return useQuery({
         queryKey: ['banners'],
         queryFn: () => cmsApi.getBanners().then(res => res.data),
-        staleTime: 15 * 60 * 1000,
     });
 };
 
