@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GraduationCap, Download } from 'lucide-react';
 import { generateCurriculumPDF } from '../utils/pdfGenerator';
 import toast from 'react-hot-toast';
 import { CurriculumTable } from '../components/education/CurriculumTable';
+import { academicApi } from '../api/academic';
+import { Course } from '../types/academic';
 
-// TODO: Fetch from Course API instead of hardcoded data
 interface Subject {
   id: string;
   code: string;
@@ -17,65 +19,93 @@ interface YearCurriculum {
   subjects: Subject[];
 }
 
-// Temporary data - will be replaced with API fetch
-const educationData: YearCurriculum[] = [
-  {
-    year: 1,
-    subjects: [
-      { id: "1", code: "TH014", name: "Thái Ngữ – I", credits: 4 },
-      { id: "2", code: "SV013", name: "Xã Hội Học", credits: 3 },
-      { id: "3", code: "SS014", name: "Sanskrit – I", credits: 4 },
-      { id: "4", code: "SD013", name: "Thiền Học – I", credits: 3 },
-      { id: "5", code: "PL314", name: "Dịch Thuật Pali – I", credits: 4 },
-      { id: "6", code: "PL214", name: "Cú Pháp Pali – I", credits: 4 },
-      { id: "7", code: "PL114", name: "Văn Phạm Pali – I", credits: 4 },
-    ]
-  },
-  {
-    year: 2,
-    subjects: [
-      { id: "17", code: "SD243", name: "Thiền Học – II", credits: 3 },
-      { id: "18", code: "TH244", name: "Thái Ngữ – II", credits: 4 },
-      { id: "19", code: "EN244", name: "Anh Ngữ – II", credits: 4 },
-      { id: "20", code: "TM012", name: "Tư Tưởng HCM", credits: 3 },
-    ]
-  },
-  {
-    year: 3,
-    subjects: [
-      { id: "35", code: "TK033", name: "Logic Học", credits: 3 },
-      { id: "36", code: "TH334", name: "Thái Ngữ – III", credits: 4 },
-      { id: "37", code: "SS334", name: "Sanskrit – III", credits: 4 },
-    ]
-  },
-  {
-    year: 4,
-    subjects: [
-      { id: "50", code: "VB014", name: "Văn Hóa Phật Giáo", credits: 4 },
-      { id: "51", code: "TH444", name: "Thái Ngữ – IV", credits: 4 },
-      { id: "52", code: "EN444", name: "Anh Ngữ – IV", credits: 4 },
-    ]
-  }
-];
-
 const Education: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const [activeYear, setActiveYear] = useState<number>(1);
-  const currentCurriculum = educationData.find(d => d.year === activeYear);
+  const [educationData, setEducationData] = useState<YearCurriculum[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isGenerating, setIsGenerating] = useState(false);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        setLoading(true);
+        const response = await academicApi.getCourses();
+        const courses: Course[] = response.data;
+
+        // Group courses by name pattern to determine year
+        // Year 1: ends with "– I" or "– ១"
+        // Year 2: ends with "– II" or "– ២"
+        // Year 3: ends with "– III" or "– ៣"
+        // Year 4: ends with "– IV" or "– ៤"
+        const grouped: YearCurriculum[] = [
+          { year: 1, subjects: [] },
+          { year: 2, subjects: [] },
+          { year: 3, subjects: [] },
+          { year: 4, subjects: [] }
+        ];
+
+        courses.forEach((course) => {
+          const name = i18n.language === 'km' && course.name_km ? course.name_km : course.name_vi;
+          let year = 1; // default
+
+          // Detect year from name pattern
+          if (name.includes(' I') || name.includes(' ១')) {
+            year = 1;
+          } else if (name.includes(' II') || name.includes(' ២')) {
+            year = 2;
+          } else if (name.includes(' III') || name.includes(' ៣')) {
+            year = 3;
+          } else if (name.includes(' IV') || name.includes(' ៤')) {
+            year = 4;
+          }
+
+          grouped[year - 1].subjects.push({
+            id: course.id,
+            code: course.code,
+            name: name,
+            credits: course.credits
+          });
+        });
+
+        setEducationData(grouped);
+      } catch (error) {
+        console.error('Error fetching courses:', error);
+        toast.error(t('common.error', 'Có lỗi xảy ra'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, [i18n.language, t]);
+
+  const currentCurriculum = educationData.find(d => d.year === activeYear);
 
   const handleDownload = async () => {
     setIsGenerating(true);
-    const toastId = toast.loading('Đang tạo file PDF...');
+    const toastId = toast.loading(t('common.generating', 'Đang tạo file PDF...'));
     try {
       await generateCurriculumPDF();
-      toast.success('Tải xuống thành công!', { id: toastId });
+      toast.success(t('common.success', 'Tải xuống thành công!'), { id: toastId });
     } catch (error) {
       console.error(error);
-      toast.error('Có lỗi khi tạo PDF.', { id: toastId });
+      toast.error(t('common.error', 'Có lỗi khi tạo PDF.'), { id: toastId });
     } finally {
       setIsGenerating(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-gray-600">{t('common.loading', 'Đang tải...')}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-cream font-body">
@@ -85,11 +115,11 @@ const Education: React.FC = () => {
         <div className="absolute inset-0 bg-[url('/images/pattern-ornate.svg')] opacity-5"></div>
         <div className="container mx-auto px-6 text-center relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold text-[#FFD700] font-heading mb-4 animate-fade-in-up">
-            CHƯƠNG TRÌNH ĐÀO TẠO
+            {t('education.title', 'CHƯƠNG TRÌNH ĐÀO TẠO')}
           </h1>
           <div className="w-24 h-1 bg-[#DAA520] mx-auto rounded-full"></div>
           <p className="text-white/80 mt-6 max-w-2xl mx-auto leading-relaxed text-lg">
-            Cử nhân Phật học (04 năm) - Hệ Chính quy
+            {t('education.subtitle', 'Cử nhân Phật học (04 năm) - Hệ Chính quy')}
           </p>
         </div>
       </div>
@@ -102,11 +132,11 @@ const Education: React.FC = () => {
             <GraduationCap size={40} className="text-[#6B2C2C]" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-secondary font-heading mb-3">Mục tiêu đào tạo</h2>
+            <h2 className="text-2xl font-bold text-secondary font-heading mb-3">
+              {t('education.goal', 'Mục tiêu đào tạo')}
+            </h2>
             <p className="text-gray-600 leading-relaxed">
-              Chương trình đào tạo Cử nhân Phật học Nam tông Khmer được thiết kế trong 04 năm học,
-              nhằm trang bị cho Tăng sinh kiến thức toàn diện về Tam tạng Pali, Văn hóa Khmer,
-              và các môn học hiện đại (Anh văn, Tin học, Xã hội học...), tạo nền tảng vững chắc để phụng sự Đạo pháp và Dân tộc.
+              {t('education.description', 'Chương trình đào tạo Cử nhân Phật học Nam tông Khmer được thiết kế trong 04 năm học, nhằm trang bị cho Tăng sinh kiến thức toàn diện về Tam tạng Pali, Văn hóa Khmer, và các môn học hiện đại (Anh văn, Tin học, Xã hội học...), tạo nền tảng vững chắc để phụng sự Đạo pháp và Dân tộc.')}
             </p>
           </div>
           <div className="flex-shrink-0">
@@ -116,7 +146,7 @@ const Education: React.FC = () => {
               className="flex items-center gap-2 px-6 py-3 bg-secondary text-white rounded-lg hover:bg-[#8B4513] transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Download size={18} />
-              <span>{isGenerating ? 'Đang xử lý...' : 'Tải PDF Chi tiết'}</span>
+              <span>{isGenerating ? t('common.processing', 'Đang xử lý...') : t('education.download', 'Tải PDF Chi tiết')}</span>
             </button>
           </div>
         </div>
@@ -135,26 +165,26 @@ const Education: React.FC = () => {
                 }
                     `}
             >
-              Năm thứ {yearToRoman(year)}
+              {t(`education.year${year}`, `Năm thứ ${yearToRoman(year)}`)}
             </button>
           ))}
         </div>
 
         {/* Content Area */}
         <div className="animate-fade-in">
-          {currentCurriculum ? (
+          {currentCurriculum && currentCurriculum.subjects.length > 0 ? (
             <div className="space-y-6">
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-secondary font-heading">
-                  Danh sách môn học - Năm thứ {yearToRoman(activeYear)}
+                  {t(`education.courseList`, 'Danh sách môn học')} - {t(`education.year${activeYear}`, `Năm thứ ${yearToRoman(activeYear)}`)}
                 </h3>
-                <p className="text-gray-500 italic">Học kỳ I & Học kỳ II</p>
+                <p className="text-gray-500 italic">{t('education.semesters', 'Học kỳ I & Học kỳ II')}</p>
               </div>
               <CurriculumTable subjects={currentCurriculum.subjects} />
             </div>
           ) : (
             <div className="text-center py-20 text-gray-400">
-              Đang cập nhật dữ liệu...
+              {t('common.no_data', 'Đang cập nhật dữ liệu...')}
             </div>
           )}
         </div>

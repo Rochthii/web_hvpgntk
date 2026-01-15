@@ -19,6 +19,7 @@ export interface Course {
     id: string;
     code: string;
     name_vi: string;
+    name_km: string | null;
     name_pali: string | null;
     credits: number;
     level: string; // 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
