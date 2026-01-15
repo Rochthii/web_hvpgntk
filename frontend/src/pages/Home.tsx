@@ -7,7 +7,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { StatsCards } from '../components/home/StatsCards';
 import { NewsGrid } from '../components/home/NewsGrid';
-import { useNews, useSiteSettings, useAnnouncements } from '../features/news/hooks/useNews';
+import { useNews, useSiteSettings, useAnnouncements, useBanners } from '../features/news/hooks/useNews';
 import { AnnouncementsSection } from '../components/home/AnnouncementsSection';
 
 /** NOTE: Header & Footer are kept inline for now - will extract later **/
@@ -17,6 +17,9 @@ const Home: React.FC = () => {
   const { data: siteSettings } = useSiteSettings();
   const { data: news = [], isLoading: newsLoading, isError: newsError } = useNews();
   const { data: announcements = [], isLoading: announcementsLoading } = useAnnouncements();
+  const { data: banners = [] } = useBanners();
+
+  const bannerImage = banners.length > 0 ? banners[0].image_url : undefined;
 
   return (
     <div className="min-h-screen bg-cream">
@@ -27,6 +30,7 @@ const Home: React.FC = () => {
       <HeroSection
         siteName={siteSettings?.site_name_vi || 'Học viện Phật giáo Nam tông Khmer'}
         siteSlogan={siteSettings?.site_slogan_vi || 'Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự'}
+        backgroundImage={bannerImage}
       />
 
 

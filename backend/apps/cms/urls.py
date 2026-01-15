@@ -1,13 +1,14 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    SiteSettingViewSet, PageViewSet, DepartmentViewSet, 
+    SiteSettingViewSet, BannerViewSet, PageViewSet, DepartmentViewSet, 
     StaffMemberViewSet, NewsViewSet, FAQViewSet, PartnerViewSet,
     ContactMessageViewSet, HistoryMilestoneViewSet
 )
 
 router = DefaultRouter()
 router.register(r'settings', SiteSettingViewSet, basename='settings')
+router.register(r'banners', BannerViewSet, basename='banners')
 router.register(r'pages', PageViewSet, basename='pages')
 router.register(r'departments', DepartmentViewSet, basename='departments')
 router.register(r'staff', StaffMemberViewSet, basename='staff')

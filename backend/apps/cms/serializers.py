@@ -1,6 +1,6 @@
 
 from rest_framework import serializers
-from .models import SiteSetting, Page, Department, StaffMember, News, FAQ, Partner, ContactMessage, HistoryMilestone
+from .models import SiteSetting, Banner, Page, Department, StaffMember, News, FAQ, Partner, ContactMessage, HistoryMilestone
 
 
 class BilingualSerializerMixin:
@@ -47,6 +47,21 @@ class SiteSettingSerializer(BilingualSerializerMixin, serializers.ModelSerialize
     
     def get_footer_text(self, obj):
         return self.get_localized_field(obj, 'footer_text')
+
+
+class BannerSerializer(BilingualSerializerMixin, serializers.ModelSerializer):
+    title = serializers.SerializerMethodField()
+    subtitle = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Banner
+        fields = '__all__'
+    
+    def get_title(self, obj):
+        return self.get_localized_field(obj, 'title')
+    
+    def get_subtitle(self, obj):
+        return self.get_localized_field(obj, 'subtitle')
 
 
 class PageSerializer(BilingualSerializerMixin, serializers.ModelSerializer):

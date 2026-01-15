@@ -1,9 +1,9 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import SiteSetting, Page, Department, StaffMember, News, FAQ, Partner, ContactMessage, HistoryMilestone
+from .models import SiteSetting, Banner, Page, Department, StaffMember, News, FAQ, Partner, ContactMessage, HistoryMilestone
 from .serializers import (
-    SiteSettingSerializer, PageSerializer, DepartmentSerializer,
+    SiteSettingSerializer, BannerSerializer, PageSerializer, DepartmentSerializer,
     StaffMemberSerializer, NewsSerializer, NewsLiteSerializer, FAQSerializer, PartnerSerializer,
     ContactMessageSerializer, HistoryMilestoneSerializer
 )
@@ -29,6 +29,15 @@ class SiteSettingViewSet(viewsets.ViewSet):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class BannerViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Banners for Homepage.
+    """
+    queryset = Banner.objects.filter(is_active=True).order_by('display_order')
+    serializer_class = BannerSerializer
+    permission_classes = [permissions.AllowAny]
+    pagination_class = None
 
 class PageViewSet(viewsets.ModelViewSet):
     """

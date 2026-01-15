@@ -5,15 +5,18 @@ import { ROUTES } from '../../router/routes';
 interface HeroSectionProps {
     siteName: string;
     siteSlogan: string;
+    backgroundImage?: string;
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ siteName, siteSlogan }) => {
+export const HeroSection: React.FC<HeroSectionProps> = ({ siteName, siteSlogan, backgroundImage }) => {
+    const bgImage = backgroundImage || '/images/temple-hero.jpg';
+
     return (
         <section className="relative h-[460px] flex items-center justify-center overflow-hidden">
             {/* Background Image */}
             <div
                 className="absolute inset-0 bg-cover bg-center opacity-100 brightness-[1.02] contrast-105"
-                style={{ backgroundImage: 'url(/images/temple-hero.jpg)' }}
+                style={{ backgroundImage: `url(${bgImage})` }}
             />
 
             {/* Gradient Overlay */}

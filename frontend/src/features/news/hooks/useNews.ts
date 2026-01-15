@@ -25,6 +25,14 @@ export const useSiteSettings = () => {
     });
 };
 
+export const useBanners = () => {
+    return useQuery({
+        queryKey: ['banners'],
+        queryFn: () => cmsApi.getBanners().then(res => res.data),
+        staleTime: 15 * 60 * 1000,
+    });
+};
+
 /**
  * Fetch announcements
  */

@@ -23,6 +23,16 @@ export interface SiteSettings {
     updated_at: string;
 }
 
+export interface Banner {
+    id: string;
+    title: string;
+    subtitle: string;
+    image_url: string;
+    image_url_mobile: string | null;
+    link_url: string;
+    display_order: number;
+}
+
 export interface NewsItem {
     id: string;
     title_vi: string;
@@ -76,6 +86,7 @@ export const cmsApi = {
     // Site Settings
     getSettings: () => axiosClient.get<SiteSettings>('/cms/settings/'),
     updateSettings: (data: Partial<SiteSettings>) => axiosClient.post('/cms/settings/update_settings/', data),
+    getBanners: () => axiosClient.get<Banner[]>('/cms/banners/').then(res => ({ ...res, data: (res.data as any).results || res.data })),
 
     // News
     getNews: (params?: any) => axiosClient.get<PaginatedResponse<NewsItem>>('/cms/news/', { params }),
