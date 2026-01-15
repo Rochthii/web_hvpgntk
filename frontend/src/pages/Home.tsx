@@ -22,7 +22,7 @@ const Home: React.FC = () => {
   const activeBanner = banners.length > 0 ? banners[0] : null;
   const heroTitle = activeBanner?.title || siteSettings?.site_name_vi || 'Học viện Phật giáo Nam tông Khmer';
   const heroSubtitle = activeBanner?.subtitle || siteSettings?.site_slogan_vi || 'Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự';
-  const heroImage = activeBanner?.image_url;
+  const heroImage = activeBanner?.image_url || siteSettings?.hero_image;
 
   return (
     <div className="min-h-screen bg-cream">

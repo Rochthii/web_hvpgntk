@@ -23,6 +23,10 @@ class SiteSetting(models.Model):
     logo_url = models.ImageField(upload_to='site/logos/', blank=True, null=True, verbose_name="Logo Website")
     favicon_url = models.ImageField(upload_to='site/favicons/', blank=True, null=True, verbose_name="Favicon")
     
+    # Hero Section
+    hero_image = models.ImageField(upload_to='settings/hero/', blank=True, null=True, verbose_name="Ảnh nền trang chủ (Desktop)", help_text="Ảnh lớn hiển thị đầu trang chủ.")
+    hero_image_mobile = models.ImageField(upload_to='settings/hero/mobile/', blank=True, null=True, verbose_name="Ảnh nền trang chủ (Mobile)")
+    
     # Liên hệ
     contact_email = models.EmailField(blank=True, verbose_name="Email liên hệ")
     contact_phone = models.CharField(max_length=50, blank=True, verbose_name="Số điện thoại")

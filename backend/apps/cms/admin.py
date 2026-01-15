@@ -22,7 +22,7 @@ class SiteSettingAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
         ('Logo & Media', {
-            'fields': ('logo_url', 'favicon_url')
+            'fields': ('logo_url', 'favicon_url', 'hero_image', 'hero_image_mobile')
         }),
         ('Liên hệ', {
             'fields': ('contact_email', 'contact_phone', 'contact_address', 'google_maps_embed')

@@ -21,6 +21,8 @@ export interface SiteSettings {
     id: string;
     created_at: string;
     updated_at: string;
+    hero_image?: string;
+    hero_image_mobile?: string;
 }
 
 export interface Banner {
