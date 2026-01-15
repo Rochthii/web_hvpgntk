@@ -76,6 +76,7 @@ class Course(models.Model):
     
     code = models.CharField(max_length=20, unique=True, verbose_name='Mã môn học')  # PG101, VIN201
     name_vi = models.CharField(max_length=200, verbose_name='Tên tiếng Việt')
+    name_km = models.CharField(max_length=200, blank=True, default='', verbose_name='Tên tiếng Khmer')
     name_pali = models.CharField(max_length=200, blank=True, verbose_name='Tên Pali')
     credits = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(10)], verbose_name='Số tín chỉ')
     level = models.CharField(max_length=20, choices=LEVEL_CHOICES, verbose_name='Cấp độ')

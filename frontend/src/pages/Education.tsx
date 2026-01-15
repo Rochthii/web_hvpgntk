@@ -3,7 +3,60 @@ import { GraduationCap, Download } from 'lucide-react';
 import { generateCurriculumPDF } from '../utils/pdfGenerator';
 import toast from 'react-hot-toast';
 import { CurriculumTable } from '../components/education/CurriculumTable';
-import { educationData } from '../data/EducationData';
+
+// TODO: Fetch from Course API instead of hardcoded data
+interface Subject {
+  id: string;
+  code: string;
+  name: string;
+  credits: number;
+}
+
+interface YearCurriculum {
+  year: number;
+  subjects: Subject[];
+}
+
+// Temporary data - will be replaced with API fetch
+const educationData: YearCurriculum[] = [
+  {
+    year: 1,
+    subjects: [
+      { id: "1", code: "TH014", name: "Thái Ngữ – I", credits: 4 },
+      { id: "2", code: "SV013", name: "Xã Hội Học", credits: 3 },
+      { id: "3", code: "SS014", name: "Sanskrit – I", credits: 4 },
+      { id: "4", code: "SD013", name: "Thiền Học – I", credits: 3 },
+      { id: "5", code: "PL314", name: "Dịch Thuật Pali – I", credits: 4 },
+      { id: "6", code: "PL214", name: "Cú Pháp Pali – I", credits: 4 },
+      { id: "7", code: "PL114", name: "Văn Phạm Pali – I", credits: 4 },
+    ]
+  },
+  {
+    year: 2,
+    subjects: [
+      { id: "17", code: "SD243", name: "Thiền Học – II", credits: 3 },
+      { id: "18", code: "TH244", name: "Thái Ngữ – II", credits: 4 },
+      { id: "19", code: "EN244", name: "Anh Ngữ – II", credits: 4 },
+      { id: "20", code: "TM012", name: "Tư Tưởng HCM", credits: 3 },
+    ]
+  },
+  {
+    year: 3,
+    subjects: [
+      { id: "35", code: "TK033", name: "Logic Học", credits: 3 },
+      { id: "36", code: "TH334", name: "Thái Ngữ – III", credits: 4 },
+      { id: "37", code: "SS334", name: "Sanskrit – III", credits: 4 },
+    ]
+  },
+  {
+    year: 4,
+    subjects: [
+      { id: "50", code: "VB014", name: "Văn Hóa Phật Giáo", credits: 4 },
+      { id: "51", code: "TH444", name: "Thái Ngữ – IV", credits: 4 },
+      { id: "52", code: "EN444", name: "Anh Ngữ – IV", credits: 4 },
+    ]
+  }
+];
 
 const Education: React.FC = () => {
   const [activeYear, setActiveYear] = useState<number>(1);
