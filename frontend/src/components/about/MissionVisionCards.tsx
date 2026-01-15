@@ -1,9 +1,12 @@
-import React from 'react';
-import { MissionPoint } from '../../data/AboutData';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GraduationCap, Landmark, HeartHandshake } from 'lucide-react';
+import { cmsApi } from '../../api/cms';
 
-interface MissionVisionCardsProps {
-    data: MissionPoint[];
+interface MissionPoint {
+    title: string;
+    description: string;
+    icon: string;
 }
 
 const getIcon = (iconName: string) => {
@@ -15,10 +18,51 @@ const getIcon = (iconName: string) => {
     }
 };
 
-export const MissionVisionCards: React.FC<MissionVisionCardsProps> = ({ data }) => {
+export const MissionVisionCards: React.FC = () => {
+    const { i18n } = useTranslation();
+    const [missionPoints, setMissionPoints] = useState<MissionPoint[]>([]);
+
+    useEffect(() => {
+        const fetchMissionData = async () => {
+            try {
+                const response = await cmsApi.getPageDetail('su-menh');
+                // Default mission points if API doesn't return structured data
+                // In the future, we can parse the HTML content or use a custom field
+                const defaultMissions: MissionPoint[] = [
+                    {
+                        title: i18n.language === 'km' ? 'ការអប់រំនិងការបណ្តុះបណ្តាល' : 'Giáo dục & Đào tạo',
+                        description: i18n.language === 'km'
+                            ? 'បណ្តុះបណ្តាលបរិញ្ញាបត្រព្រះពុទ្ធសាសនា Pali-Khmer និងសាសនាវិទ្យា បណ្តុះបណ្តាលព្រះសង្ឃដែលមានចំណេះដឹងជ្រាលជ្រៅអំពីព្រះពុទ្ធសាសនានិងអប្បបរមា។'
+                            : 'Đào tạo Cử nhân Phật học Pali - Khmer và Tôn giáo học, bồi dưỡng Tăng tài có kiến thức sâu rộng về Phật học và thế học.',
+                        icon: 'education'
+                    },
+                    {
+                        title: i18n.language === 'km' ? 'អភិរក្សវប្បធម៌' : 'Bảo tồn Văn hóa',
+                        description: i18n.language === 'km'
+                            ? 'អនុរក្សនិងលើកកម្ពស់អត្តសញ្ញាណវប្បធម៌ ភាសា អក្សរសាស្ត្រ និងប្រពៃណីដ៏ល្អរបស់ព្រះពុទ្ធសាសនាតេរវាទខ្មែរ។'
+                            : 'Gìn giữ và phát huy bản sắc văn hóa, ngôn ngữ, chữ viết và truyền thống tốt đẹp của Phật giáo Nam tông Khmer.',
+                        icon: 'culture'
+                    },
+                    {
+                        title: i18n.language === 'km' ? 'បំរើសង្គម' : 'Phụng sự Xã hội',
+                        description: i18n.language === 'km'
+                            ? 'រួមចំណែកក្នុងការកសាងឯកភាពជាតិ លើកទឹកចិត្តព្រះសង្ឃ ព្រះសង្ឃស្រី និងពុទ្ធបរិស័ទរស់នៅ "ល្អសម្រាប់ជីវិតនិងលំនឹងសម្រាប់សាសនា"។'
+                            : 'Góp phần xây dựng khối đại đoàn kết dân tộc, vận động Tăng ni, Phật tử sống "tốt đời đẹp đạo".',
+                        icon: 'social'
+                    }
+                ];
+                setMissionPoints(defaultMissions);
+            } catch (error) {
+                console.error('Error fetching mission data:', error);
+            }
+        };
+
+        fetchMissionData();
+    }, [i18n.language]);
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 container mx-auto px-6 mb-16">
-            {data.map((item, index) => (
+            {missionPoints.map((item, index) => (
                 <div
                     key={index}
                     className="bg-[#FFFBF5] p-8 rounded-xl border border-[#D4AF37]/20 text-center hover:-translate-y-2 transition-transform duration-300 shadow-sm hover:shadow-gold-sm group"

@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { HistoryTimeline } from '../components/about/HistoryTimeline';
 import { MissionVisionCards } from '../components/about/MissionVisionCards';
 import { OrgChart } from '../components/about/OrgChart';
-import { missionData } from '../data/AboutData';
 import { cmsApi, HistoryMilestone } from '../api/cms';
 
 interface PageContent {
@@ -78,7 +77,7 @@ const About: React.FC = () => {
 
       {/* Floating Mission Cards */}
       <div className="relative z-20 -mt-24 container mx-auto px-6">
-        <MissionVisionCards data={missionData} />
+        <MissionVisionCards />
       </div>
 
       {/* History Timeline */}
