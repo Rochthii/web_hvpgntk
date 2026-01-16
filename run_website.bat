@@ -39,12 +39,12 @@ echo   Trang web se tu dong mo.
 echo ==================================================
 
 timeout /t 5 >nul
-start http://localhost:5173
+start http://localhost:3000
 start http://localhost:8000/admin
 
 echo.
 echo [TUY CHON]
-echo   - Web Portal:  http://localhost:5173
+echo   - Web Portal:  http://localhost:3000
 echo   - Admin Portal: http://localhost:8000/admin
 echo.
 echo Neu he thong bao loi Database, hay chay file 'setup_database.bat'

@@ -78,7 +78,7 @@ export const NewsGrid: React.FC<NewsGridProps> = ({ news, loading, error }) => {
                     {news.map((item, idx) => (
                         <article
                             key={item.id}
-                            className="group bg-white rounded-2xl overflow-hidden border-2 border-[#E5CFA0] shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+                            className="group bg-white rounded-2xl overflow-hidden border-2 border-[#E5CFA0] shadow-lg hover:shadow-2xl hover:-translate-y-3 hover:scale-[1.02] transition-all duration-500"
                             style={{
                                 animation: `fadeInUp ${0.5 + idx * 0.1}s ease-out`,
                             }}

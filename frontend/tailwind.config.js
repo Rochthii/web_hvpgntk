@@ -115,12 +115,33 @@ export default {
                     '0%': { backgroundPosition: '-1000px 0' },
                     '100%': { backgroundPosition: '1000px 0' },
                 },
+                float: {
+                    '0%, 100%': { transform: 'translateY(0px)' },
+                    '50%': { transform: 'translateY(-12px)' },
+                },
+                gradientShift: {
+                    '0%, 100%': { backgroundPosition: '0% 50%' },
+                    '50%': { backgroundPosition: '100% 50%' },
+                },
+                glow: {
+                    '0%, 100%': { filter: 'drop-shadow(0 0 20px rgba(255,215,0,0.4))' },
+                    '50%': { filter: 'drop-shadow(0 0 35px rgba(255,215,0,0.7))' },
+                },
+                twinkle: {
+                    '0%, 100%': { opacity: '0.3' },
+                    '50%': { opacity: '1' },
+                },
             },
             animation: {
                 'fade-in': 'fadeIn 0.5s ease-in-out',
                 'fade-in-up': 'fadeInUp 0.8s ease-out',
                 'slide-in-right': 'slideInRight 0.5s ease-out',
                 'shimmer': 'shimmer 2s infinite linear',
+                'float': 'float 4s ease-in-out infinite',
+                'gradient-shift': 'gradientShift 8s ease infinite',
+                'glow': 'glow 3s ease-in-out infinite',
+                'twinkle': 'twinkle 2s ease-in-out infinite',
+                'spin-slow': 'spin 20s linear infinite',
             },
 
             // Background images
