@@ -38,10 +38,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ siteName, siteSlogan, 
             {/* Content */}
             <div className="relative z-10 text-center max-w-[880px] px-8 animate-fade-in-up">
                 <h1 className="text-[2.625rem] font-extrabold 
-                               bg-clip-text text-transparent bg-gradient-to-r from-[#FFD700] via-[#FFF8DC] to-[#FFD700]
-                               drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] 
+                               bg-clip-text text-transparent bg-gradient-to-r from-[#FFAE00] via-[#FFFDD0] to-[#FFAE00]
+                               filter drop-shadow-[0_5px_5px_rgba(0,0,0,1)]
                                mb-[1.125rem] tracking-[0.05em] leading-[1.4] 
-                               font-heading animate-glow shadow-black">
+                               font-heading animate-glow">
                     {siteName.toUpperCase()}
                 </h1>
 
