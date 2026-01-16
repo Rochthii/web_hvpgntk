@@ -76,5 +76,18 @@
         "history": "LỊCH SỬ HÌNH THÀNH",
         "history_subtitle": "Chặng đường 20 năm xây dựng và phát triển (2006 - 2026).",
         "quote": "\"Nơi ươm mầm trí tuệ, gìn giữ bản sắc, phụng sự nhân sinh.\""
+    },
+    "education": {
+        "title": "CHƯƠNG TRÌNH ĐÀO TẠO",
+        "subtitle": "Cử nhân Phật học (04 năm) - Hệ Chính quy",
+        "goal": "Mục tiêu đào tạo",
+        "description": "Chương trình đào tạo Cử nhân Phật học Nam tông Khmer được thiết kế trong 04 năm học, nhằm trang bị cho Tăng sinh kiến thức toàn diện về Tam tạng Pali, Văn hóa Khmer, và các môn học hiện đại (Anh văn, Tin học, Xã hội học...), tạo nền tảng vững chắc để phụng sự Đạo pháp và Dân tộc.",
+        "download": "Tải PDF Chi tiết",
+        "year1": "Năm thứ I",
+        "year2": "Năm thứ II",
+        "year3": "Năm thứ III",
+        "year4": "Năm thứ IV",
+        "courseList": "Danh sách môn học",
+        "semesters": "Học kỳ I & Học kỳ II"
     }
 }
