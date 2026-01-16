@@ -70,7 +70,7 @@ const About: React.FC = () => {
           </h1>
           <div className="w-24 h-1 bg-[#DAA520] mx-auto rounded-full mb-6"></div>
           <p className="text-white/90 text-lg max-w-3xl mx-auto leading-relaxed font-light italic">
-            {pageContent?.excerpt || '"Nơi ươm mầm trí tuệ, gìn giữ bản sắc, phụng sự nhân sinh."'}
+            {pageContent?.excerpt || t('about.quote', '"Nơi ươm mầm trí tuệ, gìn giữ bản sắc, phụng sự nhân sinh."')}
           </p>
         </div>
       </div>
