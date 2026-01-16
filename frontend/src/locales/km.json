@@ -110,5 +110,11 @@
             "announcement": "សេចក្តីជូនដំណឹង",
             "event": "ព្រឹត្តិការណ៍"
         }
+    },
+    "newsDetail": {
+        "errorTitle": "កំហុស",
+        "errorMessage": "រកមិនឃើញអត្ថបទ ឬមានកំហុស។",
+        "backToNews": "ត្រឡប់ទៅព័ត៌មាន",
+        "editorialBoard": "ក្រុមការងារកែសម្រួល"
     }
 }

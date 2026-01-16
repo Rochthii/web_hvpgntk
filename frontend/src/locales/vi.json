@@ -110,5 +110,11 @@
             "announcement": "Thông báo",
             "event": "Sự kiện"
         }
+    },
+    "newsDetail": {
+        "errorTitle": "Lỗi",
+        "errorMessage": "Không tìm thấy bài viết hoặc đã xảy ra lỗi.",
+        "backToNews": "Quay lại Tin tức",
+        "editorialBoard": "Ban Biên Tập"
     }
 }
