@@ -14,5 +14,11 @@ class Command(BaseCommand):
         if not obj.site_slogan_vi:
             obj.site_slogan_vi = "Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự"
             
+        # Khmer Defaults (From Translation Dictionary)
+        if not obj.site_name_km:
+            obj.site_name_km = "ពុទ្ធិកវិទ្យាល័យពុទ្ធសាសនានិកាយខ្មែរ"
+        if not obj.site_slogan_km:
+            obj.site_slogan_km = "សាមគ្គី - ឯកភាព - បញ្ញា - បម្រើ"
+            
         obj.save()
         self.stdout.write(self.style.SUCCESS('✅ Site Setting Hero Image Updated!'))

@@ -5,7 +5,11 @@ import { cmsApi, SiteSettings } from '../api/cms';
 import { useFetch } from '../hooks/useFetch';
 import { ArrowUp, Facebook, Youtube, MapPin, Phone, Mail } from 'lucide-react';
 
+import { useTranslation } from 'react-i18next';
+
 const Footer: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const isKhmer = i18n.language === 'km';
   const fetchSettings = useCallback(() => cmsApi.getSettings(), []);
   const { data: settings } = useFetch<SiteSettings>(fetchSettings);
 
@@ -34,12 +38,14 @@ const Footer: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-serif font-bold text-white text-lg leading-tight uppercase tracking-wide">
-                  Học Viện Phật Giáo <br /> <span className="text-[#DAA520]">Nam Tông Khmer</span>
+                  {isKhmer ? 'ពុទ្ធិកវិទ្យាល័យ' : 'Học Viện Phật Giáo'} <br /> <span className="text-[#DAA520]">{isKhmer ? 'ពុទ្ធសាសនាថេរវាទខ្មែរ' : 'Nam Tông Khmer'}</span>
                 </h3>
               </div>
             </div>
             <p className="text-sm opacity-80 leading-relaxed text-justify">
-              Nơi đào tạo Tăng tài, gìn giữ và phát huy bản sắc văn hóa Phật giáo Nam tông Khmer, góp phần xây dựng đạo pháp và dân tộc.
+              {isKhmer
+                ? 'ទីកន្លែងបណ្តុះបណ្តាលព្រះសង្ឃដែលមានសមត្ថភាព ថែរក្សានិងលើកកម្ពស់អត្តសញ្ញាណវប្បធម៌ព្រះពុទ្ធសាសនានិកាយខ្មែរ រួមចំណែកក្នុងការកសាងព្រះពុទ្ធសាសនានិងជាតិ។'
+                : 'Nơi đào tạo Tăng tài, gìn giữ và phát huy bản sắc văn hóa Phật giáo Nam tông Khmer, góp phần xây dựng đạo pháp và dân tộc.'}
             </p>
             <div className="flex gap-4 pt-2">
               {settings?.facebook_url && (
@@ -58,17 +64,17 @@ const Footer: React.FC = () => {
           {/* Column 2: Quick Links */}
           <div>
             <h4 className="font-serif font-bold text-white text-xl mb-6 relative inline-block">
-              Liên Kết Nhanh
+              {t('common.quick_links', 'Liên Kết Nhanh')}
               <span className="absolute bottom-0 left-0 w-1/2 h-0.5 bg-[#DAA520]"></span>
             </h4>
             <ul className="space-y-3">
               {[
-                { label: 'Trang chủ', link: ROUTES.HOME },
-                { label: 'Giới thiệu', link: ROUTES.ABOUT },
-                { label: 'Chương trình đào tạo', link: ROUTES.EDUCATION },
-                { label: 'Tin tức & Sự kiện', link: ROUTES.NEWS },
-                { label: 'Tuyển sinh', link: ROUTES.ADMISSIONS },
-                { label: 'Liên hệ', link: ROUTES.CONTACT },
+                { label: t('nav.home', 'Trang chủ'), link: ROUTES.HOME },
+                { label: t('nav.about', 'Giới thiệu'), link: ROUTES.ABOUT },
+                { label: t('nav.education', 'Chương trình đào tạo'), link: ROUTES.EDUCATION },
+                { label: t('nav.news', 'Tin tức & Sự kiện'), link: ROUTES.NEWS },
+                { label: t('nav.admissions', 'Tuyển sinh'), link: ROUTES.ADMISSIONS },
+                { label: t('nav.contact', 'Liên hệ'), link: ROUTES.CONTACT },
               ].map((item) => (
                 <li key={item.label}>
                   <Link to={item.link} className="flex items-center gap-2 hover:text-[#FFD700] transition-colors group">
@@ -119,7 +125,8 @@ const Footer: React.FC = () => {
         {/* Footer Bottom */}
         <div className="border-t border-[#6B2C2C] pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm opacity-70">
           <p>
-            {settings?.footer_text_vi || "© 2026 Học viện Phật giáo Nam tông Khmer Cần Thơ."}
+            {(isKhmer ? settings?.footer_text_km : settings?.footer_text_vi) ||
+              (isKhmer ? "© 2026 ពុទ្ធិកវិទ្យាល័យពុទ្ធសាសនានិកាយខ្មែរ កាន់ថឺ។" : "© 2026 Học viện Phật giáo Nam tông Khmer Cần Thơ.")}
           </p>
           <p>
             Phát triển bởi <span className="text-[#DAA520] font-bold">Chăm Rốch Thi</span>

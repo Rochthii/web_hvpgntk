@@ -26,12 +26,18 @@ const Home: React.FC = () => {
   const activeBanner = banners.length > 0 ? banners[0] : null;
 
   // Select content based on current language
-  const heroTitle = activeBanner?.title ||
-    (isKhmer ? siteSettings?.site_name_km : siteSettings?.site_name_vi) ||
-    'Học viện Phật giáo Nam tông Khmer';
-  const heroSubtitle = activeBanner?.subtitle ||
-    (isKhmer ? siteSettings?.site_slogan_km : siteSettings?.site_slogan_vi) ||
-    'Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự';
+  // Select content based on current language
+  let heroTitle = 'Học viện Phật giáo Nam tông Khmer';
+  let heroSubtitle = 'Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự';
+
+  if (activeBanner) {
+    // Prioritize explicit bilingual fields if available, otherwise fallback to standard title/subtitle
+    heroTitle = (isKhmer && activeBanner.title_km) ? activeBanner.title_km : (activeBanner.title_vi || activeBanner.title);
+    heroSubtitle = (isKhmer && activeBanner.subtitle_km) ? activeBanner.subtitle_km : (activeBanner.subtitle_vi || activeBanner.subtitle);
+  } else if (siteSettings) {
+    heroTitle = (isKhmer && siteSettings.site_name_km) ? siteSettings.site_name_km : siteSettings.site_name_vi;
+    heroSubtitle = (isKhmer && siteSettings.site_slogan_km) ? siteSettings.site_slogan_km : siteSettings.site_slogan_vi;
+  }
   const heroImage = activeBanner?.image_url || siteSettings?.hero_image;
 
   return (

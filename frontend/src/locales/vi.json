@@ -56,5 +56,15 @@
         "success": "Thành công",
         "error": "Thất bại",
         "search": "Tìm kiếm"
+    },
+    "news": {
+        "latest_news": "TIN TỨC HỌC VIỆN",
+        "latest_subtitle": "Cập nhật những hoạt động Phật sự, văn hóa và lễ hội mới nhất từ Học viện",
+        "view_all": "Xem tất cả tin tức",
+        "read_more": "Đọc thêm"
+    },
+    "common": {
+        "quick_links": "Liên Kết Nhanh",
+        "read_more": "Đọc thêm"
     }
 }

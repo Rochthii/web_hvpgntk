@@ -29,6 +29,10 @@ export interface Banner {
     id: string;
     title: string;
     subtitle: string;
+    title_vi?: string;
+    title_km?: string;
+    subtitle_vi?: string;
+    subtitle_km?: string;
     image_url: string;
     image_url_mobile: string | null;
     link_url: string;
@@ -38,9 +42,12 @@ export interface Banner {
 export interface NewsItem {
     id: string;
     title_vi: string;
+    title_km?: string;
     slug: string;
     excerpt_vi: string;
+    excerpt_km?: string;
     content_vi: string;
+    content_km?: string;
     featured_image_url: string;
     category: string;
     status: 'draft' | 'published' | 'archived';
