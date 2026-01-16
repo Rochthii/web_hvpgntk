@@ -65,7 +65,10 @@
     },
     "common": {
         "quick_links": "Liên Kết Nhanh",
-        "read_more": "Đọc thêm"
+        "read_more": "Đọc thêm",
+        "prev": "Trước",
+        "next": "Sau",
+        "views": "Lượt xem"
     },
     "home": {
         "founded_year": "Năm thành lập",
@@ -89,5 +92,23 @@
         "year4": "Năm thứ IV",
         "courseList": "Danh sách môn học",
         "semesters": "Học kỳ I & Học kỳ II"
+    },
+    "newsPage": {
+        "title": "Tin Tức & Sự Kiện",
+        "subtitle": "Cập nhật những hoạt động Phật sự, văn hóa và lễ hội mới nhất từ Học viện Phật giáo Nam tông Khmer.",
+        "searchTitle": "Tìm kiếm",
+        "searchPlaceholder": "Tìm tin tức...",
+        "categoriesTitle": "Danh mục",
+        "featuredAdTitle": "Đại lễ khánh thành 2025",
+        "viewDetail": "XEM CHI TIẾT",
+        "noResults": "Không tìm thấy tin tức nào phù hợp.",
+        "categories": {
+            "all": "Tất cả",
+            "academy_news": "Tin Học viện",
+            "buddhist_news": "Phật sự",
+            "khmer_festival": "Lễ hội Khmer",
+            "announcement": "Thông báo",
+            "event": "Sự kiện"
+        }
     }
 }

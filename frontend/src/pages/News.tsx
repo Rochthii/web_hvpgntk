@@ -7,13 +7,12 @@ import { ROUTES } from '../router/routes';
 import { useFetch } from '../hooks/useFetch';
 
 const News: React.FC = () => {
-   const { i18n } = useTranslation(); // Get i18n instance
+   const { i18n, t } = useTranslation(); // Get i18n instance
+
    // State for filters
    const [search, setSearch] = useState('');
    const [category, setCategory] = useState<string>('');
    const [debouncedSearch, setDebouncedSearch] = useState('');
-
-   // Debounce search
    const [page, setPage] = useState(1);
 
    // Debounce search
@@ -45,12 +44,12 @@ const News: React.FC = () => {
    // Hardcoded categories list mapped to model choices
    // In a real scenario, we might fetch these from an API endpoint like /cms/news/categories/
    const CATEGORIES = [
-      { label: 'Tất cả', value: '' },
-      { label: 'Tin Học viện', value: 'academy_news' },
-      { label: 'Phật sự', value: 'buddhist_news' },
-      { label: 'Lễ hội Khmer', value: 'khmer_festival' },
-      { label: 'Thông báo', value: 'announcement' },
-      { label: 'Sự kiện', value: 'event' },
+      { label: t('newsPage.categories.all', 'Tất cả'), value: '' },
+      { label: t('newsPage.categories.academy_news', 'Tin Học viện'), value: 'academy_news' },
+      { label: t('newsPage.categories.buddhist_news', 'Phật sự'), value: 'buddhist_news' },
+      { label: t('newsPage.categories.khmer_festival', 'Lễ hội Khmer'), value: 'khmer_festival' },
+      { label: t('newsPage.categories.announcement', 'Thông báo'), value: 'announcement' },
+      { label: t('newsPage.categories.event', 'Sự kiện'), value: 'event' },
    ];
 
    if (loading && !newsData) {
@@ -74,10 +73,12 @@ const News: React.FC = () => {
          <div className="bg-[#6B2C2C] text-white py-16 px-4 relative overflow-hidden">
             <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/black-scales.png')]"></div>
             <div className="container mx-auto relative z-10 text-center">
-               <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4 drop-shadow-md">Tin Tức & Sự Kiện</h1>
+               <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4 drop-shadow-md animate-fade-in-up">
+                  {t('newsPage.title', 'Tin Tức & Sự Kiện')}
+               </h1>
                <div className="w-32 h-1 bg-[#DAA520] mx-auto mb-6"></div>
-               <p className="text-[#E5CFA0] text-lg max-w-2xl mx-auto italic">
-                  Cập nhật những hoạt động Phật sự, văn hóa và lễ hội mới nhất từ Học viện Phật giáo Nam tông Khmer.
+               <p className="text-[#E5CFA0] text-lg max-w-2xl mx-auto italic animate-fade-in-up delay-100">
+                  {t('newsPage.subtitle', 'Cập nhật những hoạt động Phật sự, văn hóa và lễ hội mới nhất từ Học viện Phật giáo Nam tông Khmer.')}
                </p>
             </div>
          </div>
@@ -89,7 +90,7 @@ const News: React.FC = () => {
 
                   {/* HERO NEWS (Featured) - Only show on Page 1 if no filter */}
                   {featuredNews && (
-                     <div className="mb-12 group">
+                     <div className="mb-12 group animate-fade-in-up delay-200">
                         <Link to={`${ROUTES.NEWS}/${featuredNews.slug}`} className="block relative h-[500px] rounded-2xl overflow-hidden shadow-2xl border-4 border-[#DAA520]">
                            <img
                               src={featuredNews.featured_image_url || "https://picsum.photos/id/1029/1200/800"}
@@ -104,7 +105,7 @@ const News: React.FC = () => {
                                  {featuredNews.title || featuredNews.title_vi}
                               </h2>
                               <div className="flex items-center text-gray-300 text-sm mb-4 space-x-4">
-                                 <span className="flex items-center"><Calendar size={14} className="mr-1 text-[#DAA520]" /> {new Date(featuredNews.published_at || featuredNews.created_at).toLocaleDateString('vi-VN')}</span>
+                                 <span className="flex items-center"><Calendar size={14} className="mr-1 text-[#DAA520]" /> {new Date(featuredNews.published_at || featuredNews.created_at).toLocaleDateString(i18n.language === 'km' ? 'km-KH' : 'vi-VN')}</span>
                               </div>
                               <p className="text-gray-200 text-lg line-clamp-2 max-w-3xl font-light">
                                  {featuredNews.excerpt || featuredNews.excerpt_vi}
@@ -118,8 +119,8 @@ const News: React.FC = () => {
                   {otherNews.length > 0 ? (
                      <>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                           {otherNews.map((item) => (
-                              <article key={item.id} className="bg-white rounded-[16px] shadow-sm hover:shadow-xl border border-[#E5CFA0]/50 overflow-hidden group transition-all duration-300 flex flex-col h-full">
+                           {otherNews.map((item, index) => (
+                              <article key={item.id} className={`bg-white rounded-[16px] shadow-sm hover:shadow-xl border border-[#E5CFA0]/50 overflow-hidden group transition-all duration-300 flex flex-col h-full animate-fade-in-up delay-[${index * 100}ms]`}>
                                  {/* Image Container */}
                                  <div className="relative h-60 overflow-hidden">
                                     <img
@@ -138,7 +139,7 @@ const News: React.FC = () => {
                                     {/* Date Badge - Floating Right */}
                                     <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm text-white text-[11px] font-medium px-3 py-1.5 rounded-lg flex items-center gap-1.5">
                                        <Calendar size={12} className="text-[#DAA520]" />
-                                       {new Date(item.published_at || item.created_at).toLocaleDateString('vi-VN')}
+                                       {new Date(item.published_at || item.created_at).toLocaleDateString(i18n.language === 'km' ? 'km-KH' : 'vi-VN')}
                                     </div>
                                  </div>
 
@@ -158,11 +159,11 @@ const News: React.FC = () => {
                                     <div className="pt-5 border-t border-[#F5E6D3] flex items-center justify-between text-xs text-gray-500 font-medium mt-auto">
                                        <div className="flex items-center gap-2">
                                           <Eye size={14} className="text-gray-400" />
-                                          {item.view_count || 0} lượt xem
+                                          {item.view_count || 0} {t('common.views', 'Lượt xem')}
                                        </div>
 
                                        <Link to={`${ROUTES.NEWS}/${item.slug}`} className="flex items-center text-[#8B4513] hover:text-[#DAA520] transition-colors gap-1 font-bold group/btn">
-                                          ĐỌC TIẾP
+                                          {t('newsPage.viewDetail', 'XEM CHI TIẾT')}
                                           <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
                                        </Link>
                                     </div>
@@ -179,7 +180,7 @@ const News: React.FC = () => {
                                  disabled={page === 1}
                                  className="px-4 py-2 rounded-lg bg-white border border-[#E5CFA0] text-[#6B2C2C] hover:bg-[#FFF8E1] disabled:opacity-50 disabled:cursor-not-allowed"
                               >
-                                 Trước
+                                 {t('common.prev', 'Trước')}
                               </button>
 
                               {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
@@ -200,14 +201,14 @@ const News: React.FC = () => {
                                  disabled={page === totalPages}
                                  className="px-4 py-2 rounded-lg bg-white border border-[#E5CFA0] text-[#6B2C2C] hover:bg-[#FFF8E1] disabled:opacity-50 disabled:cursor-not-allowed"
                               >
-                                 Sau
+                                 {t('common.next', 'Sau')}
                               </button>
                            </div>
                         )}
                      </>
                   ) : (
                      <div className="text-center py-20 bg-white rounded-xl border border-dashed border-[#E5CFA0]">
-                        <p className="text-gray-500 italic">Không tìm thấy tin tức nào phù hợp.</p>
+                        <p className="text-gray-500 italic">{t('newsPage.noResults', 'Không tìm thấy tin tức nào phù hợp.')}</p>
                      </div>
                   )}
                </div>
@@ -217,14 +218,14 @@ const News: React.FC = () => {
                   {/* Search Widget */}
                   <div className="bg-white p-6 rounded-xl shadow-gold-sm border border-[#E5CFA0]">
                      <h3 className="font-serif font-bold text-[#6B2C2C] text-xl mb-4 relative pb-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-[#DAA520]">
-                        Tìm kiếm
+                        {t('newsPage.searchTitle', 'Tìm kiếm')}
                      </h3>
                      <div className="relative">
                         <input
                            type="text"
                            value={search}
                            onChange={(e) => setSearch(e.target.value)}
-                           placeholder="Tìm tin tức..."
+                           placeholder={t('newsPage.searchPlaceholder', 'Tìm tin tức...')}
                            className="w-full pl-4 pr-10 py-3 bg-[#FDF5E6] border border-[#E5CFA0] rounded-lg focus:outline-none focus:border-[#DAA520] focus:ring-1 focus:ring-[#DAA520] text-sm text-[#6B2C2C] placeholder-[#8B4513]/50"
                         />
                         <Search className="absolute right-3 top-3 text-[#DAA520]" size={18} />
@@ -234,7 +235,7 @@ const News: React.FC = () => {
                   {/* Categories Widget */}
                   <div className="bg-white p-6 rounded-xl shadow-gold-sm border border-[#E5CFA0]">
                      <h3 className="font-serif font-bold text-[#6B2C2C] text-xl mb-6 relative pb-2 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-12 after:h-0.5 after:bg-[#DAA520]">
-                        Danh mục
+                        {t('newsPage.categoriesTitle', 'Danh mục')}
                      </h3>
                      <ul className="space-y-3 text-sm">
                         {CATEGORIES.map(cat => (
@@ -255,9 +256,9 @@ const News: React.FC = () => {
                   <div className="rounded-xl overflow-hidden shadow-gold-md relative h-64 group cursor-pointer">
                      <img src="https://phatsuonline.com/wp-content/uploads/2024/02/1-4-10.jpg" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Ad" />
                      <div className="absolute inset-0 bg-gradient-to-t from-[#6B2C2C]/90 to-transparent flex flex-col justify-end p-6 text-center">
-                        <h4 className="text-white font-serif font-bold text-lg mb-2">Đại lễ khánh thành 2025</h4>
+                        <h4 className="text-white font-serif font-bold text-lg mb-2">{t('newsPage.featuredAdTitle', 'Đại lễ khánh thành 2025')}</h4>
                         <button className="bg-[#DAA520] text-[#6B2C2C] text-xs font-bold py-2 px-4 rounded-full self-center hover:bg-white transition-colors">
-                           XEM CHI TIẾT
+                           {t('newsPage.viewDetail', 'XEM CHI TIẾT')}
                         </button>
                      </div>
                   </div>
