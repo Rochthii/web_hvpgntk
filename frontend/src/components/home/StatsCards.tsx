@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ROUTES } from '../../router/routes';
 import { useCounter, useInView } from '../../utils/animations';
+import { useTranslation } from 'react-i18next';
 
 interface StatCardData {
     num: string;
@@ -19,6 +20,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({
     studentCount,
     courseCount,
 }) => {
+    const { t } = useTranslation();
     const [ref, isInView] = useInView(0.3);
 
     // Parse numbers from strings like "250+"
@@ -29,14 +31,14 @@ export const StatsCards: React.FC<StatsCardsProps> = ({
     const courseCounter = useCounter(courseNum, 1500, isInView);
 
     const stats: StatCardData[] = [
-        { num: foundedYear, label: 'Năm thành lập' },
+        { num: foundedYear, label: t('home.founded_year', 'Năm thành lập') },
         {
             num: studentCount.includes('+') ? `${studentCounter}+` : `${studentCounter}`,
-            label: 'Sinh viên tốt nghiệp'
+            label: t('home.graduates', 'Sinh viên tốt nghiệp')
         },
         {
             num: courseCount.includes('+') ? `${courseCounter}+` : `${courseCounter}`,
-            label: 'Tỉnh Nam Bộ'
+            label: t('home.provinces', 'Tỉnh Nam Bộ')
         },
     ];
 

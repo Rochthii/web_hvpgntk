@@ -66,5 +66,10 @@
     "common": {
         "quick_links": "Liên Kết Nhanh",
         "read_more": "Đọc thêm"
+    },
+    "home": {
+        "founded_year": "Năm thành lập",
+        "graduates": "Sinh viên tốt nghiệp",
+        "provinces": "Tỉnh Nam Bộ"
     }
 }
