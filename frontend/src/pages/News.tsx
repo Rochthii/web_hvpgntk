@@ -252,16 +252,7 @@ const News: React.FC = () => {
                      </ul>
                   </div>
 
-                  {/* Featured Banner (Ad) */}
-                  <div className="rounded-xl overflow-hidden shadow-gold-md relative h-64 group cursor-pointer">
-                     <img src="https://phatsuonline.com/wp-content/uploads/2024/02/1-4-10.jpg" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Ad" />
-                     <div className="absolute inset-0 bg-gradient-to-t from-[#6B2C2C]/90 to-transparent flex flex-col justify-end p-6 text-center">
-                        <h4 className="text-white font-serif font-bold text-lg mb-2">{t('newsPage.featuredAdTitle', 'Đại lễ khánh thành 2025')}</h4>
-                        <button className="bg-[#DAA520] text-[#6B2C2C] text-xs font-bold py-2 px-4 rounded-full self-center hover:bg-white transition-colors">
-                           {t('newsPage.viewDetail', 'XEM CHI TIẾT')}
-                        </button>
-                     </div>
-                  </div>
+
 
                </div>
             </div>
