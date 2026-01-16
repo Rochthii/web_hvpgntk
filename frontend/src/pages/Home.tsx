@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { SiteSettings } from '../api/cms';
 import { ROUTES } from '../router/routes';
 import { HeroSection } from '../components/home/HeroSection';
@@ -13,6 +14,9 @@ import { AnnouncementsSection } from '../components/home/AnnouncementsSection';
 /** NOTE: Header & Footer are kept inline for now - will extract later **/
 
 const Home: React.FC = () => {
+  const { i18n } = useTranslation();
+  const isKhmer = i18n.language === 'km';
+
   // Use React Query hooks
   const { data: siteSettings } = useSiteSettings();
   const { data: news = [], isLoading: newsLoading, isError: newsError } = useNews();
@@ -20,8 +24,14 @@ const Home: React.FC = () => {
   const { data: banners = [] } = useBanners();
 
   const activeBanner = banners.length > 0 ? banners[0] : null;
-  const heroTitle = activeBanner?.title || siteSettings?.site_name_vi || 'Học viện Phật giáo Nam tông Khmer';
-  const heroSubtitle = activeBanner?.subtitle || siteSettings?.site_slogan_vi || 'Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự';
+
+  // Select content based on current language
+  const heroTitle = activeBanner?.title ||
+    (isKhmer ? siteSettings?.site_name_km : siteSettings?.site_name_vi) ||
+    'Học viện Phật giáo Nam tông Khmer';
+  const heroSubtitle = activeBanner?.subtitle ||
+    (isKhmer ? siteSettings?.site_slogan_km : siteSettings?.site_slogan_vi) ||
+    'Đoàn kết - Hòa hợp - Trí tuệ - Phụng sự';
   const heroImage = activeBanner?.image_url || siteSettings?.hero_image;
 
   return (
