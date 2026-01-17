@@ -384,17 +384,17 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     
-    # Global Rate Limiting (DDoS Protection)
-    'DEFAULT_THROTTLE_CLASSES': [
-        'apps.core.throttling.StrictAnonThrottle',
-        'apps.core.throttling.SustainedUserThrottle',
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'login': '10/minute',           # Login attempts (brute-force protection)
-        'strict_anon': '50/hour',      # Anonymous users
-        'burst_user': '100/minute',    # Authenticated users (burst)
-        'sustained_user': '1000/hour', # Authenticated users (sustained)
-    },
+    # Global Rate Limiting (DDoS Protection) - DISABLED FOR DEVELOPMENT
+    # 'DEFAULT_THROTTLE_CLASSES': [
+    #     'apps.core.throttling.StrictAnonThrottle',
+    #     'apps.core.throttling.SustainedUserThrottle',
+    # ],
+    # 'DEFAULT_THROTTLE_RATES': {
+    #     'login': '10/minute',           # Login attempts (brute-force protection)
+    #     'strict_anon': '50/hour',      # Anonymous users
+    #     'burst_user': '100/minute',    # Authenticated users (burst)
+    #     'sustained_user': '1000/hour', # Authenticated users (sustained)
+    # },
 }
 
 
