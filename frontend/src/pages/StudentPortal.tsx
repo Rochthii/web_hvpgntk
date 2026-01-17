@@ -56,7 +56,28 @@ const StudentPortal: React.FC = () => {
       try {
          const payload = { login_id: email, password };
          const res = await authApi.login(payload);
+         const userData = res.data.user;
+
+         // SECURITY: Admin/Abbot not allowed to login here
+         if (['admin', 'abbot'].includes(userData.role)) {
+            setError('Tài khoản Quản trị không được phép đăng nhập tại cổng này. Vui lòng truy cập trang dành riêng cho Quản trị viên.');
+            return;
+         }
+
          login(res.data);
+
+         // Redirect based on role
+         switch (userData.role) {
+            case 'content':
+               navigate('/portal/content');
+               break;
+            case 'teacher':
+               navigate('/portal/teacher');
+               break;
+            default:
+               // Stay on student portal
+               break;
+         }
       } catch (err: any) {
          console.error(err);
          const msg = err.response?.data?.non_field_errors?.[0] ||

@@ -3,6 +3,7 @@ CMS Models - Quản lý nội dung website
 """
 import uuid
 from django.db import models
+from django.utils import timezone
 from django.conf import settings
 from django.utils.text import slugify
 
@@ -390,6 +391,8 @@ class News(models.Model):
     
     class Status(models.TextChoices):
         DRAFT = 'draft', 'Nháp'
+        PENDING = 'pending', 'Chờ duyệt'
+        APPROVED = 'approved', 'Đã duyệt'
         PUBLISHED = 'published', 'Đã xuất bản'
         ARCHIVED = 'archived', 'Lưu trữ'
     
@@ -451,6 +454,19 @@ class News(models.Model):
     
     published_at = models.DateTimeField(null=True, blank=True, verbose_name="Thời gian xuất bản")
     view_count = models.IntegerField(default=0, verbose_name="Lượt xem")
+    
+    # Editorial workflow fields
+    submitted_at = models.DateTimeField(null=True, blank=True, verbose_name="Ngày nộp bài")
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='reviewed_news',
+        verbose_name="Người duyệt"
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True, verbose_name="Ngày duyệt")
+    rejection_reason = models.TextField(null=True, blank=True, verbose_name="Lý do từ chối")
     
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,

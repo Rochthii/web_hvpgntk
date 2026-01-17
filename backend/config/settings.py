@@ -37,7 +37,7 @@ def get_required_env(var_name: str) -> str:
 SECRET_KEY = get_required_env('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
@@ -338,6 +338,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 if not DEBUG:
     # HSTS Settings
     SECURE_SSL_REDIRECT = True
+    # Additional Security Headers
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+    SECURE_PERMISSIONS_POLICY = {
+        'geolocation': [],
+        'microphone': [],
+        'camera': [],
+    }
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
@@ -363,18 +371,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     
-    # Rate Limiting (Throttling)
+    # Global Rate Limiting (DDoS Protection)
     'DEFAULT_THROTTLE_CLASSES': [
-        'apps.core.throttling.BurstUserThrottle',
+        'apps.core.throttling.StrictAnonThrottle',
         'apps.core.throttling.SustainedUserThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {

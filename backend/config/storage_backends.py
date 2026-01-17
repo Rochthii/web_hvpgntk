@@ -8,6 +8,7 @@ from django.core.files.base import ContentFile
 from django.conf import settings
 from supabase import create_client, Client
 from urllib.parse import urljoin
+from apps.core.file_validators import validate_image_file, get_file_mime_type
 
 
 class SupabaseStorage(Storage):
@@ -68,6 +69,16 @@ class SupabaseStorage(Storage):
                 print(f"Image compression failed for {name}: {e}. Uploading original.")
                 # Fallback to original content if compression fails
         # -------------------------------
+        
+        # --- FILE VALIDATION (Magic Bytes) ---
+        # Validate image files to prevent malicious uploads
+        if ext in ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.tiff']:
+            try:
+                validate_image_file(file_content, name)
+            except Exception as e:
+                print(f"File validation failed for {name}: {e}")
+                raise  # Re-raise to prevent upload
+        # -------------------------------------
         
         # Upload to Supabase Storage
         try:

@@ -30,6 +30,15 @@ import Unauthorized from './pages/Unauthorized';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { Role } from './lib/permissions';
 import { SiteSettingsPage } from './pages/admin/settings/SiteSettingsPage';
+import { ContentDashboard } from './pages/portal/ContentDashboard';
+import { NewsEditorPortal } from './pages/portal/NewsEditorPortal';
+import { MyNewsList } from './pages/portal/MyNewsList';
+import { TeacherDashboard } from './pages/portal/TeacherDashboard';
+import { MyClasses } from './pages/portal/MyClasses';
+import { GradeEntry } from './pages/portal/GradeEntry';
+import { StudentList } from './pages/portal/StudentList';
+import { PortalLayout } from './layouts/PortalLayout';
+import { StaffLogin } from './pages/admin/StaffLogin';
 import { ROUTES } from './router/routes';
 
 // Scroll to top on route change
@@ -61,6 +70,50 @@ const App: React.FC = () => {
 
             <Route path="/unauthorized" element={<Unauthorized />} />
 
+            {/* Separate Staff/Admin Login */}
+            <Route path="/admin/login" element={<StaffLogin />} />
+            <Route path="/login" element={<StaffLogin />} /> {/* Fallback for ProtectedRoute */}
+
+            {/* Role-Based Portals */}
+            <Route path="/portal/content" element={
+              <ProtectedRoute allowedRoles={[Role.CONTENT, Role.ADMIN]}>
+                <PortalLayout role="content">
+                  <ContentDashboard />
+                </PortalLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/portal/content/news" element={
+              <ProtectedRoute allowedRoles={[Role.CONTENT, Role.ADMIN, Role.ABBOT]}>
+                <PortalLayout role="content">
+                  <MyNewsList />
+                </PortalLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/portal/content/news/create" element={
+              <ProtectedRoute allowedRoles={[Role.CONTENT, Role.ADMIN, Role.ABBOT]}>
+                <PortalLayout role="content">
+                  <NewsEditorPortal />
+                </PortalLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/portal/content/news/edit/:id" element={
+              <ProtectedRoute allowedRoles={[Role.CONTENT, Role.ADMIN, Role.ABBOT]}>
+                <PortalLayout role="content">
+                  <NewsEditorPortal />
+                </PortalLayout>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/portal/teacher" element={
+              <ProtectedRoute allowedRoles={[Role.TEACHER, Role.ADMIN, Role.ABBOT]}>
+                <PortalLayout role="teacher">
+                  <TeacherDashboard />
+                </PortalLayout>
+              </ProtectedRoute>
+            } />
+            {/* TODO: Add MyClasses and GradeEntry pages */}
+
+
             {/* Admin Routes - Protected */}
             <Route path="/admin" element={
               <ProtectedRoute allowedRoles={[Role.ADMIN, Role.ABBOT, Role.TEACHER, Role.CONTENT, Role.SECRETARY, Role.ADMISSION]}>
@@ -76,6 +129,35 @@ const App: React.FC = () => {
             <Route path="/admin/approvals" element={
               <ProtectedRoute allowedRoles={[Role.ADMIN, Role.ABBOT, Role.ADMISSION]}>
                 <AdminLayout><PetitionQueue /></AdminLayout>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/portal/teacher/classes" element={
+              <ProtectedRoute allowedRoles={[Role.TEACHER, Role.ADMIN, Role.ABBOT]}>
+                <PortalLayout role="teacher">
+                  <MyClasses />
+                </PortalLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/portal/teacher/grades/:classId" element={
+              <ProtectedRoute allowedRoles={[Role.TEACHER, Role.ADMIN, Role.ABBOT]}>
+                <PortalLayout role="teacher">
+                  <GradeEntry />
+                </PortalLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/portal/teacher/students" element={
+              <ProtectedRoute allowedRoles={[Role.TEACHER, Role.ADMIN, Role.ABBOT]}>
+                <PortalLayout role="teacher">
+                  <StudentList />
+                </PortalLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/portal/teacher/grades" element={ // Fallback if no class ID
+              <ProtectedRoute allowedRoles={[Role.TEACHER, Role.ADMIN, Role.ABBOT]}>
+                <PortalLayout role="teacher">
+                  <MyClasses />
+                </PortalLayout>
               </ProtectedRoute>
             } />
 

@@ -13,6 +13,15 @@ export const ROUTES = {
     MY_REQUESTS: '/student/requests',
     CREATE_REQUEST: '/student/requests/create',
     PROFILE: '/profile',
+    PORTAL: {
+        CONTENT: '/portal/content',
+        CONTENT_NEWS: '/portal/content/news',
+        CONTENT_NEWS_CREATE: '/portal/content/news/create',
+        TEACHER: '/portal/teacher',
+        TEACHER_CLASSES: '/portal/teacher/classes',
+        TEACHER_GRADES: '/portal/teacher/grades',
+        TEACHER_STUDENTS: '/portal/teacher/students',
+    }
 };
 
 export const API_ROUTES = {

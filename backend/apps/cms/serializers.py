@@ -1,6 +1,7 @@
 
 from rest_framework import serializers
 from .models import SiteSetting, Banner, Page, Department, StaffMember, News, FAQ, Partner, ContactMessage, HistoryMilestone
+from apps.core.sanitize import sanitize_html
 
 
 class BilingualSerializerMixin:
@@ -81,6 +82,14 @@ class PageSerializer(BilingualSerializerMixin, serializers.ModelSerializer):
     
     def get_excerpt(self, obj):
         return self.get_localized_field(obj, 'excerpt')
+    
+    def validate_content_vi(self, value):
+        """Sanitize Vietnamese content to prevent XSS"""
+        return sanitize_html(value)
+    
+    def validate_content_km(self, value):
+        """Sanitize Khmer content to prevent XSS"""
+        return sanitize_html(value)
 
 
 class DepartmentSerializer(BilingualSerializerMixin, serializers.ModelSerializer):
@@ -134,6 +143,25 @@ class NewsSerializer(BilingualSerializerMixin, serializers.ModelSerializer):
     
     def get_content(self, obj):
         return self.get_localized_field(obj, 'content')
+    
+    def get_category(self, obj):
+        return self.get_localized_field(obj, 'category')
+    
+    def validate_content_vi(self, value):
+        """Sanitize Vietnamese content to prevent XSS"""
+        return sanitize_html(value)
+    
+    def validate_content_km(self, value):
+        """Sanitize Khmer content to prevent XSS"""
+        return sanitize_html(value)
+    
+    def validate_excerpt_vi(self, value):
+        """Sanitize Vietnamese excerpt"""
+        return sanitize_html(value)
+    
+    def validate_excerpt_km(self, value):
+        """Sanitize Khmer excerpt"""
+        return sanitize_html(value)
 
 
 class NewsLiteSerializer(BilingualSerializerMixin, serializers.ModelSerializer):

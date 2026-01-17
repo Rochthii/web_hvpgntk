@@ -8,7 +8,7 @@ Start-Sleep -Seconds 1
 
 # 2. Database Preparations
 Write-Host "[2/5] Preparing Database..." -ForegroundColor Yellow
-cd backend
+Set-Location backend
 # Check if venv exists and activate
 if (Test-Path "venv\Scripts\Activate.ps1") {
     Write-Host "Using Virtual Environment..." -ForegroundColor Gray
@@ -21,7 +21,7 @@ cd ..
 
 # 3. Start Backend
 Write-Host "[3/5] Starting Backend Server (Port 8000)..." -ForegroundColor Yellow
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd backend; if(Test-Path 'venv/Scripts/Activate.ps1'){& 'venv/Scripts/Activate.ps1'}; python manage.py runserver 0.0.0.0:8000"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location backend; if(Test-Path 'venv/Scripts/Activate.ps1'){& 'venv/Scripts/Activate.ps1'}; python manage.py runserver 0.0.0.0:8000"
 Start-Sleep -Seconds 5
 
 # 4. Start Frontend

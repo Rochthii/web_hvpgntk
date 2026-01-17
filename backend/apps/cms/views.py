@@ -1,6 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.utils import timezone
 from .models import SiteSetting, Banner, Page, Department, StaffMember, News, FAQ, Partner, ContactMessage, HistoryMilestone
 from .serializers import (
     SiteSettingSerializer, BannerSerializer, PageSerializer, DepartmentSerializer,
@@ -82,13 +83,23 @@ class StaffMemberViewSet(viewsets.ModelViewSet):
 class NewsViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
-        # Check if user has CMS View permission
-        can_view_all = user.is_authenticated and (
-            user.role in ['admin', 'abbot', 'teacher', 'content', 'secretary'] or user.is_staff
-        )
-        if self.action in ['list', 'retrieve', 'featured', 'latest', 'announcements'] and not can_view_all:
-             return News.objects.filter(status='published').order_by('-published_at')
-        return News.objects.all().order_by('-created_at')
+        queryset = News.objects.all().order_by('-created_at')
+        
+        # Public views -> Only published
+        if self.action in ['list', 'retrieve', 'featured', 'latest', 'announcements']:
+            # Check if user has CMS View permission
+            can_view_all = user.is_authenticated and (
+                user.role in ['admin', 'abbot', 'teacher', 'content', 'secretary'] or user.is_staff
+            )
+            if not can_view_all:
+                return queryset.filter(status='published').order_by('-published_at')
+        
+        # CMS views -> Support filtering
+        status_param = self.request.query_params.get('status')
+        if status_param:
+            queryset = queryset.filter(status=status_param)
+            
+        return queryset
     
     def get_serializer_class(self):
         if self.action == 'list':
@@ -99,6 +110,27 @@ class NewsViewSet(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve', 'featured', 'latest', 'announcements']:
             return [permissions.AllowAny()]
         return [CanEditCMS()]
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        # Auto-set author? Assuming author field exists or handled by serializer context
+        # If user tries to publish but is not admin/abbot -> force pending
+        if serializer.validated_data.get('status') == 'published':
+            if user.role not in ['admin', 'abbot'] and not user.is_staff:
+                serializer.save(status='pending', submitted_at=timezone.now())
+                return
+        serializer.save()
+
+    def perform_update(self, serializer):
+        user = self.request.user
+        # If user tries to publish but is not admin/abbot -> force pending
+        if serializer.validated_data.get('status') == 'published':
+             if user.role not in ['admin', 'abbot'] and not user.is_staff:
+                # Force status to pending if unauthorized publish attempt
+                serializer.save(status='pending', submitted_at=timezone.now())
+                return
+        
+        serializer.save()
 
     lookup_field = 'slug'
     

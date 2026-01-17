@@ -7,6 +7,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.http import JsonResponse
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from apps.core.views import ImageUploadView
 
 def welcome(request):
     return JsonResponse({
@@ -36,6 +37,9 @@ urlpatterns = [
         path('petitions/', include('apps.petitions.urls')),
         path('calendar/', include('apps.calendar.urls')),
     ])),
+    
+    # Upload API
+    path('api/upload/image', ImageUploadView.as_view(), name='upload_image'),
     
     # API Documentation
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

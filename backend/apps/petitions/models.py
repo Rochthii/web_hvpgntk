@@ -112,6 +112,8 @@ class Petition(BaseModel):
         verbose_name="Tiêu đề"
     )
     reason = models.TextField(
+        null=True,
+        blank=True,
         verbose_name="Lý do / Nội dung"
     )
     
